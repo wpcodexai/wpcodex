@@ -1,0 +1,26 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 8
+
+    # Analyse the actual PHP source directory and the entry point.
+    # WPCodex PHP lives in includes/ (PSR-4 root), not src/ (which is TypeScript/SCSS).
+    paths:
+        - includes
+        - wpcodex.php
+
+    bootstrapFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+
+    # Disable parallel analysis to avoid the child-process OOM crash on Windows
+    # (WAMP / WampServer). Remove this line on Linux/macOS CI where memory is not
+    # split across worker processes.
+    parallel:
+        maximumNumberOfProcesses: 1
+
+    # Treat WordPress stubs as the authoritative type source.
+    # The szepeviktor/phpstan-wordpress extension handles most WP types,
+    # but stub files may be missing some internal constants on older stub versions.
+    stubFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

@@ -1,48 +1,117 @@
-# Wordpress - ignore core, configuration, examples, uploads and logs.
-# https://github.com/github/gitignore/blob/main/WordPress.gitignore
+# WPCodex — .gitignore
 
-# Core
-#
-# Note: if you want to stage/commit WP core files
-# you can delete this whole section/until Configuration.
+# Live skill files — gitignored so every install keeps its own skills.
+# The read-only templates in skills/ ARE committed. Only the live directory
+# wpcodex-skills/ is excluded.
+
+wpcodex-skills/
+
+# PHP sandbox — runtime directory created on plugin activation.
+# Contains only temp execution files; never commit.
+wpcodex-sandbox/
+
+# Composer
+/vendor/
+
+# Node / front-end tooling
+/node_modules/
+
+# The compiled assets (assets/css/ and assets/js/) ARE committed so the plugin
+# works without a build step after installation. Only the tooling artifacts
+# below are excluded.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Operating system files
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Editor and IDE files
+
+# JetBrains (PhpStorm, WebStorm, etc.)
+.idea/
+
+# Vim / Neovim
+*.swp
+*.swo
+*.swn
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+Session.vim
+.netrwhist
+
+# Emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# Sublime Text
+*.sublime-workspace
+
+# PHP / WordPress development
+
+# WordPress configuration (never commit credentials)
+wp-config.php
+wp-config-local.php
+.env
+.env.local
+.env.*.local
+
+# WordPress core (if this repo is inside a full WP install)
 /wp-admin/
-/wp-content/index.php
-/wp-content/languages
-/wp-content/plugins/index.php
-/wp-content/themes/index.php
 /wp-includes/
 /index.php
-/license.txt
-/readme.html
 /wp-*.php
 /xmlrpc.php
-
-# Configuration
-wp-config.php
-
-# Example themes
-/wp-content/themes/twenty*/
-
-# Example plugin
-/wp-content/plugins/hello.php
-
-# Uploads
+/license.txt
+/readme.html
 /wp-content/uploads/
+/wp-content/upgrade/
+/wp-content/cache/
 
-# Log files
-*.log
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
 
-# htaccess
-/.htaccess
+# PHPStan
+.phpstan/
 
-# All plugins
-#
-# Note: If you wish to whitelist plugins,
-# uncomment the next line
-#/wp-content/plugins
+# PHP CS Fixer
+.php-cs-fixer.cache
 
-# All themes
-#
-# Note: If you wish to whitelist themes,
-# uncomment the next line
-#/wp-content/themes
+
+# Release ZIP (built by CI, not committed to source)
+*.zip
+*.tar.gz
+
+# Release info file — updated programmatically, never hand-edited.
+# Commit this file; do not add it here.
+# release-info.json   ← intentionally NOT gitignored
+
+# Dev mock and local overrides
+
+
+# Dev mock for Pro features (local development only)
+includes/skills/dev-mock.php
+
+# Local wp-config overrides
+local-config.php

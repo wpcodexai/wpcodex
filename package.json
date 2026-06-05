@@ -1,0 +1,37 @@
+{
+    "name": "wpcodex",
+    "version": "1.0.0",
+    "description": "Build tooling for WPCodex admin assets",
+    "author": "WPCodex Team",
+    "license": "GPL-3.0-or-later",
+    "private": true,
+    "scripts": {
+        "build":           "wp-scripts build",
+        "start":           "wp-scripts start",
+        "format":          "wp-scripts format ./src",
+        "lint":            "npm run lint:js && npm run lint:css",
+        "lint:js":         "wp-scripts lint-js",
+        "lint:css":        "wp-scripts lint-style",
+        "lint:fix":        "wp-scripts lint-js --fix && wp-scripts lint-style --fix",
+        "lint:pkg-json":   "wp-scripts lint-pkg-json",
+        "packages-update": "wp-scripts packages-update",
+        "plugin-zip":      "wp-scripts plugin-zip",
+        "make-pot":        "wp i18n make-pot . languages/wpcodex.pot --domain=wpcodex --exclude=node_modules,vendor,tests"
+    },
+    "devDependencies": {
+        "@wordpress/scripts": "^30.23.0",
+        "@actions/core": "^1.10.0",
+        "npm-check-updates": "^16.14.20",
+        "simple-git": "^3.27.0",
+        "webpack-remove-empty-scripts": "^1.1.1"
+    },
+    "dependencies": {
+        "@monaco-editor/react": "^4.7.0",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.563.0",
+        "react-redux": "^9.2.0",
+        "react-router-dom": "^7.13.0",
+        "redux": "^5.0.1",
+        "sonner": "^2.0.7"
+    }
+}

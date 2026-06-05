@@ -1,0 +1,43 @@
+{
+    "name": "wpcodex/wpcodex",
+    "description": "The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": ">=8.0",
+        "wordpress/mcp-adapter": "^0.5.0",
+        "automattic/jetpack-autoloader": "^5.0"
+    },
+    "require-dev": {
+        "php-stubs/wordpress-stubs": "^6.9",
+        "overtrue/phplint": "^9.0",
+        "phpunit/phpunit": "^10.0",
+        "brain/monkey": "^2.6",
+        "phpstan/phpstan": "^1.10",
+        "szepeviktor/phpstan-wordpress": "^1.3",
+        "carthage-software/mago": "^1.24.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "WPCodex\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WPCodex\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint":    "vendor/bin/phplint --no-cache .",
+        "analyze": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "test":    "vendor/bin/phpunit --testdox",
+        "format":  "vendor/bin/mago format"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "automattic/jetpack-autoloader": true
+        },
+        "sort-packages": true
+    }
+}

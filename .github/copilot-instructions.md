@@ -1,6 +1,7 @@
 ---
-title: Copilot / Agent Instructions Template
-scope: repository
+applyTo: 'wp-content\plugins\wpcodex',
+title: 'Copilot / Agent Instructions Template',
+scope: 'repository',
 created: 2026-06-05
 ---
 

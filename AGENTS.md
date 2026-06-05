@@ -1,5 +1,6 @@
 ---
-name: wpcodex-repo-agent
+applyTo: 'wp-content\plugins\wpcodex',
+name: 'wpcodex-repo-agent',
 description: A repository-specialized agent for working on the WPCodex plugin. Focused on safe, standards-compliant edits, skill creation, and ability definitions.
 ---
 

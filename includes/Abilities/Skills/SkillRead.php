@@ -16,7 +16,7 @@ class SkillRead {
 	public function __construct() {
 		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
 	}
-	public static function init(): void {
+	public function init(): void {
 		wp_register_ability( 'wpcodex/skill-read', [
 			'label'       => __( 'Read Skill', 'wpcodex' ),
 			'description' => __( 'Read the full body of a skill by name.', 'wpcodex' ),

@@ -19,10 +19,23 @@ namespace WPCodex\Skills;
 class Prompts {
 
 	/**
-	 * Register one ability per discoverable prompt-mode skill.
-	 * Called on wp_abilities_api_init at priority 500.
+	 * Wire the wp_abilities_api_init hook at priority 500.
+	 *
+	 * Priority 500 — after core abilities (10) and before the collect hook (PHP_INT_MAX).
+	 *
+	 * @since 1.0.0
 	 */
-	public static function register(): void {
+	public function __construct() {
+		add_action( 'wp_abilities_api_init', [ $this, 'register' ], 500 );
+	}
+
+	/**
+	 * Register one ability per discoverable prompt-mode skill.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function register(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
 			return;
 		}

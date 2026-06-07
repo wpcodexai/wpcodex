@@ -25,6 +25,16 @@ final class ConfigurationPage {
 	/** Application name used when auto-creating passwords. */
 	private const APP_NAME_DEFAULT = 'WPCodex';
 
+	/**
+	 * Register AJAX handlers for the Configuration page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __construct() {
+		add_action( 'wp_ajax_' . self::AJAX_GENERATE, [ $this, 'ajax_generate_password' ] );
+		add_action( 'wp_ajax_' . self::AJAX_REVOKE,   [ $this, 'ajax_revoke_password' ] );
+	}
+
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
@@ -434,15 +444,10 @@ final class ConfigurationPage {
 	}
 
 	// -------------------------------------------------------------------------
-	// AJAX handlers  (registered from Plugin.php or AdminMenu)
+	// AJAX handlers
 	// -------------------------------------------------------------------------
 
-	public static function register_ajax(): void {
-		add_action( 'wp_ajax_' . self::AJAX_GENERATE, [ self::class, 'ajax_generate_password' ] );
-		add_action( 'wp_ajax_' . self::AJAX_REVOKE,   [ self::class, 'ajax_revoke_password' ] );
-	}
-
-	public static function ajax_generate_password(): void {
+	public function ajax_generate_password(): void {
 		check_ajax_referer( self::AJAX_GENERATE, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( __( 'Insufficient permissions.', 'wpcodex' ) );
@@ -483,7 +488,7 @@ final class ConfigurationPage {
 		] );
 	}
 
-	public static function ajax_revoke_password(): void {
+	public function ajax_revoke_password(): void {
 		check_ajax_referer( self::AJAX_REVOKE, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( __( 'Insufficient permissions.', 'wpcodex' ) );

@@ -22,19 +22,29 @@ class BuiltIn {
 	public const SOURCE_PRIORITY = 10;
 
 	/**
-	 * Register this source with the wpcodex_skill_sources filter.
-	 * Called once from Plugin::init().
+	 * Wire the wpcodex_skill_sources filter.
+	 *
+	 * @since 1.0.0
 	 */
-	public static function register_source(): void {
-		add_filter( 'wpcodex_skill_sources', static function ( array $sources ): array {
-			$sources[ self::SOURCE_ID ] = [
-				'id'       => self::SOURCE_ID,
-				'priority' => self::SOURCE_PRIORITY,
-				'label'    => self::SOURCE_LABEL,
-				'loader'   => [ self::class, 'load' ],
-			];
-			return $sources;
-		} );
+	public function __construct() {
+		add_filter( 'wpcodex_skill_sources', [ $this, 'add_source' ] );
+	}
+
+	/**
+	 * Register the built-in source entry in the skills source map.
+	 *
+	 * @since 1.0.0
+	 * @param array<string, mixed> $sources Existing sources keyed by source ID.
+	 * @return array<string, mixed> Sources with the built-in entry added.
+	 */
+	public function add_source( array $sources ): array {
+		$sources[ self::SOURCE_ID ] = [
+			'id'       => self::SOURCE_ID,
+			'priority' => self::SOURCE_PRIORITY,
+			'label'    => self::SOURCE_LABEL,
+			'loader'   => [ self::class, 'load' ],
+		];
+		return $sources;
 	}
 
 	/**

@@ -4,7 +4,7 @@
  * Plugin URI:        https://github.com/wpcodex/wpcodex
  * Description:       The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.
  * Version:           1.0.0
- * Requires at least: 7.0
+ * Requires at least: 6.9
  * Requires PHP:      8.0
  * Author:            WPCodex Team
  * Author URI:        https://wpcodex.ai

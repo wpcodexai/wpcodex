@@ -12,40 +12,61 @@ namespace WPCodex\Abilities\Files;
 use WPCodex\Runner\FileManager;
 use WPCodex\Utils\Helpers;
 
+/**
+ * Class FileDelete
+ */
 class FileDelete {
+
 	public function __construct() {
-        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
-    }
+		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+	}
 
 	public function init(): void {
 		wp_register_ability( 'wpcodex/file-delete', [
 			'label'       => __( 'Delete File', 'wpcodex' ),
-			'description' => __( 'Delete a file from the server. This is irreversible — no backup is created.', 'wpcodex' ),
+			'description' => __( 'Delete a file or directory. Idempotent — returns success when the path does not exist. Core WordPress directories are protected.', 'wpcodex' ),
 			'category'    => 'wpcodex',
 
 			'input_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'path' => [
+					'path'      => [
 						'type'        => 'string',
-						'description' => 'Absolute server path to the file to delete.',
+						'description' => 'Absolute path or path relative to ABSPATH.',
+					],
+					'recursive' => [
+						'type'        => 'boolean',
+						'description' => 'Delete directories and their contents recursively. Required when deleting a directory. Default: false.',
+						'default'     => false,
 					],
 				],
-				'required'   => [ 'path' ],
+				'required'             => [ 'path' ],
+				'additionalProperties' => false,
 			],
 
 			'output_schema' => [
-				'type'        => 'string',
-				'description' => 'Success message.',
+				'type'       => 'object',
+				'properties' => [
+					'path'          => [ 'type' => 'string', 'description' => 'Resolved absolute path.' ],
+					'type'          => [ 'type' => 'string', 'description' => 'Entry type: file, dir, or unknown (when path did not exist).' ],
+					'deleted'       => [ 'type' => 'boolean', 'description' => 'True when the path was deleted; false when it did not exist.' ],
+					'items_deleted' => [ 'type' => 'integer', 'description' => 'Number of filesystem entries deleted.' ],
+				],
+				'required' => [ 'path', 'type', 'deleted', 'items_deleted' ],
 			],
 
-			'execute_callback' => static function ( array $args ): string|\WP_Error {
+			'execute_callback' => static function ( array $args ): array|\WP_Error {
 				if ( empty( $args['path'] ) || ! is_string( $args['path'] ) ) {
 					return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
 				}
+
+				$recursive = isset( $args['recursive'] ) && true === $args['recursive'];
+
 				try {
-					return FileManager::instance()->delete( $args['path'] );
-				} catch ( \Throwable $e ) {
+					return FileManager::instance()->delete_path( $args['path'], $recursive );
+				} catch ( \InvalidArgumentException $e ) {
+					return new \WP_Error( 'wpcodex_path_error', $e->getMessage() );
+				} catch ( \RuntimeException $e ) {
 					return new \WP_Error( 'wpcodex_file_error', $e->getMessage() );
 				}
 			},

@@ -116,6 +116,7 @@ final class AbilitiesSettingsPage {
 		$category_labels = [
 			'wpcodex'        => __( 'WPCodex', 'wpcodex' ),
 			'wpcodex-skills' => __( 'WPCodex Skills', 'wpcodex' ),
+			'wpcodex-gutenberg' => __( 'WPCodex Gutenberg', 'wpcodex' ),
 			'general'        => __( 'General', 'wpcodex' ),
 		];
 

@@ -44,8 +44,7 @@ final class AdminMenu {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_head',            [ $this, 'inline_menu_styles' ] );
 		add_action( 'admin_bar_menu',        [ $this, 'admin_bar_indicator' ], 100 );
-		// Register AJAX handlers for the Configuration page.
-		ConfigurationPage::register_ajax();
+		new ConfigurationPage();
 	}
 
 	// -------------------------------------------------------------------------

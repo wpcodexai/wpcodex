@@ -195,7 +195,7 @@ class FileManager {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_copy
 		if ( copy( $path, $backup ) ) {
 			$key = self::BACKUP_TRANSIENT_PREFIX . md5( $path );
-			set_transient( $key, wp_json_encode( [ 'original' => $path, 'backup' => $backup, 'ts' => time() ] ), 86400 );
+			set_transient( $key, wp_json_encode( [ 'original' => $path, 'backup' => $backup, 'ts' => time() ] ), DAY_IN_SECONDS );
 			return sprintf( '[Backup: %s] ', basename( $backup ) );
 		}
 		return '';

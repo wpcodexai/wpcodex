@@ -4,9 +4,9 @@
  * Plugin URI:        https://github.com/wpcodex/wpcodex
  * Description:       The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.
  * Version:           1.0.0
- * Requires at least: 6.5
+ * Requires at least: 7.0
  * Requires PHP:      8.0
- * Author:            Your Name
+ * Author:            WPCodex Team
  * Author URI:        https://wpcodex.ai
  * License:           GPL-3.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
@@ -23,11 +23,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPCODEX_VERSION',     '1.0.0' );
 define( 'WPCODEX_FILE',        __FILE__ );
-define( 'WPCODEX_DIR',         plugin_dir_path( __FILE__ ) );
-define( 'WPCODEX_URL',         plugin_dir_url( __FILE__ ) );
-define( 'WPCODEX_BASENAME',    plugin_basename( __FILE__ ) );
+// Retrieve the version dynamically from this file's header comments
+$plugin_data = get_file_data( WPCODEX_FILE, array( 'Version' => 'Version' ), 'plugin' );
+$plugin_version = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : '1.0.0';
+
+define( 'WPCODEX_VERSION',     $plugin_version );
+define( 'WPCODEX_DIR',         plugin_dir_path( WPCODEX_FILE ) );
+define( 'WPCODEX_URL',         plugin_dir_url( WPCODEX_FILE ) );
+define( 'WPCODEX_BASENAME',    plugin_basename( WPCODEX_FILE ) );
 define( 'WPCODEX_SANDBOX_DIR', WP_CONTENT_DIR . '/wpcodex-sandbox/' );
  
 // Autoloader (Jetpack Autoloader — handles wordpress/mcp-adapter)

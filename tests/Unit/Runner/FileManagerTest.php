@@ -20,7 +20,7 @@ use WPCodex\Runner\FileManager;
  * Uses a real temp directory so we can test actual filesystem behaviour
  * without touching the WordPress root.
  */
-final class FileManagerTest extends TestCase {
+class FileManagerTest extends TestCase {
 
 	private string $tmp_dir;
 

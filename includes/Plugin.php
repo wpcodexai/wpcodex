@@ -10,8 +10,6 @@ declare( strict_types=1 );
 namespace WPCodex;
 
 use WPCodex\Admin\AdminMenu;
-use WPCodex\Admin\ConnectPage;
-use WPCodex\Admin\SettingsPage;
 use WPCodex\Abilities\Abilities;
 use WPCodex\Skills\Schema  as SkillsSchema;
 use WPCodex\Utils\Requirements;
@@ -23,6 +21,9 @@ final class Plugin {
 
 	/** @var self|null */
 	private static ?self $instance = null;
+
+	/** @var Abilities|null Holds the Abilities instance so it is not GC'd. */
+	private ?Abilities $abilities = null;
 
 	private function __construct() {}
 
@@ -47,15 +48,11 @@ final class Plugin {
 		$this->register_abilities();
 
 		if ( is_admin() ) {
-			AdminMenu::instance()->register();
-			SettingsPage::instance()->register();
-			ConnectPage::instance()->register();
+			AdminMenu::instance();
 		}
 	}
 
-	// -------------------------------------------------------------------------
 	// Activation / deactivation
-	// -------------------------------------------------------------------------
 
 	public static function activate(): void {
 		SkillsSchema::create_table();
@@ -67,9 +64,7 @@ final class Plugin {
 		flush_rewrite_rules();
 	}
 
-	// -------------------------------------------------------------------------
 	// Private helpers
-	// -------------------------------------------------------------------------
 
 	private function load_textdomain(): void {
 		load_plugin_textdomain(
@@ -123,7 +118,7 @@ final class Plugin {
 	}
 
 	/**
-	 * Register wpcodex ability categories on wp_abilities_api_categories_init.
+	 * Register wpcodex ability categories.
 	 */
 	private function register_ability_categories(): void {
 		add_action( 'wp_abilities_api_categories_init', static function (): void {
@@ -140,10 +135,10 @@ final class Plugin {
 	}
 
 	/**
-	 * Require and register all ability classes on wp_abilities_api_init.
+	 * Register abilities — store instance so it is not garbage-collected.
 	 */
 	private function register_abilities(): void {
-		new Abilities();
+		$this->abilities = new Abilities();
 	}
 
 	/**
@@ -154,7 +149,6 @@ final class Plugin {
 			wp_mkdir_p( WPCODEX_SANDBOX_DIR );
 		}
 
-		// Block HTTP access.
 		$htaccess = WPCODEX_SANDBOX_DIR . '.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents

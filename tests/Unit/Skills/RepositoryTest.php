@@ -20,7 +20,7 @@ use WPCodex\Skills\Schema;
  *
  * Uses a $wpdb mock so no real DB connection is needed.
  */
-final class RepositoryTest extends TestCase {
+class RepositoryTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();

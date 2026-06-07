@@ -45,7 +45,7 @@ class DbRunner {
 
 		if ( in_array( $verb, [ 'SELECT', 'SHOW', 'DESCRIBE', 'EXPLAIN' ], true ) ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$results = $wpdb->get_results( $prepared, 'ARRAY_A' );
+			$results = $wpdb->get_results( $prepared, ARRAY_A );
 			if ( '' !== (string) $wpdb->last_error ) {
 				throw new \RuntimeException( '[WPCodex DB] ' . esc_html( $wpdb->last_error ) );
 			}

@@ -37,7 +37,7 @@ class Repository {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			"SELECT id, name, description, enable_agentic, enable_prompt, created_at, updated_at FROM {$table} ORDER BY name ASC",
-			'ARRAY_A'
+			ARRAY_A
 		);
 		if ( ! is_array( $rows ) ) {
 			return [];
@@ -60,7 +60,7 @@ class Repository {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$row = $wpdb->get_row(
 			$wpdb->prepare( "SELECT * FROM {$table} WHERE name = %s LIMIT 1", $name ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			'ARRAY_A'
+			ARRAY_A
 		);
 		if ( ! is_array( $row ) ) {
 			return null;

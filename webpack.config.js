@@ -48,7 +48,7 @@ module.exports = {
 	entry: {
 		...defaultConfig.entry(),
 		'assets/admin/admin':       path.resolve( rootDir, 'src/admin',    'index.js' ),
-		'assets/frontend/frontend': path.resolve( rootDir, 'src/frontend', 'index.js' ),
+		// 'assets/frontend/frontend': path.resolve( rootDir, 'src/frontend', 'index.js' ),
 	},
 
 	output: {

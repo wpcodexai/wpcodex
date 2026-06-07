@@ -27,12 +27,12 @@ class FileWrite {
 						'type'        => 'string',
 						'description' => 'Absolute server path to the file.',
 					],
-					'contents' => [
+					'content' => [
 						'type'        => 'string',
-						'description' => 'File contents to write.',
+						'description' => 'Full content to write to the file.',
 					],
 				],
-				'required'   => [ 'path', 'contents' ],
+				'required'   => [ 'path', 'content' ],
 			],
 
 			'output_schema' => [
@@ -44,11 +44,11 @@ class FileWrite {
 				if ( empty( $args['path'] ) || ! is_string( $args['path'] ) ) {
 					return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
 				}
-				if ( empty( $args['contents'] ) || ! is_string( $args['contents'] ) ) {
-					return new \WP_Error( 'wpcodex_invalid_input', __( 'contents must be a non-empty string.', 'wpcodex' ) );
+				if ( empty( $args['content'] ) || ! is_string( $args['content'] ) ) {
+					return new \WP_Error( 'wpcodex_invalid_input', __( 'content must be a non-empty string.', 'wpcodex' ) );
 				}
 				try {
-					return FileManager::instance()->write( $args['path'], $args['contents'] );
+					return FileManager::instance()->write( $args['path'], $args['content'] );
 				} catch ( \Throwable $e ) {
 					return new \WP_Error( 'wpcodex_file_error', $e->getMessage() );
 				}

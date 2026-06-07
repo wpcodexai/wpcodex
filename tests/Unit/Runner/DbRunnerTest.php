@@ -17,7 +17,7 @@ use WPCodex\Runner\DbRunner;
 /**
  * Class DbRunnerTest
  */
-final class DbRunnerTest extends TestCase {
+class DbRunnerTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();

@@ -7,13 +7,15 @@
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Skills;
 
 use WPCodex\Skills\Repository;
 use WPCodex\Utils\Helpers;
 
 class SkillRead {
-
+	public function __construct() {
+		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+	}
 	public static function init(): void {
 		wp_register_ability( 'wpcodex/skill-read', [
 			'label'       => __( 'Read Skill', 'wpcodex' ),

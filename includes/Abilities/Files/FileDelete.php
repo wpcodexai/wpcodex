@@ -7,14 +7,17 @@
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Files;
 
 use WPCodex\Runner\FileManager;
 use WPCodex\Utils\Helpers;
 
 class FileDelete {
+	public function __construct() {
+        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+    }
 
-	public static function init(): void {
+	public function init(): void {
 		wp_register_ability( 'wpcodex/file-delete', [
 			'label'       => __( 'Delete File', 'wpcodex' ),
 			'description' => __( 'Delete a file from the server. This is irreversible — no backup is created.', 'wpcodex' ),

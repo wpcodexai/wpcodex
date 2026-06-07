@@ -7,14 +7,16 @@
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Skills;
 
 use WPCodex\Skills\Repository;
 use WPCodex\Utils\Helpers;
 
 class SkillUpdate {
-
-	public static function init(): void {
+	public function __construct() {
+        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+    }
+	public function init(): void {
 		wp_register_ability( 'wpcodex/skill-update', [
 			'label'       => __( 'Update Skill', 'wpcodex' ),
 			'description' => __( 'Update an existing skill by name. Pass only the fields you want to change.', 'wpcodex' ),

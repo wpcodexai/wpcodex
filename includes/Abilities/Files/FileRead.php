@@ -1,39 +1,33 @@
 <?php
 /**
- * Ability: wpcodex/file-list
+ * Ability: wpcodex/file-read
  *
  * @package WPCodex\Abilities
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Files;
 
 use WPCodex\Runner\FileManager;
 use WPCodex\Utils\Helpers;
 
-class FileList {
-
-	public static function init(): void {
-		wp_register_ability( 'wpcodex/file-list', [
-			'label'       => __( 'List Directory', 'wpcodex' ),
-			'description' => __(
-				'List files and directories in a given path. Returns a JSON array of file info objects.',
-				'wpcodex'
-			),
+class FileRead {
+	public function __construct() {
+        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+    }
+	public function init(): void {
+		wp_register_ability( 'wpcodex/file-read', [
+			'label'       => __( 'Read File', 'wpcodex' ),
+			'description' => __( 'Read the contents of any file on the server. Path must be absolute.', 'wpcodex' ),
 			'category'    => 'wpcodex',
 
 			'input_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'path'      => [
+					'path' => [
 						'type'        => 'string',
-						'description' => 'Absolute server path to the directory.',
-					],
-					'recursive' => [
-						'type'        => 'boolean',
-						'description' => 'Whether to list files recursively. Default: false.',
-						'default'     => false,
+						'description' => 'Absolute server path to the file.',
 					],
 				],
 				'required'   => [ 'path' ],
@@ -41,16 +35,15 @@ class FileList {
 
 			'output_schema' => [
 				'type'        => 'string',
-				'description' => 'JSON-encoded array of {name, path, type, size, modified} objects.',
+				'description' => 'Raw file contents.',
 			],
 
 			'execute_callback' => static function ( array $args ): string|\WP_Error {
 				if ( empty( $args['path'] ) || ! is_string( $args['path'] ) ) {
 					return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
 				}
-				$recursive = isset( $args['recursive'] ) ? (bool) $args['recursive'] : false;
 				try {
-					return FileManager::instance()->list( $args['path'], $recursive );
+					return FileManager::instance()->read( $args['path'] );
 				} catch ( \Throwable $e ) {
 					return new \WP_Error( 'wpcodex_file_error', $e->getMessage() );
 				}

@@ -7,13 +7,15 @@
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Site;
 
 use WPCodex\Utils\Helpers;
 
 class SiteInfo {
-
-	public static function init(): void {
+	public function __construct() {
+        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+    }
+	public function init(): void {
 		wp_register_ability( 'wpcodex/site-info', [
 			'label'       => __( 'Site Info', 'wpcodex' ),
 			'description' => __(

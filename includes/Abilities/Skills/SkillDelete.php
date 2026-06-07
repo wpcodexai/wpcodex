@@ -7,14 +7,16 @@
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Skills;
 
 use WPCodex\Skills\Repository;
 use WPCodex\Utils\Helpers;
 
 class SkillDelete {
-
-	public static function init(): void {
+	public function __construct() {
+		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+	}
+	public function init(): void {
 		wp_register_ability( 'wpcodex/skill-delete', [
 			'label'       => __( 'Delete Skill', 'wpcodex' ),
 			'description' => __( 'Permanently delete a skill by name.', 'wpcodex' ),

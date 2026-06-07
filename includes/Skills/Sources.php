@@ -1,0 +1,117 @@
+<?php
+/**
+ * Skills source registry — aggregates skills from multiple sources.
+ *
+ * Sources are registered via the wpcodex_skill_sources filter. Each source
+ * provides a loader callable that returns a list of skill records.
+ *
+ * @package WPCodex\Skills
+ */
+
+declare( strict_types=1 );
+
+namespace WPCodex\Skills;
+
+/**
+ * Class Sources
+ */
+class Sources {
+
+	/** Priority for the user DB source — higher = appears later in catalog. */
+	public const USER_DB_PRIORITY = 50;
+
+	/**
+	 * Return the sorted list of registered skill sources.
+	 *
+	 * Each entry: { id, priority, label, loader: callable(): array<skill> }
+	 * where a skill is: { slug, name, description, body, enable_prompt, enable_agentic }
+	 *
+	 * @return list<array{id: string, priority: int, label: string, loader: callable}>
+	 */
+	public static function registry(): array {
+		$default = [
+			'user-db' => [
+				'id'       => 'user-db',
+				'priority' => self::USER_DB_PRIORITY,
+				'label'    => 'User',
+				'loader'   => [ self::class, 'load_user_db' ],
+			],
+		];
+
+		/** @var array<string, array{id: string, priority: int, label: string, loader: callable}> $sources */
+		$sources = apply_filters( 'wpcodex_skill_sources', $default );
+
+		$list = array_values( $sources );
+		usort( $list, static fn( array $a, array $b ): int => $a['priority'] <=> $b['priority'] );
+		return $list;
+	}
+
+	/**
+	 * Return all skills from all sources with source annotations.
+	 *
+	 * @return list<array<string, mixed>>
+	 */
+	public static function all(): array {
+		$result = [];
+		foreach ( self::registry() as $entry ) {
+			foreach ( ( $entry['loader'] )() as $skill ) {
+				$skill['source']       = $entry['id'];
+				$skill['source_label'] = $entry['label'];
+				$result[]              = $skill;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Return all skills where description is non-empty and the given flag is on.
+	 *
+	 * @param 'agentic'|'prompt' $mode
+	 * @return list<array<string, mixed>>
+	 */
+	public static function discoverable( string $mode ): array {
+		$key     = 'agentic' === $mode ? 'enable_agentic' : 'enable_prompt';
+		$default = 'agentic' === $mode; // agentic defaults on, prompt defaults off.
+		$result  = [];
+
+		foreach ( self::all() as $skill ) {
+			if ( trim( (string) ( $skill['description'] ?? '' ) ) === '' ) {
+				continue;
+			}
+			if ( trim( (string) ( $skill['body'] ?? '' ) ) === '' ) {
+				continue;
+			}
+			if ( ! ( $skill[ $key ] ?? $default ) ) {
+				continue;
+			}
+			$result[] = $skill;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Loader for the user DB source — reads from wpcodex_skills table.
+	 *
+	 * @return list<array{slug: string, name: string, description: string, body: string, enable_prompt: bool, enable_agentic: bool}>
+	 */
+	public static function load_user_db(): array {
+		$rows = Repository::instance()->all();
+		$result = [];
+		foreach ( $rows as $row ) {
+			$slug = Parser::normalize_slug( (string) $row['name'] );
+			if ( '' === $slug ) {
+				continue;
+			}
+			$result[] = [
+				'slug'           => $slug,
+				'name'           => (string) $row['name'],
+				'description'    => (string) $row['description'],
+				'body'           => (string) ( $row['body'] ?? '' ),
+				'enable_prompt'  => (bool) $row['enable_prompt'],
+				'enable_agentic' => (bool) $row['enable_agentic'],
+			];
+		}
+		return $result;
+	}
+}

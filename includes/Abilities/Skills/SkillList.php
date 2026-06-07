@@ -7,14 +7,16 @@
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPCodex\Abilities\Skills;
 
 use WPCodex\Skills\Repository;
 use WPCodex\Utils\Helpers;
 
 class SkillList {
-
-	public static function init(): void {
+	public function __construct() {
+        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+    }
+	public function init(): void {
 		wp_register_ability( 'wpcodex/skill-list', [
 			'label'       => __( 'List Skills', 'wpcodex' ),
 			'description' => __(

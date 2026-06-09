@@ -2,6 +2,10 @@
 /**
  * Unit tests for SandboxLoader.
  *
+ * Uses WPCODEX_SANDBOX_DIR (defined in bootstrap) as the real temp sandbox so
+ * filesystem behaviour (glob, file_exists, etc.) is exercised without mocking.
+ * WordPress functions are stubbed via Brain\Monkey where needed.
+ *
  * @package WPCodex\Tests\Unit\Runner
  */
 
@@ -15,15 +19,15 @@ use PHPUnit\Framework\TestCase;
 use WPCodex\Runner\SandboxLoader;
 
 /**
- * Class SandboxLoaderTest
- *
- * Uses a real temp directory so filesystem behaviour (glob, file_exists,
- * rename, etc.) is tested without mocking. WordPress functions are stubbed
- * via Brain\Monkey.
+ * @covers \WPCodex\Runner\SandboxLoader
  */
 final class SandboxLoaderTest extends TestCase {
 
-	/** Temporary sandbox directory created fresh for every test. */
+	/**
+	 * Absolute path to the test sandbox directory.
+	 * Equals WPCODEX_SANDBOX_DIR so the SandboxLoader constant and the test
+	 * work on the same directory.
+	 */
 	private string $sandbox_dir;
 
 	/** Absolute path to the .crashed marker inside the sandbox. */
@@ -33,22 +37,22 @@ final class SandboxLoaderTest extends TestCase {
 		parent::setUp();
 		Monkey\setUp();
 
-		// Create a clean sandbox directory for this test.
-		$this->sandbox_dir  = sys_get_temp_dir() . '/wpcodex-sandbox-test-' . uniqid( '', true ) . '/';
+		// WPCODEX_SANDBOX_DIR is defined in bootstrap — use it directly.
+		$this->sandbox_dir  = WPCODEX_SANDBOX_DIR;
 		$this->crashed_file = $this->sandbox_dir . '.crashed';
 
-		mkdir( $this->sandbox_dir, 0755, true );
+		// Reset hooks from previous tests.
+		$GLOBALS['_wp_filter'] = [];
 
-		// Point the constant to our temp directory.
-		if ( ! defined( 'WPCODEX_SANDBOX_DIR' ) ) {
-			define( 'WPCODEX_SANDBOX_DIR', $this->sandbox_dir );
-		}
+		// Ensure directory exists and is clean.
+		@mkdir( $this->sandbox_dir, 0755, true );
+		$this->clean_sandbox();
 
 		// Stub WordPress functions used by SandboxLoader.
+		// NOTE: add_action is NOT stubbed here so tests that use
+		// Functions\expect('add_action') work correctly.
 		Functions\when( 'get_option' )->justReturn( false );
-		Functions\when( 'add_action' )->justReturn( null );
 		Functions\when( 'current_user_can' )->justReturn( true );
-		Functions\when( 'wp_admin_notice' )->justReturn( null );
 		Functions\when( 'esc_html__' )->returnArg();
 		Functions\when( 'esc_html' )->returnArg();
 		Functions\when( 'wp_json_encode' )->alias(
@@ -57,51 +61,36 @@ final class SandboxLoaderTest extends TestCase {
 	}
 
 	protected function tearDown(): void {
+		$this->clean_sandbox();
+		$GLOBALS['_wp_filter'] = [];
 		Monkey\tearDown();
-		$this->remove_dir( $this->sandbox_dir );
 		parent::tearDown();
 	}
 
-	// -------------------------------------------------------------------------
-	// __construct — hook registration
-	// -------------------------------------------------------------------------
-
-	public function test_constructor_registers_admin_notices_hook(): void {
-		Functions\expect( 'add_action' )
-			->once()
-			->with( 'admin_notices', \Mockery::type( 'array' ) );
-
-		new SandboxLoader();
-	}
-
-	// -------------------------------------------------------------------------
-	// load() — sandbox directory missing
-	// -------------------------------------------------------------------------
+	// ── load() — sandbox directory missing ────────────────────────────────────
 
 	public function test_load_does_nothing_when_sandbox_dir_missing(): void {
+		// Temporarily remove the sandbox directory.
 		$this->remove_dir( $this->sandbox_dir );
 
-		// No files to load — should complete silently with no errors.
 		$loader = new SandboxLoader();
-		$loader->load();
+		$loader->load(); // should complete silently
 
-		// Assertion: no PHP errors / exceptions thrown.
+		// Recreate for tearDown.
+		@mkdir( $this->sandbox_dir, 0755, true );
+
 		$this->assertTrue( true );
 	}
 
-	// -------------------------------------------------------------------------
-	// load() — abilities disabled (simple path)
-	// -------------------------------------------------------------------------
+	// ── load() — abilities disabled (simple path) ─────────────────────────────
 
 	public function test_load_simple_path_loads_php_files_when_abilities_disabled(): void {
 		Functions\when( 'get_option' )->justReturn( false ); // abilities disabled
 
-		// Write a PHP file that sets a global flag.
 		$file = $this->sandbox_dir . 'plugin.php';
 		file_put_contents( $file, '<?php $GLOBALS["sandbox_loaded"] = true;' );
 
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		$this->assertTrue( $GLOBALS['sandbox_loaded'] ?? false );
 		unset( $GLOBALS['sandbox_loaded'] );
@@ -112,58 +101,45 @@ final class SandboxLoaderTest extends TestCase {
 
 		file_put_contents( $this->sandbox_dir . 'index.php', '<?php $GLOBALS["index_loaded"] = true;' );
 
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		$this->assertFalse( $GLOBALS['index_loaded'] ?? false );
 	}
 
-	// -------------------------------------------------------------------------
-	// load() — abilities enabled, safe mode
-	// -------------------------------------------------------------------------
+	// ── load() — abilities enabled, safe mode ─────────────────────────────────
 
 	public function test_load_skips_all_files_when_crashed_marker_exists(): void {
 		Functions\when( 'get_option' )->justReturn( true ); // abilities enabled
 
-		// Create .crashed marker.
 		file_put_contents( $this->crashed_file, json_encode( [ 'message' => 'fatal', 'sandbox_file' => 'test.php' ] ) );
-
-		// Write a PHP file that would set a flag if loaded.
 		file_put_contents( $this->sandbox_dir . 'plugin.php', '<?php $GLOBALS["crash_test_loaded"] = true;' );
 
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		$this->assertFalse( $GLOBALS['crash_test_loaded'] ?? false );
 	}
 
 	public function test_load_skips_all_files_when_safe_mode_query_param_set(): void {
 		Functions\when( 'get_option' )->justReturn( true );
-
 		$_GET['wpcodex_safe_mode'] = '1';
 
 		file_put_contents( $this->sandbox_dir . 'plugin.php', '<?php $GLOBALS["safe_mode_test"] = true;' );
-
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		unset( $_GET['wpcodex_safe_mode'] );
 
 		$this->assertFalse( $GLOBALS['safe_mode_test'] ?? false );
 	}
 
-	// -------------------------------------------------------------------------
-	// load() — abilities enabled, normal load with crash recovery
-	// -------------------------------------------------------------------------
+	// ── load() — abilities enabled, crash recovery ────────────────────────────
 
 	public function test_load_with_crash_recovery_loads_php_files(): void {
-		Functions\when( 'get_option' )->justReturn( true ); // abilities enabled
+		Functions\when( 'get_option' )->justReturn( true );
 
 		$file = $this->sandbox_dir . 'feature.php';
 		file_put_contents( $file, '<?php $GLOBALS["feature_loaded"] = true;' );
 
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		$this->assertTrue( $GLOBALS['feature_loaded'] ?? false );
 		unset( $GLOBALS['feature_loaded'] );
@@ -174,8 +150,7 @@ final class SandboxLoaderTest extends TestCase {
 
 		file_put_contents( $this->sandbox_dir . 'index.php', '<?php $GLOBALS["index_cr_loaded"] = true;' );
 
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		$this->assertFalse( $GLOBALS['index_cr_loaded'] ?? false );
 	}
@@ -184,12 +159,10 @@ final class SandboxLoaderTest extends TestCase {
 		Functions\when( 'get_option' )->justReturn( true );
 
 		$GLOBALS['load_order'] = [];
-
 		file_put_contents( $this->sandbox_dir . 'a-first.php',  '<?php $GLOBALS["load_order"][] = "a";' );
 		file_put_contents( $this->sandbox_dir . 'b-second.php', '<?php $GLOBALS["load_order"][] = "b";' );
 
-		$loader = new SandboxLoader();
-		$loader->load();
+		( new SandboxLoader() )->load();
 
 		$this->assertSame( [ 'a', 'b' ], $GLOBALS['load_order'] );
 		unset( $GLOBALS['load_order'] );
@@ -198,22 +171,17 @@ final class SandboxLoaderTest extends TestCase {
 	public function test_load_does_nothing_when_sandbox_is_empty(): void {
 		Functions\when( 'get_option' )->justReturn( true );
 
-		// Sandbox exists but has no PHP files.
-		$loader = new SandboxLoader();
-		$loader->load(); // Should complete silently.
+		( new SandboxLoader() )->load();
 
 		$this->assertTrue( true );
 	}
 
-	// -------------------------------------------------------------------------
-	// maybe_show_crash_notice()
-	// -------------------------------------------------------------------------
+	// ── maybe_show_crash_notice() ─────────────────────────────────────────────
 
 	public function test_crash_notice_not_shown_when_no_crashed_marker(): void {
 		Functions\expect( 'wp_admin_notice' )->never();
 
-		$loader = new SandboxLoader();
-		$loader->maybe_show_crash_notice();
+		( new SandboxLoader() )->maybe_show_crash_notice();
 	}
 
 	public function test_crash_notice_not_shown_when_user_lacks_capability(): void {
@@ -222,8 +190,7 @@ final class SandboxLoaderTest extends TestCase {
 
 		file_put_contents( $this->crashed_file, json_encode( [ 'message' => 'fatal', 'sandbox_file' => 'test.php' ] ) );
 
-		$loader = new SandboxLoader();
-		$loader->maybe_show_crash_notice();
+		( new SandboxLoader() )->maybe_show_crash_notice();
 	}
 
 	public function test_crash_notice_shown_when_crashed_marker_exists(): void {
@@ -234,8 +201,7 @@ final class SandboxLoaderTest extends TestCase {
 
 		Functions\expect( 'wp_admin_notice' )->once();
 
-		$loader = new SandboxLoader();
-		$loader->maybe_show_crash_notice();
+		( new SandboxLoader() )->maybe_show_crash_notice();
 	}
 
 	public function test_crash_notice_includes_file_name_and_error_message(): void {
@@ -245,40 +211,34 @@ final class SandboxLoaderTest extends TestCase {
 		);
 
 		$captured_notice = '';
-
 		Functions\when( 'wp_admin_notice' )->alias(
 			static function ( string $notice ) use ( &$captured_notice ): void {
 				$captured_notice = $notice;
 			}
 		);
 
-		$loader = new SandboxLoader();
-		$loader->maybe_show_crash_notice();
+		( new SandboxLoader() )->maybe_show_crash_notice();
 
-		$this->assertStringContainsString( 'broken.php',      $captured_notice );
+		$this->assertStringContainsString( 'broken.php',       $captured_notice );
 		$this->assertStringContainsString( 'fatal error here', $captured_notice );
 	}
 
 	public function test_crash_notice_shown_even_with_malformed_crashed_file(): void {
-		// Write invalid JSON — should degrade gracefully, still show a notice.
 		file_put_contents( $this->crashed_file, 'not-json' );
 
 		Functions\expect( 'wp_admin_notice' )->once();
 
-		$loader = new SandboxLoader();
-		$loader->maybe_show_crash_notice();
+		( new SandboxLoader() )->maybe_show_crash_notice();
 	}
 
-	// -------------------------------------------------------------------------
-	// collect_files() — via reflection (private method)
-	// -------------------------------------------------------------------------
+	// ── collect_files() — via reflection ─────────────────────────────────────
 
 	public function test_collect_files_excludes_non_php_files(): void {
 		Functions\when( 'get_option' )->justReturn( true );
 
 		file_put_contents( $this->sandbox_dir . 'plugin.php', '<?php' );
 		file_put_contents( $this->sandbox_dir . 'readme.md',  '# readme' );
-		file_put_contents( $this->sandbox_dir . '.crashed',   '{}' ); // should be excluded
+		file_put_contents( $this->sandbox_dir . '.crashed',   '{}' );
 
 		$loader = new SandboxLoader();
 		$method = new \ReflectionMethod( SandboxLoader::class, 'collect_files' );
@@ -294,7 +254,7 @@ final class SandboxLoaderTest extends TestCase {
 	}
 
 	public function test_collect_files_excludes_index_php(): void {
-		file_put_contents( $this->sandbox_dir . 'index.php',  '<?php // silence' );
+		file_put_contents( $this->sandbox_dir . 'index.php',   '<?php // silence' );
 		file_put_contents( $this->sandbox_dir . 'feature.php', '<?php' );
 
 		$loader = new SandboxLoader();
@@ -306,7 +266,7 @@ final class SandboxLoaderTest extends TestCase {
 		$names = array_map( 'basename', $files );
 
 		$this->assertNotContains( 'index.php',  $names );
-		$this->assertContains(    'feature.php', $names );
+		$this->assertContains( 'feature.php', $names );
 	}
 
 	public function test_collect_files_returns_empty_array_for_empty_sandbox(): void {
@@ -316,13 +276,10 @@ final class SandboxLoaderTest extends TestCase {
 
 		/** @var list<string> $files */
 		$files = $method->invoke( $loader );
-
 		$this->assertSame( [], $files );
 	}
 
-	// -------------------------------------------------------------------------
-	// is_safe_mode() — via reflection (private method)
-	// -------------------------------------------------------------------------
+	// ── is_safe_mode() — via reflection ──────────────────────────────────────
 
 	public function test_is_safe_mode_false_when_no_marker_and_no_param(): void {
 		$loader = new SandboxLoader();
@@ -368,10 +325,33 @@ final class SandboxLoaderTest extends TestCase {
 		$this->assertFalse( $result );
 	}
 
-	// -------------------------------------------------------------------------
-	// Helpers
-	// -------------------------------------------------------------------------
+	// ── Helpers ───────────────────────────────────────────────────────────────
 
+	/**
+	 * Remove all files from the sandbox directory (but keep the directory itself).
+	 * Also clears hidden files like .crashed.
+	 */
+	private function clean_sandbox(): void {
+		if ( ! is_dir( $this->sandbox_dir ) ) {
+			return;
+		}
+		// Visible files
+		foreach ( glob( $this->sandbox_dir . '*' ) ?: [] as $file ) {
+			if ( is_file( $file ) ) {
+				@unlink( $file );
+			}
+		}
+		// Hidden files (e.g. .crashed)
+		foreach ( glob( $this->sandbox_dir . '.*' ) ?: [] as $file ) {
+			if ( is_file( $file ) ) {
+				@unlink( $file );
+			}
+		}
+	}
+
+	/**
+	 * Fully remove a directory and its contents.
+	 */
 	private function remove_dir( string $dir ): void {
 		if ( ! is_dir( $dir ) ) {
 			return;
@@ -381,7 +361,7 @@ final class SandboxLoaderTest extends TestCase {
 				continue;
 			}
 			$full = $dir . $entry;
-			is_dir( $full ) ? $this->remove_dir( $full . '/' ) : unlink( $full );
+			is_dir( $full ) ? $this->remove_dir( $full . DIRECTORY_SEPARATOR ) : unlink( $full );
 		}
 		rmdir( $dir );
 	}

@@ -67,13 +67,27 @@ class EnableFinalization {
 					);
 				}
 
-				if ( GutenbergStorage::gb_status( $batch->ID ) !== GutenbergStorage::STATUS_DRAFT ) {
+				$current_status = GutenbergStorage::gb_status( $batch->ID );
+				if ( $current_status !== GutenbergStorage::STATUS_DRAFT ) {
+					// Idempotent: if already ready (or further along), return current state.
+					if ( $current_status === GutenbergStorage::STATUS_READY ) {
+						$fresh   = GutenbergStorage::find_batch( $batch->ID ) ?? $batch;
+						$runtime = GutenbergStorage::finalizer_runtime_status( $fresh );
+						return [
+							'batch_id'              => $fresh->ID,
+							'batch_status'          => GutenbergStorage::gb_status( $fresh->ID ),
+							'finalization_required' => true,
+							'finalization_url'      => GutenbergStorage::finalization_url( $fresh->ID ),
+							'finalizer_runtime'     => $runtime,
+							'user_instruction'      => GutenbergStorage::user_instruction( $fresh ),
+						];
+					}
 					return new \WP_Error(
 						'gutenberg_batch_not_draft',
 						sprintf(
 							'Gutenberg batch %d is already %s; only draft batches can be enabled.',
 							$batch->ID,
-							GutenbergStorage::gb_status( $batch->ID )
+							$current_status
 						),
 						[ 'status' => 409 ]
 					);

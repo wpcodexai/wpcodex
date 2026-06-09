@@ -23,7 +23,7 @@ class FileDisable {
 				'Disables a PHP file in the WPCodex sandbox (wp-content/wpcodex-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
 				'wpcodex'
 			),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'                 => 'object',

@@ -133,9 +133,11 @@ final class ConfigurationPage {
 
 					<!-- Generate form -->
 					<div id="wpcodex-pw-generate-form">
-						<div style="margin-bottom:12px;">
+						<?php $has_passwords = ! empty( $existing_passwords ); ?>
+						<div id="wpcodex-pw-name-wrap" style="margin-bottom:12px;<?php echo $has_passwords ? '' : ' display:none;'; ?>">
 							<label for="wpcodex-pw-name" style="display:block; margin-bottom:4px; font-weight:600;">
 								<?php esc_html_e( 'Name', 'wpcodex' ); ?>
+								<span style="color:#d63638; margin-left:2px;" aria-hidden="true">*</span>
 							</label>
 							<input
 								type="text"
@@ -145,7 +147,7 @@ final class ConfigurationPage {
 								maxlength="70"
 							>
 							<p class="description" style="margin-top:4px;">
-								<?php esc_html_e( 'A label to identify this credential later. Leave blank to use "WPCodex".', 'wpcodex' ); ?>
+								<?php esc_html_e( 'A unique label for this credential — one per AI client.', 'wpcodex' ); ?>
 							</p>
 						</div>
 						<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
@@ -183,44 +185,38 @@ final class ConfigurationPage {
 					</div>
 
 					<!-- Existing passwords table — only WPCodex-prefixed, shown at the bottom -->
-					<?php if ( ! empty( $existing_passwords ) ) : ?>
-						<hr style="margin:20px 0; border:none; border-top:1px solid #dcdcde;">
-					<?php endif; ?>
-					<div id="wpcodex-pw-existing" style="<?php echo empty( $existing_passwords ) ? 'display:none;' : ''; ?>">
-						<h3 style="margin:0 0 10px; font-size:.9375rem;">
-							<?php
-							printf(
-								/* translators: %d count */
-								esc_html__( 'Manage existing application passwords (%d)', 'wpcodex' ),
-								count( $existing_passwords )
-							);
-							?>
-						</h3>
-						<table class="wp-list-table widefat fixed striped" id="wpcodex-pw-table">
-							<thead>
-								<tr>
-									<th><?php esc_html_e( 'Name', 'wpcodex' ); ?></th>
-									<th><?php esc_html_e( 'Created', 'wpcodex' ); ?></th>
-									<th><?php esc_html_e( 'Last Used', 'wpcodex' ); ?></th>
-									<th><?php esc_html_e( 'Actions', 'wpcodex' ); ?></th>
-								</tr>
-							</thead>
-							<tbody id="wpcodex-pw-tbody">
-								<?php foreach ( $existing_passwords as $pw ) : ?>
-									<tr data-uuid="<?php echo esc_attr( $pw['uuid'] ); ?>">
-										<td><?php echo esc_html( $pw['display_name'] ); ?></td>
-										<td><?php echo esc_html( $pw['created'] ); ?></td>
-										<td><?php echo esc_html( $pw['last_used'] ); ?></td>
-										<td>
-											<button type="button" class="button button-small button-link-delete"
-											        onclick="wpcodexRevokePassword('<?php echo esc_js( $pw['uuid'] ); ?>', this)">
-												<?php esc_html_e( 'Revoke', 'wpcodex' ); ?>
-											</button>
-										</td>
+					<div id="wpcodex-pw-existing" style="<?php echo empty( $existing_passwords ) ? 'display:none;' : ''; ?>margin-top:20px; padding-top:20px; border-top:1px solid #dcdcde;">
+						<p class="wpcodex-pw-section-label">
+							<?php esc_html_e( 'Manage existing application passwords', 'wpcodex' ); ?>
+							&nbsp;<span id="wpcodex-pw-count">(<?php echo esc_html( (string) count( $existing_passwords ) ); ?>)</span>
+						</p>
+						<div class="wpcodex-pw-table-wrap">
+							<table class="wpcodex-pw-table" id="wpcodex-pw-table">
+								<thead>
+									<tr>
+										<th><?php esc_html_e( 'Name', 'wpcodex' ); ?></th>
+										<th><?php esc_html_e( 'Created', 'wpcodex' ); ?></th>
+										<th><?php esc_html_e( 'Last Used', 'wpcodex' ); ?></th>
+										<th></th>
 									</tr>
-								<?php endforeach; ?>
-							</tbody>
-						</table>
+								</thead>
+								<tbody id="wpcodex-pw-tbody">
+									<?php foreach ( $existing_passwords as $pw ) : ?>
+										<tr data-uuid="<?php echo esc_attr( $pw['uuid'] ); ?>">
+											<td class="wpcodex-pw-table__name"><?php echo esc_html( $pw['display_name'] ); ?></td>
+											<td class="wpcodex-pw-table__meta"><?php echo esc_html( $pw['created'] ); ?></td>
+											<td class="wpcodex-pw-table__meta"><?php echo esc_html( $pw['last_used'] ); ?></td>
+											<td class="wpcodex-pw-table__actions">
+												<button type="button" class="button button-small wpcodex-pw-revoke-btn"
+												        onclick="wpcodexRevokePassword('<?php echo esc_js( $pw['uuid'] ); ?>', this)">
+													<?php esc_html_e( 'Revoke', 'wpcodex' ); ?>
+												</button>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
 
 				<?php endif; ?>
@@ -229,7 +225,7 @@ final class ConfigurationPage {
 			<!-- ══════════════════════════════════════════════════════════════
 			     STEP 3 — Connect Your AI Client
 			     ══════════════════════════════════════════════════════════════ -->
-			<?php $step3_hidden = ! $enabled || empty( $existing_passwords ); ?>
+			<?php $step3_hidden = true; // Only revealed via JS after a password is generated. ?>
 			<div class="wpcodex-config__card"
 			     id="wpcodex-step-3"
 			     data-step="3"
@@ -339,8 +335,7 @@ final class ConfigurationPage {
 							?>
 							<button type="button"
 							        class="wpcodex-client-tab<?php echo $first ? ' is-active' : ''; ?>"
-							        data-client="<?php echo esc_attr( $slug ); ?>"
-							        onclick="wpcodexSetManualClient('<?php echo esc_js( $slug ); ?>', this)">
+							        data-client="<?php echo esc_attr( $slug ); ?>">
 								<?php echo esc_html( $label ); ?>
 							</button>
 							<?php $first = false; ?>
@@ -371,12 +366,12 @@ final class ConfigurationPage {
 						<?php esc_html_e( 'Copy this configuration snippet to connect using direct HTTP (no Node/npx required).', 'wpcodex' ); ?>
 					</p>
 					<div class="wpcodex-client-tabs">
-						<button type="button" class="wpcodex-client-tab is-active"
-						        onclick="wpcodexSetNpxlessClient('claude', this)">
+						<button type="button" class="wpcodex-client-tab wpcodex-npxless-tab is-active"
+						        data-client="claude">
 							<?php esc_html_e( 'Claude Code', 'wpcodex' ); ?>
 						</button>
-						<button type="button" class="wpcodex-client-tab"
-						        onclick="wpcodexSetNpxlessClient('codex', this)">
+						<button type="button" class="wpcodex-client-tab wpcodex-npxless-tab"
+						        data-client="codex">
 							<?php esc_html_e( 'Codex', 'wpcodex' ); ?>
 						</button>
 					</div>
@@ -418,6 +413,7 @@ final class ConfigurationPage {
 					'never'           => __( 'Never', 'wpcodex' ),
 					'revoke'          => __( 'Revoke', 'wpcodex' ),
 					'revokeConfirm'   => __( 'Revoke this application password? The AI client using it will lose access immediately.', 'wpcodex' ),
+					'errorNameRequired' => __( 'Please enter a name for this password.', 'wpcodex' ),
 					'errorGenerate'   => __( 'Error generating password.', 'wpcodex' ),
 					'errorNetwork'    => __( 'Network error. Please try again.', 'wpcodex' ),
 					'completeStep1'   => __( 'Complete step 1 first', 'wpcodex' ),
@@ -458,13 +454,10 @@ final class ConfigurationPage {
 		}
 
 		$raw_name = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		// Silently prefix with "WPCodex: " for filtering — but don't double-prefix
-		// if the user already typed something starting with "WPCodex" (case-insensitive).
+		// First password (no name provided) → stored as "WPCodex".
+		// Subsequent passwords → stored as "WPCodex: {name}".
 		if ( $raw_name === '' ) {
-			$name = 'WPCodex: WPCodex';
-		} elseif ( stripos( $raw_name, 'wpcodex' ) === 0 ) {
-			// User typed "WPCodex ..." — treat as-is, just normalise the prefix format.
-			$name = 'WPCodex: ' . ltrim( preg_replace( '/^wpcodex\s*:?\s*/i', '', $raw_name ) ?: $raw_name );
+			$name = 'WPCodex';
 		} else {
 			$name = 'WPCodex: ' . $raw_name;
 		}
@@ -530,16 +523,16 @@ final class ConfigurationPage {
 		foreach ( $all as $pw ) {
 			$pw_name = (string) ( $pw['name'] ?? '' );
 
-			// Only show passwords created by WPCodex (name starts with "WPCodex: ").
-			if ( stripos( $pw_name, 'WPCodex:' ) !== 0 ) {
+			// Only show passwords created by WPCodex: exact "WPCodex" or "WPCodex: *".
+			if ( $pw_name !== 'WPCodex' && stripos( $pw_name, 'WPCodex: ' ) !== 0 ) {
 				continue;
 			}
 
 			$result[] = [
 				'uuid'         => (string) ( $pw['uuid'] ?? '' ),
 				'name'         => $pw_name,
-				// Strip the hidden "WPCodex: " prefix for user-facing display.
-				'display_name' => trim( preg_replace( '/^wpcodex\s*:\s*/i', '', $pw_name ) ?: $pw_name ),
+				// Show the full stored name (prefix visible in the table).
+				'display_name' => $pw_name,
 				'created'      => $pw['created'] ? (string) wp_date( get_option( 'date_format' ) . ' g:i a', $pw['created'] ) : '—',
 				'last_used'    => $pw['last_used'] ? (string) wp_date( get_option( 'date_format' ), $pw['last_used'] ) : __( 'Never', 'wpcodex' ),
 			];

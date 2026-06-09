@@ -55,6 +55,8 @@ class Abilities {
 		new Skills\SkillCreate();
 		new Skills\SkillUpdate();
 		new Skills\SkillDelete();
+		new Skills\SkillListRevisions();
+		new Skills\SkillRestoreRevision();
 
 		// Gutenberg / Block Editor Queue abilities.
 		new Gutenberg\GetContent();

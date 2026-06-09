@@ -30,25 +30,25 @@ class CreateAdminAccessLink {
 			'input_schema' => [
 				'type'                 => 'object',
 				'properties'           => [
-					'user_id'             => [
+					'user_id'            => [
 						'type'        => 'integer',
 						'description' => 'WordPress user ID of the admin to log in as. Defaults to the current user.',
 					],
-					'expires_in'          => [
+					'expires_in'         => [
 						'type'        => 'integer',
-						'description' => 'Seconds before the access token expires (30–3600). Default 300.',
+						'description' => 'Seconds before the access token expires (30–600). Default 300.',
 						'default'     => 300,
 						'minimum'     => 30,
-						'maximum'     => 3600,
+						'maximum'     => 600,
 					],
-					'session_expires_in'  => [
+					'session_expires_in' => [
 						'type'        => 'integer',
 						'description' => 'WordPress session lifetime in seconds after login (60–3600). Default 1800.',
 						'default'     => 1800,
 						'minimum'     => 60,
 						'maximum'     => 3600,
 					],
-					'admin_path'          => [
+					'admin_path'         => [
 						'type'        => 'string',
 						'description' => 'Admin path to redirect to after login. Relative to wp-admin/. Default: empty (wp-admin home).',
 						'default'     => '',
@@ -60,13 +60,29 @@ class CreateAdminAccessLink {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'exchange_url'   => [ 'type' => 'string', 'description' => 'POST this URL with access_token in token_header and access_nonce in nonce_header to receive a login_url.' ],
-					'access_token'   => [ 'type' => 'string', 'description' => 'One-time bearer token. Send as the token_header value.' ],
-					'token_header'   => [ 'type' => 'string', 'description' => 'HTTP header that must carry access_token.' ],
-					'access_nonce'   => [ 'type' => 'string', 'description' => 'Binding nonce. Send as the nonce_header value.' ],
-					'nonce_header'   => [ 'type' => 'string', 'description' => 'HTTP header that must carry access_nonce.' ],
-					'expires_at'     => [ 'type' => 'integer', 'description' => 'Unix timestamp when the token expires.' ],
-					'curl_example'   => [ 'type' => 'string', 'description' => 'Example curl command for the exchange step.' ],
+					'exchange_url'      => [ 'type' => 'string', 'description' => 'POST this URL with access_token in token_header and access_nonce in nonce_header to receive a login_url.' ],
+					'exchange_method'   => [ 'type' => 'string', 'description' => 'HTTP method for the exchange request.' ],
+					'access_token'      => [ 'type' => 'string', 'description' => 'One-time bearer token. Send as the token_header value.' ],
+					'token_header'      => [ 'type' => 'string', 'description' => 'HTTP header that must carry access_token.' ],
+					'access_nonce'      => [ 'type' => 'string', 'description' => 'Binding nonce. Send as the nonce_header value.' ],
+					'nonce_header'      => [ 'type' => 'string', 'description' => 'HTTP header that must carry access_nonce.' ],
+					'expires_at'        => [ 'type' => 'integer', 'description' => 'Unix timestamp when the token expires.' ],
+					'session_expires_in' => [ 'type' => 'integer', 'description' => 'Browser admin session duration in seconds.' ],
+					'redirect_url'      => [ 'type' => 'string', 'description' => 'Admin URL opened after the token is consumed.' ],
+					'one_time'          => [ 'type' => 'boolean', 'description' => 'Whether the URL can only be used once.' ],
+					'curl_example'      => [ 'type' => 'string', 'description' => 'Example curl command for the exchange step.' ],
+				],
+				'required' => [
+					'exchange_url',
+					'exchange_method',
+					'access_token',
+					'token_header',
+					'access_nonce',
+					'nonce_header',
+					'expires_at',
+					'session_expires_in',
+					'redirect_url',
+					'one_time',
 				],
 			],
 
@@ -76,7 +92,8 @@ class CreateAdminAccessLink {
 					$user_id = get_current_user_id();
 				}
 
-				$expires_in         = max( 30, min( 3600, (int) ( $args['expires_in'] ?? 300 ) ) );
+				// Cap expires_in at 600 s (matching novamira security posture).
+				$expires_in         = max( 30, min( 600, (int) ( $args['expires_in'] ?? 300 ) ) );
 				$session_expires_in = max( 60, min( 3600, (int) ( $args['session_expires_in'] ?? 1800 ) ) );
 				$admin_path         = is_string( $args['admin_path'] ?? null ) ? (string) $args['admin_path'] : '';
 
@@ -95,15 +112,26 @@ class CreateAdminAccessLink {
 				$token_header = 'X-WPCodex-Admin-Access-Token';
 				$nonce_header = 'X-WPCodex-Admin-Access-Nonce';
 
+				// Build redirect_url from admin_path (same logic as AdminAccessEndpoint).
+				$admin_path_clean = ltrim( $admin_path, '/' );
+				if ( str_starts_with( $admin_path_clean, 'wp-admin/' ) ) {
+					$admin_path_clean = substr( $admin_path_clean, strlen( 'wp-admin/' ) );
+				}
+				$redirect_url = '' !== $admin_path_clean ? admin_url( $admin_path_clean ) : admin_url();
+
 				return [
-					'exchange_url' => $exchange_url,
-					'access_token' => $result['token'],
-					'token_header' => $token_header,
-					'access_nonce' => $result['nonce'],
-					'nonce_header' => $nonce_header,
-					'expires_at'   => $result['expires_at'],
-					'curl_example' => sprintf(
-						'curl -X POST -H "%s: $access_token" -H "%s: $access_nonce" %s',
+					'exchange_url'       => $exchange_url,
+					'exchange_method'    => 'POST',
+					'access_token'       => $result['token'],
+					'token_header'       => $token_header,
+					'access_nonce'       => $result['nonce'],
+					'nonce_header'       => $nonce_header,
+					'expires_at'         => $result['expires_at'],
+					'session_expires_in' => $session_expires_in,
+					'redirect_url'       => $redirect_url,
+					'one_time'           => true,
+					'curl_example'       => sprintf(
+						'curl -s -X POST -H "%s: $access_token" -H "%s: $access_nonce" %s',
 						$token_header,
 						$nonce_header,
 						escapeshellarg( $exchange_url )

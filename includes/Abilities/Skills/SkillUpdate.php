@@ -14,8 +14,9 @@ use WPCodex\Utils\Helpers;
 
 class SkillUpdate {
 	public function __construct() {
-        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
-    }
+		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+	}
+
 	public function init(): void {
 		wp_register_ability( 'wpcodex/skill-update', [
 			'label'       => __( 'Update Skill', 'wpcodex' ),
@@ -33,9 +34,21 @@ class SkillUpdate {
 				],
 				'required' => [ 'name' ],
 			],
-			'output_schema' => [ 'type' => 'string', 'description' => 'Success message.' ],
 
-			'execute_callback' => static function ( array $args ): string|\WP_Error {
+			'output_schema' => [
+				'type'       => 'object',
+				'properties' => [
+					'name'           => [ 'type' => 'string', 'description' => 'Skill name.' ],
+					'changed_fields' => [
+						'type'        => 'array',
+						'items'       => [ 'type' => 'string' ],
+						'description' => 'List of fields that were updated.',
+					],
+				],
+				'required' => [ 'name', 'changed_fields' ],
+			],
+
+			'execute_callback' => static function ( array $args ): array|\WP_Error {
 				if ( empty( $args['name'] ) || ! is_string( $args['name'] ) ) {
 					return new \WP_Error( 'wpcodex_invalid_input', __( 'name must be a non-empty string.', 'wpcodex' ) );
 				}
@@ -55,11 +68,7 @@ class SkillUpdate {
 				if ( empty( $data ) ) {
 					return new \WP_Error( 'wpcodex_invalid_input', __( 'No fields to update were provided.', 'wpcodex' ) );
 				}
-				$result = Repository::instance()->update( $args['name'], $data );
-				if ( is_wp_error( $result ) ) {
-					return $result;
-				}
-				return sprintf( __( 'Skill "%s" updated.', 'wpcodex' ), esc_html( $args['name'] ) );
+				return Repository::instance()->update( $args['name'], $data );
 			},
 
 			'permission_callback' => [ Helpers::class, 'ability_permission' ],

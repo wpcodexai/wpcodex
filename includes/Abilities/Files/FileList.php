@@ -25,7 +25,7 @@ class FileList {
 		wp_register_ability( 'wpcodex/file-list', [
 			'label'       => __( 'List Directory', 'wpcodex' ),
 			'description' => __( 'List the contents of a directory. Supports glob patterns, depth control, and hidden-file filtering.', 'wpcodex' ),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'       => 'object',

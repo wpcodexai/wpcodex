@@ -643,6 +643,75 @@ input:checked + .wpcodex-toggle__slider::after {
 .wpcodex-config-footer .wpcodex-config-paths li {
   margin-bottom: 3px;
 }
+.wpcodex-pw-section-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #646970;
+  text-transform: capitalize;
+  letter-spacing: 0.05em;
+  margin: 0 0 10px;
+}
+.wpcodex-pw-table-wrap {
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.wpcodex-pw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.wpcodex-pw-table thead th {
+  text-align: right;
+  padding: 9px 14px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #646970;
+  background: #f6f7f7;
+  border-bottom: 1px solid #dcdcde;
+  white-space: nowrap;
+}
+.wpcodex-pw-table thead th:last-child {
+  text-align: left;
+}
+.wpcodex-pw-table tbody tr {
+  border-bottom: 1px solid #dcdcde;
+  transition: background 0.12s ease;
+}
+.wpcodex-pw-table tbody tr:last-child {
+  border-bottom: none;
+}
+.wpcodex-pw-table tbody tr:hover {
+  background: #f6f7f7;
+}
+.wpcodex-pw-table td {
+  padding: 10px 14px;
+  vertical-align: middle;
+  color: #1e2327;
+}
+.wpcodex-pw-table td.wpcodex-pw-table__name {
+  font-weight: 600;
+}
+.wpcodex-pw-table td.wpcodex-pw-table__meta {
+  color: #646970;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+.wpcodex-pw-table td.wpcodex-pw-table__actions {
+  text-align: left;
+  white-space: nowrap;
+}
+.wpcodex-pw-revoke-btn {
+  color: #d63638 !important;
+  border-color: rgba(214, 54, 56, 0.35) !important;
+}
+.wpcodex-pw-revoke-btn:hover {
+  background: #d63638 !important;
+  border-color: #d63638 !important;
+  color: #fff !important;
+}
 .wpcodex-toggle--lg .wpcodex-toggle__slider {
   width: 52px;
   height: 28px;

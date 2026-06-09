@@ -71,20 +71,41 @@ class Repository {
 	}
 
 	/**
-	 * Create a new skill.
+	 * Create a new skill, with optional conflict resolution.
 	 *
-	 * @param array<string, mixed> $data Fields: name, description, body, enable_agentic, enable_prompt.
-	 * @return int|\WP_Error Inserted ID on success.
+	 * @param array<string, mixed> $data        Fields: name, description, body, enable_agentic, enable_prompt.
+	 * @param string               $on_conflict 'fail' (default), 'replace', or 'rename'.
+	 * @return array{id: int, name: string, action: string}|\WP_Error
 	 */
-	public function create( array $data ): int|\WP_Error {
+	public function create( array $data, string $on_conflict = 'fail' ): array|\WP_Error {
 		global $wpdb;
 
-		if ( null !== $this->find( $data['name'] ) ) {
-			return new \WP_Error(
-				'wpcodex_duplicate',
-				/* translators: %s skill name */
-				sprintf( __( 'A skill named "%s" already exists.', 'wpcodex' ), esc_html( $data['name'] ) )
-			);
+		$name     = (string) $data['name'];
+		$existing = $this->find( $name );
+		$action   = 'created';
+
+		if ( null !== $existing ) {
+			if ( 'fail' === $on_conflict ) {
+				return new \WP_Error(
+					'wpcodex_duplicate',
+					/* translators: %s skill name */
+					sprintf( __( 'A skill named "%s" already exists.', 'wpcodex' ), esc_html( $name ) )
+				);
+			}
+
+			if ( 'replace' === $on_conflict ) {
+				// Snapshot before replacing so the old version is recoverable.
+				$this->snapshot_revision( $name );
+				$del = $this->delete( $name );
+				if ( is_wp_error( $del ) ) {
+					return $del;
+				}
+				$action = 'replaced';
+			} elseif ( 'rename' === $on_conflict ) {
+				$name         = $this->find_free_name( $name );
+				$data['name'] = $name;
+				$action       = 'renamed';
+			}
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -104,7 +125,27 @@ class Repository {
 			return new \WP_Error( 'wpcodex_db_error', $wpdb->last_error );
 		}
 
-		return (int) $wpdb->insert_id;
+		Notices::set_pending_reload_notice();
+
+		return [
+			'id'     => (int) $wpdb->insert_id,
+			'name'   => $name,
+			'action' => $action,
+		];
+	}
+
+	/**
+	 * Find a name that does not already exist by appending -2, -3, etc.
+	 */
+	private function find_free_name( string $base ): string {
+		$i = 2;
+		while ( null !== $this->find( $base . '-' . $i ) ) {
+			++$i;
+			if ( $i > 9999 ) {
+				return $base . '-' . time();
+			}
+		}
+		return $base . '-' . $i;
 	}
 
 	/**
@@ -112,9 +153,9 @@ class Repository {
 	 *
 	 * @param string               $name Name/slug of the skill.
 	 * @param array<string, mixed> $data Fields to update.
-	 * @return true|\WP_Error
+	 * @return array{name: string, changed_fields: list<string>}|\WP_Error
 	 */
-	public function update( string $name, array $data ): true|\WP_Error {
+	public function update( string $name, array $data ): array|\WP_Error {
 		global $wpdb;
 
 		if ( null === $this->find( $name ) ) {
@@ -125,28 +166,38 @@ class Repository {
 			);
 		}
 
-		$fields  = [];
-		$formats = [];
+		$fields         = [];
+		$formats        = [];
+		$changed_fields = [];
 
 		if ( isset( $data['description'] ) ) {
 			$fields['description'] = $data['description'];
 			$formats[]             = '%s';
+			$changed_fields[]      = 'description';
 		}
 		if ( isset( $data['body'] ) ) {
 			$fields['body'] = $data['body'];
 			$formats[]      = '%s';
+			$changed_fields[] = 'body';
 		}
 		if ( isset( $data['enable_agentic'] ) ) {
 			$fields['enable_agentic'] = $data['enable_agentic'] ? 1 : 0;
 			$formats[]                = '%d';
+			$changed_fields[]         = 'enable_agentic';
 		}
 		if ( isset( $data['enable_prompt'] ) ) {
 			$fields['enable_prompt'] = $data['enable_prompt'] ? 1 : 0;
 			$formats[]               = '%d';
+			$changed_fields[]        = 'enable_prompt';
 		}
 
 		if ( empty( $fields ) ) {
-			return true;
+			return [ 'name' => $name, 'changed_fields' => [] ];
+		}
+
+		// Snapshot before overwriting body or description.
+		if ( isset( $data['body'] ) || isset( $data['description'] ) ) {
+			$this->snapshot_revision( $name );
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -162,11 +213,13 @@ class Repository {
 			return new \WP_Error( 'wpcodex_db_error', $wpdb->last_error );
 		}
 
-		return true;
+		Notices::set_pending_reload_notice();
+
+		return [ 'name' => $name, 'changed_fields' => $changed_fields ];
 	}
 
 	/**
-	 * Delete a skill by name.
+	 * Delete a skill by name. Idempotent — not-found is treated as success.
 	 *
 	 * @return true|\WP_Error
 	 */
@@ -174,11 +227,7 @@ class Repository {
 		global $wpdb;
 
 		if ( null === $this->find( $name ) ) {
-			return new \WP_Error(
-				'wpcodex_not_found',
-				/* translators: %s skill name */
-				sprintf( __( 'Skill "%s" not found.', 'wpcodex' ), esc_html( $name ) )
-			);
+			return true; // idempotent: already absent
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -192,6 +241,154 @@ class Repository {
 			return new \WP_Error( 'wpcodex_db_error', $wpdb->last_error );
 		}
 
+		Notices::set_pending_reload_notice();
+
 		return true;
+	}
+
+	// -------------------------------------------------------------------------
+	// Revision history
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Return up to 10 revisions for a skill, newest first.
+	 *
+	 * Each row: { id, skill_name, body, description, enable_agentic, enable_prompt, created_at }
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function get_revisions( string $name ): array {
+		global $wpdb;
+		$table = Schema::revisions_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
+			$wpdb->prepare( "SELECT * FROM {$table} WHERE skill_name = %s ORDER BY id DESC LIMIT 10", $name ),
+			ARRAY_A
+		);
+		if ( ! is_array( $rows ) ) {
+			return [];
+		}
+		return array_map( static function ( array $row ): array {
+			$row['enable_agentic'] = (bool) $row['enable_agentic'];
+			$row['enable_prompt']  = (bool) $row['enable_prompt'];
+			return $row;
+		}, $rows );
+	}
+
+	/**
+	 * Restore a skill to the state captured in the given revision.
+	 *
+	 * The current state is snapshotted first so the restore itself is reversible.
+	 *
+	 * @return true|\WP_Error
+	 */
+	public function restore_revision( int $revision_id ): true|\WP_Error {
+		global $wpdb;
+
+		$table = Schema::revisions_table_name();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rev = $wpdb->get_row(
+			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d LIMIT 1", $revision_id ),
+			ARRAY_A
+		);
+
+		if ( ! is_array( $rev ) ) {
+			return new \WP_Error(
+				'wpcodex_not_found',
+				/* translators: %d revision ID */
+				sprintf( __( 'Revision #%d not found.', 'wpcodex' ), $revision_id )
+			);
+		}
+
+		$skill_name = (string) $rev['skill_name'];
+
+		if ( null === $this->find( $skill_name ) ) {
+			return new \WP_Error(
+				'wpcodex_not_found',
+				/* translators: %s skill name */
+				sprintf( __( 'Skill "%s" not found.', 'wpcodex' ), esc_html( $skill_name ) )
+			);
+		}
+
+		// Snapshot current state so the restore is itself reversible.
+		$this->snapshot_revision( $skill_name );
+
+		// Apply the revision.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = $wpdb->update(
+			Schema::table_name(),
+			[
+				'body'           => (string) $rev['body'],
+				'description'    => (string) $rev['description'],
+				'enable_agentic' => (int) $rev['enable_agentic'],
+				'enable_prompt'  => (int) $rev['enable_prompt'],
+			],
+			[ 'name' => $skill_name ],
+			[ '%s', '%s', '%d', '%d' ],
+			[ '%s' ]
+		);
+
+		if ( false === $result ) {
+			return new \WP_Error( 'wpcodex_db_error', $wpdb->last_error );
+		}
+
+		$this->prune_revisions( $skill_name );
+		return true;
+	}
+
+	/**
+	 * Snapshot the current state of a skill into the revisions table.
+	 * Does nothing if the skill doesn't exist.
+	 */
+	private function snapshot_revision( string $name ): void {
+		global $wpdb;
+
+		$skill = $this->find( $name );
+		if ( null === $skill ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			Schema::revisions_table_name(),
+			[
+				'skill_name'     => $name,
+				'body'           => (string) $skill['body'],
+				'description'    => (string) $skill['description'],
+				'enable_agentic' => (bool) $skill['enable_agentic'] ? 1 : 0,
+				'enable_prompt'  => (bool) $skill['enable_prompt'] ? 1 : 0,
+			],
+			[ '%s', '%s', '%s', '%d', '%d' ]
+		);
+
+		$this->prune_revisions( $name );
+	}
+
+	/**
+	 * Delete oldest revisions for a skill beyond the $keep cap.
+	 */
+	private function prune_revisions( string $name, int $keep = 10 ): void {
+		global $wpdb;
+		$table = Schema::revisions_table_name();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$count = (int) $wpdb->get_var(
+			$wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE skill_name = %s", $name )
+		);
+
+		if ( $count <= $keep ) {
+			return;
+		}
+
+		$delete_count = $count - $keep;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$table} WHERE skill_name = %s ORDER BY id ASC LIMIT %d",
+				$name,
+				$delete_count
+			)
+		);
 	}
 }

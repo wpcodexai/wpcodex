@@ -25,7 +25,7 @@ class FileRead {
 		wp_register_ability( 'wpcodex/file-read', [
 			'label'       => __( 'Read File', 'wpcodex' ),
 			'description' => __( 'Read the contents of a file from the WordPress filesystem. Returns base64-encoded content for binary files.', 'wpcodex' ),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'       => 'object',

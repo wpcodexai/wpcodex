@@ -25,7 +25,7 @@ class FileWrite {
 		wp_register_ability( 'wpcodex/file-write', [
 			'label'       => __( 'Write File', 'wpcodex' ),
 			'description' => __( 'Write content to a file. Creates the file if it does not exist. PHP files are restricted to the sandbox directory.', 'wpcodex' ),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'       => 'object',

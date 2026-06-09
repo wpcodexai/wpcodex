@@ -91,6 +91,51 @@ class Sources {
 	}
 
 	/**
+	 * Check whether a slug exists in any source except 'user-db'.
+	 *
+	 * Used before create/write operations to prevent overwriting external sources.
+	 *
+	 * @param string $slug Normalised skill slug.
+	 * @return string|null Source label of the first external match, or null if not found.
+	 */
+	public static function exists_in_external_source( string $slug ): ?string {
+		foreach ( self::registry() as $entry ) {
+			if ( 'user-db' === $entry['id'] ) {
+				continue;
+			}
+			foreach ( ( $entry['loader'] )() as $skill ) {
+				if ( Parser::normalize_slug( (string) ( $skill['slug'] ?? $skill['name'] ?? '' ) ) === $slug ) {
+					return $entry['label'];
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find a single skill by slug across all sources and return it with source annotations.
+	 *
+	 * The input $slug is normalised before comparison so callers do not need
+	 * to pre-process the value they receive from user/agent input.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public static function find( string $slug ): ?array {
+		$normalized = Parser::normalize_slug( $slug );
+		foreach ( self::registry() as $entry ) {
+			foreach ( ( $entry['loader'] )() as $skill ) {
+				$skill_slug = Parser::normalize_slug( (string) ( $skill['slug'] ?? $skill['name'] ?? '' ) );
+				if ( $skill_slug === $normalized ) {
+					$skill['source']       = $entry['id'];
+					$skill['source_label'] = $entry['label'];
+					return $skill;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Loader for the user DB source — reads from wpcodex_skills table.
 	 *
 	 * @return list<array{slug: string, name: string, description: string, body: string, enable_prompt: bool, enable_agentic: bool}>

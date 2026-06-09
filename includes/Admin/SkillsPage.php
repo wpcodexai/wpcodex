@@ -12,6 +12,7 @@ declare( strict_types=1 );
 
 namespace WPCodex\Admin;
 
+use WPCodex\Skills\Notices as SkillNotices;
 use WPCodex\Skills\Repository;
 
 /**
@@ -26,6 +27,24 @@ final class SkillsPage {
 
 		$action  = isset( $_GET['action'] ) ? sanitize_key( $_GET['action'] ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$notices = self::handle_actions();
+
+		// Pick up notices that were passed via redirect (e.g. after new skill creation).
+		$redirect_notice = isset( $_GET['wpcodex_notice'] ) ? sanitize_key( $_GET['wpcodex_notice'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( 'created' === $redirect_notice ) {
+			$notices[] = [ 'type' => 'success', 'message' => __( 'Skill created.', 'wpcodex' ) ];
+		}
+
+		// Show the MCP-reload reminder only when no action notice is already present
+		// (i.e. the mutation was made externally via MCP, not from this UI).
+		if ( empty( $notices ) ) {
+			$reload = SkillNotices::pending_reload_notice();
+			if ( null !== $reload ) {
+				$notices[] = $reload;
+			}
+		} else {
+			// Consume the transient silently so it doesn't carry over to the next load.
+			SkillNotices::pending_reload_notice();
+		}
 
 		switch ( $action ) {
 			case 'edit':
@@ -78,6 +97,10 @@ final class SkillsPage {
 			case 'upload':
 				$notices = array_merge( $notices, self::handle_upload() );
 				break;
+
+			case 'restore':
+				$notices = array_merge( $notices, self::handle_restore() );
+				break;
 		}
 
 		return $notices;
@@ -103,17 +126,33 @@ final class SkillsPage {
 
 		if ( $is_edit ) {
 			$result = $repo->update( $original_name, compact( 'description', 'body', 'enable_agentic', 'enable_prompt' ) );
-			$msg    = __( 'Skill updated.', 'wpcodex' );
-		} else {
-			$result = $repo->create( compact( 'name', 'description', 'body', 'enable_agentic', 'enable_prompt' ) );
-			$msg    = __( 'Skill created.', 'wpcodex' );
+
+			if ( is_wp_error( $result ) ) {
+				return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
+			}
+
+			return [ [ 'type' => 'success', 'message' => __( 'Skill updated.', 'wpcodex' ) ] ];
 		}
+
+		// New skill — create then redirect to its edit page so the notice shows there.
+		$result = $repo->create( compact( 'name', 'description', 'body', 'enable_agentic', 'enable_prompt' ) );
 
 		if ( is_wp_error( $result ) ) {
 			return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 		}
 
-		return [ [ 'type' => 'success', 'message' => $msg ] ];
+		wp_safe_redirect(
+			add_query_arg(
+				[
+					'page'            => 'wpcodex-skills',
+					'action'          => 'edit',
+					'name'            => $name,
+					'wpcodex_notice'  => 'created',
+				],
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
 	}
 
 	/**
@@ -195,6 +234,25 @@ final class SkillsPage {
 		return [ [ 'type' => 'success', 'message' => __( 'Skill imported from file.', 'wpcodex' ) ] ];
 	}
 
+	/**
+	 * @return array{type: string, message: string}[]
+	 */
+	private static function handle_restore(): array {
+		$revision_id = isset( $_POST['revision_id'] ) ? (int) $_POST['revision_id'] : 0;
+
+		if ( $revision_id <= 0 ) {
+			return [ [ 'type' => 'error', 'message' => __( 'Invalid revision ID.', 'wpcodex' ) ] ];
+		}
+
+		$result = Repository::instance()->restore_revision( $revision_id );
+
+		if ( is_wp_error( $result ) ) {
+			return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
+		}
+
+		return [ [ 'type' => 'success', 'message' => __( 'Revision restored successfully.', 'wpcodex' ) ] ];
+	}
+
 	// -------------------------------------------------------------------------
 	// Render helpers
 	// -------------------------------------------------------------------------
@@ -215,11 +273,11 @@ final class SkillsPage {
 					</a>
 				</div>
 			</div>
+			<div class="wp-header-end"></div>
+			<?php self::render_notices( $notices ); ?>
 			<p class="wpcodex-page-description">
 				<?php esc_html_e( 'Skills are Markdown playbooks stored in the WordPress database. The agent reads their descriptions at session start and loads the body when the description matches the task.', 'wpcodex' ); ?>
 			</p>
-
-			<?php self::render_notices( $notices ); ?>
 
 			<!-- Upload form -->
 			<div class="wpcodex-upload-area">
@@ -265,10 +323,21 @@ final class SkillsPage {
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=wpcodex-skills' ) ); ?>"
 				   class="button">&larr; <?php esc_html_e( 'Back to Skills', 'wpcodex' ); ?></a>
 			</div>
-
+			<div class="wp-header-end"></div>
 			<?php self::render_notices( $notices ); ?>
 
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=wpcodex-skills' ) ); ?>">
+			<?php
+			// Post back to the current page so notices render here, not on the list.
+			$self_url = add_query_arg(
+				array_filter( [
+					'page'   => 'wpcodex-skills',
+					'action' => $action,
+					'name'   => ( 'edit' === $action && isset( $skill['name'] ) ) ? (string) $skill['name'] : null,
+				] ),
+				admin_url( 'admin.php' )
+			);
+			?>
+			<form method="post" action="<?php echo esc_url( $self_url ); ?>">
 				<?php wp_nonce_field( 'wpcodex_skills_action', 'wpcodex_skills_nonce' ); ?>
 				<input type="hidden" name="form_action"   value="save">
 				<input type="hidden" name="original_name" value="<?php echo esc_attr( $skill['name'] ?? '' ); ?>">
@@ -342,6 +411,54 @@ final class SkillsPage {
 
 				<?php submit_button( $skill ? __( 'Update Skill', 'wpcodex' ) : __( 'Create Skill', 'wpcodex' ) ); ?>
 			</form>
+
+			<?php if ( 'edit' === $action && null !== $skill ) : ?>
+				<?php
+				$revisions = Repository::instance()->get_revisions( (string) $skill['name'] );
+				if ( ! empty( $revisions ) ) :
+				?>
+				<div class="wpcodex-revisions" style="margin-top: 2em;">
+					<h2><?php esc_html_e( 'Revision History', 'wpcodex' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'Up to 10 previous versions. Restoring a revision snapshots the current state first, so every restore is reversible.', 'wpcodex' ); ?></p>
+					<table class="widefat striped" style="margin-top: 0.75em;">
+						<thead>
+							<tr>
+								<th><?php esc_html_e( '#', 'wpcodex' ); ?></th>
+								<th><?php esc_html_e( 'Saved', 'wpcodex' ); ?></th>
+								<th><?php esc_html_e( 'Description', 'wpcodex' ); ?></th>
+								<th><?php esc_html_e( 'Body preview', 'wpcodex' ); ?></th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $revisions as $index => $rev ) : ?>
+								<tr>
+									<td><?php echo esc_html( (string) ( count( $revisions ) - $index ) ); ?></td>
+									<td style="white-space:nowrap;"><?php echo esc_html( (string) $rev['created_at'] ); ?></td>
+									<td><?php echo esc_html( mb_strimwidth( (string) $rev['description'], 0, 60, '…' ) ); ?></td>
+									<td><code style="font-size:0.85em;"><?php echo esc_html( mb_strimwidth( (string) $rev['body'], 0, 90, '…' ) ); ?></code></td>
+									<td>
+										<form method="post"
+										      action="<?php echo esc_url( admin_url( 'admin.php?page=wpcodex-skills&action=edit&name=' . urlencode( (string) $skill['name'] ) ) ); ?>"
+										      style="display:inline;">
+											<?php wp_nonce_field( 'wpcodex_skills_action', 'wpcodex_skills_nonce' ); ?>
+											<input type="hidden" name="form_action"  value="restore">
+											<input type="hidden" name="revision_id"  value="<?php echo esc_attr( (string) $rev['id'] ); ?>">
+											<input type="hidden" name="skill_name"   value="<?php echo esc_attr( (string) $skill['name'] ); ?>">
+											<button type="submit"
+											        class="button button-small"
+											        onclick="return confirm('<?php echo esc_js( __( 'Restore this revision? The current state will be saved first.', 'wpcodex' ) ); ?>')">
+												<?php esc_html_e( 'Restore', 'wpcodex' ); ?>
+											</button>
+										</form>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+				<?php endif; ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

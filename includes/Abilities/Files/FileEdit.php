@@ -28,7 +28,7 @@ class FileEdit {
 		wp_register_ability( 'wpcodex/file-edit', [
 			'label'       => __( 'Edit File', 'wpcodex' ),
 			'description' => __( 'Replace an exact string in a file. By default requires the string to appear exactly once — set replace_all to true to replace every occurrence.', 'wpcodex' ),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'       => 'object',

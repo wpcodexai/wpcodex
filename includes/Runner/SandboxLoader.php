@@ -40,10 +40,6 @@ class SandboxLoader {
 		add_action( 'admin_notices', [ $this, 'maybe_show_crash_notice' ] );
 	}
 
-	// -------------------------------------------------------------------------
-	// Public API
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Load all enabled sandbox PHP files.
 	 *
@@ -113,9 +109,6 @@ class SandboxLoader {
 		);
 	}
 
-	// -------------------------------------------------------------------------
-	// Private helpers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Load sandbox files without crash-recovery overhead.

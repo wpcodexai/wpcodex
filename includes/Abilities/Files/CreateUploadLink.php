@@ -25,7 +25,7 @@ class CreateUploadLink {
 		wp_register_ability( 'wpcodex/create-upload-link', [
 			'label'       => __( 'Create Upload Link', 'wpcodex' ),
 			'description' => __( 'Creates a temporary upload endpoint and header-only bearer token that external tools (e.g. curl) can use to upload one file into the WordPress filesystem. Accepts raw PUT/POST bodies and multipart/form-data with a field named "file".', 'wpcodex' ),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'                 => 'object',

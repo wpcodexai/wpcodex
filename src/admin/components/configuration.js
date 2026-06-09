@@ -336,11 +336,20 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		} );
 	};
 
-	// Application Password — generate (AJAX) 
+	// Application Password — generate (AJAX)
 	window.wpcodexGeneratePassword = ( btn ) => {
+		const nameWrap  = document.getElementById( 'wpcodex-pw-name-wrap' );
 		const nameInput = document.getElementById( 'wpcodex-pw-name' );
+		const isSecond  = nameWrap && nameWrap.style.display !== 'none';
 		const name      = nameInput?.value.trim() || '';
 		const spinner   = document.getElementById( 'wpcodex-pw-spinner' );
+
+		// Second+ time: name is required.
+		if ( isSecond && name === '' ) {
+			nameInput?.focus();
+			alert( L10N.errorNameRequired || 'Please enter a name for this password.' );
+			return;
+		}
 		btn.disabled = true;
 		if ( spinner ) spinner.style.display = 'inline-block';
 
@@ -366,28 +375,36 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 				btn.textContent = L10N.generateAnother || 'Generate another application password';
 
+				// Reveal the name field for subsequent passwords and clear it.
+				const nameWrap2 = document.getElementById( 'wpcodex-pw-name-wrap' );
+				const nameInput2 = document.getElementById( 'wpcodex-pw-name' );
+				if ( nameWrap2 ) nameWrap2.style.display = '';
+				if ( nameInput2 ) nameInput2.value = '';
+
 				// Append row to existing table and show it.
 				const tbody    = document.getElementById( 'wpcodex-pw-tbody' );
 				const existing = document.getElementById( 'wpcodex-pw-existing' );
 				if ( tbody ) {
-					// Strip "WPCodex: " prefix for display.
-					const displayName = data.data.name.replace( /^wpcodex\s*:\s*/i, '' );
+					// Show full name (prefix visible in the table).
+					const displayName = data.data.name;
 					const tr = document.createElement( 'tr' );
 					tr.dataset.uuid = data.data.uuid;
 					tr.innerHTML =
-						`<td>${displayName}</td>` +
-						`<td>${data.data.created}</td>` +
-						`<td>${L10N.never || 'Never'}</td>` +
-						`<td><button type="button" class="button button-small button-link-delete" onclick="wpcodexRevokePassword('${data.data.uuid}', this)">${L10N.revoke || 'Revoke'}</button></td>`;
+						`<td class="wpcodex-pw-table__name">${displayName}</td>` +
+						`<td class="wpcodex-pw-table__meta">${data.data.created}</td>` +
+						`<td class="wpcodex-pw-table__meta">${L10N.never || 'Never'}</td>` +
+						`<td class="wpcodex-pw-table__actions"><button type="button" class="button button-small wpcodex-pw-revoke-btn" onclick="wpcodexRevokePassword('${data.data.uuid}', this)">${L10N.revoke || 'Revoke'}</button></td>`;
 					tbody.appendChild( tr );
 				}
 
-				// Show the divider + table section.
+				// Show the table section and update count badge.
 				if ( existing ) {
 					existing.style.display = '';
-					// Also show the divider that precedes it.
-					const prev = existing.previousElementSibling;
-					if ( prev && prev.tagName === 'HR' ) prev.style.display = '';
+					const countEl = document.getElementById( 'wpcodex-pw-count' );
+					if ( countEl ) {
+						const tbody2 = document.getElementById( 'wpcodex-pw-tbody' );
+						countEl.textContent = `(${tbody2 ? tbody2.rows.length : 1})`;
+					}
 				}
 
 				// Unlock Step 3 — password exists now.
@@ -416,13 +433,15 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			.then( data => {
 				if ( ! data.success ) { alert( data.data || 'Error.' ); return; }
 				document.querySelector( `[data-uuid="${uuid}"]` )?.remove();
-				// Hide the table section if no rows remain.
+				// Update count badge; hide section if no rows remain.
 				const tbody    = document.getElementById( 'wpcodex-pw-tbody' );
 				const existing = document.getElementById( 'wpcodex-pw-existing' );
-				if ( tbody && existing && tbody.rows.length === 0 ) {
-					existing.style.display = 'none';
-					const prev = existing.previousElementSibling;
-					if ( prev && prev.tagName === 'HR' ) prev.style.display = 'none';
+				if ( tbody ) {
+					const countEl = document.getElementById( 'wpcodex-pw-count' );
+					if ( countEl ) countEl.textContent = `(${tbody.rows.length})`;
+					if ( existing && tbody.rows.length === 0 ) {
+						existing.style.display = 'none';
+					}
 				}
 			} );
 	};

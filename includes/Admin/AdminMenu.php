@@ -108,14 +108,14 @@ final class AdminMenu {
 			[ BlockEditorPage::class, 'render' ]
 		);
 
-		add_submenu_page(
-			self::MENU_SLUG,
-			__( 'Get Pro — WPCodex', 'wpcodex' ),
-			__( 'Get Pro', 'wpcodex' ),
-			'manage_options',
-			'wpcodex-get-pro',
-			[ $this, 'render_get_pro_redirect' ]
-		);
+		// add_submenu_page(
+		// 	self::MENU_SLUG,
+		// 	__( 'Get Pro — WPCodex', 'wpcodex' ),
+		// 	__( 'Get Pro', 'wpcodex' ),
+		// 	'manage_options',
+		// 	'wpcodex-get-pro',
+		// 	[ $this, 'render_get_pro_redirect' ]
+		// );
 	}
 
 	// -------------------------------------------------------------------------

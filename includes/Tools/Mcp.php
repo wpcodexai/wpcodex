@@ -121,8 +121,8 @@ class Mcp {
 			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'wpcodex' ),
 		] );
 
-		wp_register_ability_category( 'general', [
-			'label'       => __( 'General', 'wpcodex' ),
+		wp_register_ability_category( 'wpcodex-general', [
+			'label'       => __( 'WPCodex General', 'wpcodex' ),
 			'description' => __( 'General-purpose abilities that may be used by WPCodex or other plugins.', 'wpcodex' ),
 		] );
 	}

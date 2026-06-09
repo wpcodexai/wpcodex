@@ -14,14 +14,13 @@ declare( strict_types=1 );
 
 namespace WPCodex\Abilities\Core;
 
-use WPCodex\Skills\Repository;
-use WPCodex\Skills\Parser;
+use WPCodex\Skills\Sources;
 use WPCodex\Utils\Helpers;
 
 class DiscoverAbilities {
 	public function __construct() {
-        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
-    }
+		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+	}
 
 	public function init(): void {
 		// wp_get_ability( 'name' ) calls WP_Abilities_Registry::get_registered()
@@ -38,7 +37,6 @@ class DiscoverAbilities {
 		}
 
 		// Guard: if unregister failed (locked ability), don't double-register.
-		// Re-fetch after unregister to get the current state.
 		$registered_after = function_exists( 'wp_get_abilities' ) ? wp_get_abilities() : [];
 		if ( isset( $registered_after['mcp-adapter/discover-abilities'] ) ) {
 			return;
@@ -103,11 +101,8 @@ class DiscoverAbilities {
 					}
 				}
 
-				// Build instructions with skill catalog.
-				$instructions = self::build_instructions();
-
 				return [
-					'instructions' => $instructions,
+					'instructions' => self::build_instructions(),
 					'abilities'    => $ability_list,
 				];
 			},
@@ -146,7 +141,39 @@ class DiscoverAbilities {
 			'**Site:** ' . $site_url,
 			'**Sandbox directory:** ' . $sandbox,
 			'',
-			'### Environment',
+			'## Environment',
+			'',
+			'WordPress ' . get_bloginfo( 'version' ) . ' — PHP ' . PHP_VERSION . ' — Locale: ' . get_locale(),
+		];
+
+		// Multilingual plugin detection.
+		$multilingual = self::get_active_languages();
+		if ( null !== $multilingual && [] !== $multilingual['languages'] ) {
+			$lines[] = 'Multilingual (' . $multilingual['plugin'] . '): ' . implode( ', ', $multilingual['languages'] );
+		}
+
+		$lines[] = '';
+
+		// Installed plugins inventory.
+		if ( function_exists( 'get_plugins' ) ) {
+			/** @var array<string, array{Name?: string, Version?: string}> $all_plugins */
+			$all_plugins = get_plugins();
+			if ( [] !== $all_plugins ) {
+				$lines[] = 'Installed plugins:';
+				foreach ( $all_plugins as $plugin_file => $plugin_data ) {
+					$name           = $plugin_data['Name'] ?? $plugin_file;
+					$version        = $plugin_data['Version'] ?? '';
+					$version_suffix = '' !== $version ? ' v' . $version : '';
+					$active         = is_plugin_active( $plugin_file ) ? 'active' : 'inactive';
+					$lines[]        = '- ' . $name . $version_suffix . ' (' . $active . ')';
+				}
+				$lines[] = '';
+			}
+		}
+
+		// Abilities & tools overview.
+		$lines = array_merge( $lines, [
+			'### Abilities',
 			'',
 			'- Execute arbitrary PHP with `wpcodex/php-execute` — full WordPress environment available (`$wpdb`, all functions, all plugins).',
 			'- Run WP-CLI commands with `wpcodex/wpcli-run`.',
@@ -154,15 +181,44 @@ class DiscoverAbilities {
 			'- Persist PHP code across requests by writing files to the sandbox directory and using `wpcodex/file-disable` / `wpcodex/file-enable` to control loading.',
 			'- Manage skill playbooks with `wpcodex/skill-*` abilities.',
 			'',
-			'### Rules',
+		] );
+
+		// WordPress-native development guidelines.
+		$lines = array_merge( $lines, [
+			'## WordPress-native development',
+			'',
+			'IMPORTANT: Prefer WordPress-native features to store and manage data.',
+			'Do not hardcode content in PHP arrays when WordPress has a better mechanism:',
+			'- Custom post types (register_post_type) for structured content (unless a data-modeling plugin owns it — see below)',
+			'- Taxonomies (register_taxonomy) for categorization (same caveat)',
+			'- Post meta / custom fields (update_post_meta) for additional data on posts (same caveat)',
+			'- Options API (update_option) for settings and configuration',
+			'- Custom database tables via $wpdb only when the above are insufficient',
+			'',
+			'Take advantage of active plugins. If a data-modeling plugin is in the installed-plugins inventory above',
+			'(ACF / ACF Pro, JetEngine, Pods, ACPT, Meta Box, Toolset, Custom Post Type UI, WooCommerce, etc.),',
+			'use it for the task it owns — never write a custom register_post_type / register_taxonomy / register_meta',
+			'call in PHP for content the active plugin can model through its own UI/API.',
+			'',
+			'Use WordPress hooks (actions/filters), template hierarchy, and REST API conventions.',
+			'Write code that integrates with WordPress, not code that ignores it.',
+			'',
+		] );
+
+		// Building pages context.
+		$lines = array_merge( $lines, self::build_building_context_lines() );
+		$lines[] = '';
+
+		// Rules.
+		$lines = array_merge( $lines, [
+			'## Rules',
 			'',
 			'- Always inspect before modifying. Use `wpcodex/file-read` or `wpcodex/php-execute` to understand the current state.',
 			'- For destructive operations, confirm with the user first.',
 			'- Sandbox files run on every WordPress request — keep them lean and non-blocking.',
 			'',
-		];
+		] );
 
-		// Append skill catalog if any agentic skills exist.
 		$catalog = self::build_skill_catalog();
 		if ( '' !== $catalog ) {
 			$lines[] = $catalog;
@@ -172,13 +228,74 @@ class DiscoverAbilities {
 	}
 
 	/**
-	 * Build the ## Available Skills catalog block from the DB.
+	 * Detect active multilingual plugin and language list.
+	 *
+	 * Supports WPML, Polylang, and TranslatePress.
+	 *
+	 * @return array{plugin: string, languages: string[]}|null
+	 */
+	private static function get_active_languages(): ?array {
+		// WPML.
+		if ( function_exists( 'icl_get_languages' ) ) {
+			/** @var array<string, array{language_code: string}>|false $wpml_languages */
+			$wpml_languages = icl_get_languages( 'skip_missing=0' );
+			if ( is_array( $wpml_languages ) ) {
+				return [ 'plugin' => 'WPML', 'languages' => array_column( $wpml_languages, 'language_code' ) ];
+			}
+		}
+
+		// Polylang.
+		if ( function_exists( 'pll_languages_list' ) ) {
+			/** @var string[]|false $languages */
+			$languages = pll_languages_list();
+			if ( is_array( $languages ) ) {
+				return [ 'plugin' => 'Polylang', 'languages' => $languages ];
+			}
+		}
+
+		// TranslatePress.
+		if ( class_exists( 'TRP_Translate_Press' ) ) {
+			/** @var array{translation-languages?: string[]} $trp_settings */
+			$trp_settings = get_option( 'trp_settings', [] );
+			return [ 'plugin' => 'TranslatePress', 'languages' => $trp_settings['translation-languages'] ?? [] ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Build the active theme + building mode context lines.
+	 *
+	 * @return list<string>
+	 */
+	private static function build_building_context_lines(): array {
+		if ( ! function_exists( 'wp_get_theme' ) ) {
+			return [];
+		}
+
+		$theme      = wp_get_theme();
+		$theme_desc = (string) $theme->get( 'Name' );
+		if ( $theme->get_template() !== $theme->get_stylesheet() ) {
+			$parent = $theme->parent();
+			$theme_desc .= ' (child theme of ' . ( $parent instanceof \WP_Theme ? (string) $parent->get( 'Name' ) : $theme->get_template() ) . ')';
+		}
+
+		return [
+			'## Building pages and layout',
+			'',
+			'Active theme: ' . $theme_desc . '.',
+			'',
+			'Before building or restructuring a page\'s content or layout, check the installed-plugins inventory above for page builders (which replace the editor) and block libraries (which extend Gutenberg), then ask the user which approach to use: a page builder, Gutenberg, classic theme templates, a child theme, or a custom theme. Ask once and follow that choice; do not mix approaches (e.g. Gutenberg blocks in a page-builder page).',
+		];
+	}
+
+	/**
+	 * Build the ## Available Skills catalog block from all registered sources
+	 * (user DB + external plugin sources via the wpcodex_skill_sources filter).
 	 */
 	private static function build_skill_catalog(): string {
-		$skills = Repository::instance()->all();
-		$agentic = array_filter( $skills, static fn( array $s ): bool =>
-			(bool) $s['enable_agentic'] && trim( (string) $s['description'] ) !== ''
-		);
+		// Use Sources::discoverable() so external plugin skills are included.
+		$agentic = Sources::discoverable( 'agentic' );
 
 		if ( empty( $agentic ) ) {
 			return '';
@@ -192,11 +309,15 @@ class DiscoverAbilities {
 		];
 
 		foreach ( $agentic as $skill ) {
-			$lines[] = sprintf(
-				'- **`%s`** — %s',
-				esc_html( (string) $skill['name'] ),
-				esc_html( (string) $skill['description'] )
-			);
+			$name         = esc_html( (string) ( $skill['name'] ?? $skill['slug'] ?? '' ) );
+			$description  = esc_html( (string) ( $skill['description'] ?? '' ) );
+			$source_label = (string) ( $skill['source_label'] ?? '' );
+
+			$badge = ( '' !== $source_label && 'User' !== $source_label )
+				? ' [' . esc_html( $source_label ) . ']'
+				: '';
+
+			$lines[] = sprintf( '- **`%s`**%s — %s', $name, $badge, $description );
 		}
 
 		$lines[] = '';

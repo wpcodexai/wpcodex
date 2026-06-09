@@ -16,10 +16,11 @@ class SkillDelete {
 	public function __construct() {
 		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
 	}
+
 	public function init(): void {
 		wp_register_ability( 'wpcodex/skill-delete', [
 			'label'       => __( 'Delete Skill', 'wpcodex' ),
-			'description' => __( 'Permanently delete a skill by name.', 'wpcodex' ),
+			'description' => __( 'Permanently delete a skill by name. Idempotent — returns success when the skill does not exist.', 'wpcodex' ),
 			'category'    => 'wpcodex-skills',
 
 			'input_schema' => [
@@ -29,17 +30,33 @@ class SkillDelete {
 				],
 				'required' => [ 'name' ],
 			],
-			'output_schema' => [ 'type' => 'string', 'description' => 'Success message.' ],
 
-			'execute_callback' => static function ( array $args ): string|\WP_Error {
+			'output_schema' => [
+				'type'       => 'object',
+				'properties' => [
+					'name'    => [ 'type' => 'string', 'description' => 'Skill name.' ],
+					'deleted' => [ 'type' => 'boolean', 'description' => 'True when the skill was deleted; false when it did not exist.' ],
+				],
+				'required' => [ 'name', 'deleted' ],
+			],
+
+			'execute_callback' => static function ( array $args ): array|\WP_Error {
 				if ( empty( $args['name'] ) || ! is_string( $args['name'] ) ) {
 					return new \WP_Error( 'wpcodex_invalid_input', __( 'name must be a non-empty string.', 'wpcodex' ) );
 				}
-				$result = Repository::instance()->delete( $args['name'] );
+
+				$name     = $args['name'];
+				$existed  = null !== Repository::instance()->find( $name );
+				$result   = Repository::instance()->delete( $name );
+
 				if ( is_wp_error( $result ) ) {
 					return $result;
 				}
-				return sprintf( __( 'Skill "%s" deleted.', 'wpcodex' ), esc_html( $args['name'] ) );
+
+				return [
+					'name'    => $name,
+					'deleted' => $existed,
+				];
 			},
 
 			'permission_callback' => [ Helpers::class, 'ability_permission' ],

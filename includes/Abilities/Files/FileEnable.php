@@ -22,7 +22,7 @@ class FileEnable {
 				'Re-enables a previously disabled sandbox file by removing the ".disabled" suffix. Accepts either the original filename or the .disabled filename. Only operates inside wp-content/wpcodex-sandbox/. Idempotent: enabling an already-enabled file returns enabled=false.',
 				'wpcodex'
 			),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'                 => 'object',

@@ -61,12 +61,21 @@ class FileManager {
 
 		if ( ! file_exists( $path ) ) {
 			throw new \RuntimeException(
-				sprintf( __( 'File not found: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf(
+					/* translators: %s: File path. */
+					__( 'File not found: %s', 'wpcodex' ),
+					esc_html( $path )
+				)
 			);
 		}
+
 		if ( ! is_readable( $path ) ) {
 			throw new \RuntimeException(
-				sprintf( __( 'File not readable: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf(
+					/* translators: %s: File path. */
+					__( 'File not readable: %s', 'wpcodex' ),
+					esc_html( $path )
+				)
 			);
 		}
 

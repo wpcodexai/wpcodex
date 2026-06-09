@@ -114,10 +114,10 @@ final class AbilitiesSettingsPage {
 		}
 
 		$category_labels = [
+			'wpcodex-general'        => __( 'General', 'wpcodex' ),
 			'wpcodex'        => __( 'WPCodex', 'wpcodex' ),
 			'wpcodex-skills' => __( 'WPCodex Skills', 'wpcodex' ),
 			'wpcodex-gutenberg' => __( 'WPCodex Gutenberg', 'wpcodex' ),
-			'general'        => __( 'General', 'wpcodex' ),
 		];
 
 		foreach ( $groups as $category => $items ) {

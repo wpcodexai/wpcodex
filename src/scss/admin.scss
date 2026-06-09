@@ -747,6 +747,73 @@ $font-mono: 'Courier New', Courier, monospace;
   }
 }
 
+// ─── Application passwords table ─────────────────────────────────────────────
+
+.wpcodex-pw-section-label {
+  font-size:     .8125rem;
+  font-weight:   600;
+  color:         $color-text-muted;
+  text-transform: capitalize;
+  letter-spacing: .05em;
+  margin:        0 0 10px;
+}
+
+.wpcodex-pw-table-wrap {
+  border:        1px solid $color-border-lt;
+  border-radius: $radius-md;
+  overflow:      hidden;
+}
+
+.wpcodex-pw-table {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       .875rem;
+
+  thead th {
+    text-align:   left;
+    padding:      9px 14px;
+    font-size:    .75rem;
+    font-weight:  600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color:        $color-text-muted;
+    background:   $color-bg;
+    border-bottom: 1px solid $color-border-lt;
+    white-space:  nowrap;
+
+    &:last-child { text-align: right; }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $color-border-lt;
+    transition:    background .12s ease;
+
+    &:last-child  { border-bottom: none; }
+    &:hover       { background: $color-bg; }
+  }
+
+  td {
+    padding:        10px 14px;
+    vertical-align: middle;
+    color:          $color-text;
+
+    &.wpcodex-pw-table__name  { font-weight: 600; }
+    &.wpcodex-pw-table__meta  { color: $color-text-muted; font-size: .8125rem; white-space: nowrap; }
+    &.wpcodex-pw-table__actions { text-align: right; white-space: nowrap; }
+  }
+}
+
+.wpcodex-pw-revoke-btn {
+  color:        $color-danger  !important;
+  border-color: rgba(214, 54, 56, .35) !important;
+
+  &:hover {
+    background:   $color-danger !important;
+    border-color: $color-danger !important;
+    color:        #fff          !important;
+  }
+}
+
 // ─── Toggle large variant ─────────────────────────────────────────────────────
 
 .wpcodex-toggle--lg {

@@ -16,6 +16,9 @@ namespace WPCodex\Runner;
  * WPCODEX_SANDBOX_DIR, including it in the current WordPress process with
  * output buffering, then always deleting the file — even on exception.
  *
+ * Returns a structured result array so callers can expose typed output
+ * to MCP agents rather than a plain string.
+ *
  * No process-level isolation. Designed for dev/staging environments.
  */
 class PhpRunner {
@@ -33,14 +36,14 @@ class PhpRunner {
 	}
 
 	/**
-	 * Execute PHP code and return captured output.
+	 * Execute PHP code and return a structured result.
 	 *
 	 * @param string $code PHP code without opening tag.
-	 * @return string Captured stdout + return value, or formatted error string.
+	 * @return array{success: bool, return_value: mixed, output: string, errors: list<array{type: string, message: string, file: string, line: int}>, error_message: string, error_class: string, execution_time_ms: float}
 	 *
 	 * @throws \RuntimeException When the sandbox directory is not writable.
 	 */
-	public function run( string $code ): string {
+	public function run( string $code ): array {
 		$sandbox = WPCODEX_SANDBOX_DIR;
 
 		if ( ! is_dir( $sandbox ) ) {
@@ -62,39 +65,71 @@ class PhpRunner {
 			throw new \RuntimeException( __( 'WPCodex: Failed to write PHP sandbox file.', 'wpcodex' ) );
 		}
 
-		ob_start();
+		/** @var list<array{type: string, message: string, file: string, line: int}> $errors */
+		$errors       = [];
 		$return_value = null;
+
+		// Install a custom error handler to capture warnings and notices.
+		set_error_handler( static function ( int $errno, string $errstr, string $errfile, int $errline ) use ( &$errors ): bool {
+			$type_map = [
+				E_WARNING        => 'warning',
+				E_NOTICE         => 'notice',
+				E_USER_ERROR     => 'user_error',
+				E_USER_WARNING   => 'user_warning',
+				E_USER_NOTICE    => 'user_notice',
+				E_DEPRECATED     => 'deprecated',
+				E_USER_DEPRECATED => 'user_deprecated',
+			];
+			$errors[] = [
+				'type'    => $type_map[ $errno ] ?? 'error',
+				'message' => $errstr,
+				'file'    => $errfile,
+				'line'    => $errline,
+			];
+			return true; // suppress PHP's own error output
+		} );
+
+		ob_start();
+		$start_ns = hrtime( true );
 
 		try {
 			// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
 			$return_value = include $filename;
+
+			$execution_time_ms = ( hrtime( true ) - $start_ns ) / 1_000_000;
+			$output            = (string) ob_get_clean();
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			@unlink( $filename );
+
+			restore_error_handler();
+
+			return [
+				'success'          => true,
+				'return_value'     => ( null !== $return_value && 1 !== $return_value ) ? $return_value : null,
+				'output'           => $output,
+				'errors'           => $errors,
+				'error_message'    => '',
+				'error_class'      => '',
+				'execution_time_ms' => round( $execution_time_ms, 3 ),
+			];
+
 		} catch ( \Throwable $e ) {
+			$execution_time_ms = ( hrtime( true ) - $start_ns ) / 1_000_000;
 			ob_end_clean();
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
 			@unlink( $filename );
 
-			return sprintf(
-				"[WPCodex PHP Error]\n%s\nIn %s on line %d\n\nStack trace:\n%s",
-				$e->getMessage(),
-				$e->getFile(),
-				$e->getLine(),
-				$e->getTraceAsString()
-			);
-		}
+			restore_error_handler();
 
-		$output = (string) ob_get_clean();
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
-		@unlink( $filename );
-
-		$parts = [];
-		if ( '' !== $output ) {
-			$parts[] = $output;
+			return [
+				'success'          => false,
+				'return_value'     => null,
+				'output'           => '',
+				'errors'           => $errors,
+				'error_message'    => $e->getMessage(),
+				'error_class'      => get_class( $e ),
+				'execution_time_ms' => round( $execution_time_ms, 3 ),
+			];
 		}
-		// Append return value if meaningful (include() returns 1 by default).
-		if ( null !== $return_value && 1 !== $return_value ) {
-			$parts[] = '[Return value]: ' . wp_json_encode( $return_value, JSON_PRETTY_PRINT );
-		}
-
-		return implode( "\n", $parts ) ?: '[No output]';
 	}
 }

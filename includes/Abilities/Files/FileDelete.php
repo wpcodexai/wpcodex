@@ -25,7 +25,7 @@ class FileDelete {
 		wp_register_ability( 'wpcodex/file-delete', [
 			'label'       => __( 'Delete File', 'wpcodex' ),
 			'description' => __( 'Delete a file or directory. Idempotent — returns success when the path does not exist. Core WordPress directories are protected.', 'wpcodex' ),
-			'category'    => 'wpcodex',
+			'category'    => 'wpcodex-general',
 
 			'input_schema' => [
 				'type'       => 'object',

@@ -10,12 +10,14 @@ declare( strict_types=1 );
 namespace WPCodex;
 
 use WPCodex\Abilities\Abilities;
+use WPCodex\Admin\AbilityPolicy;
 use WPCodex\Admin\AdminMenu;
 use WPCodex\REST\AdminAccessEndpoint;
 use WPCodex\REST\GutenbergFinalizerEndpoint;
 use WPCodex\REST\UploadEndpoint;
 use WPCodex\Runner\SandboxLoader;
 use WPCodex\Skills\BuiltIn;
+use WPCodex\Skills\Notices as SkillNotices;
 use WPCodex\Skills\Prompts;
 use WPCodex\Skills\Schema as SkillsSchema;
 use WPCodex\Tools\Mcp;
@@ -62,13 +64,16 @@ final class Plugin {
 		}
 
 		$this->load_textdomain();
+		SkillsSchema::maybe_upgrade();
 		new Mcp();
+		new AbilityPolicy();
 		$this->abilities = new Abilities();
 		new UploadEndpoint();
 		new AdminAccessEndpoint();
 		new GutenbergFinalizerEndpoint();
 		new BuiltIn();
 		new Prompts();
+		new SkillNotices();
 		new GutenbergStorage();
 		( new SandboxLoader() )->load();
 

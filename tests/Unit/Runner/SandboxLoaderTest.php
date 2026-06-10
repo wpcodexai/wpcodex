@@ -11,6 +11,8 @@
 
 declare( strict_types=1 );
 
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir,WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- test setup/teardown requires direct FS calls; WP_Filesystem is not available in unit test context
+
 namespace WPCodex\Tests\Unit\Runner;
 
 use Brain\Monkey;

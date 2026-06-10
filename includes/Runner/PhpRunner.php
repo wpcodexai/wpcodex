@@ -51,7 +51,7 @@ class PhpRunner {
 		}
 
 		if ( ! wp_is_writable( $sandbox ) ) {
-			throw new \RuntimeException(
+			throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 				__( 'WPCodex sandbox directory is not writable. Check plugin activation.', 'wpcodex' )
 			);
 		}
@@ -62,7 +62,7 @@ class PhpRunner {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		if ( false === file_put_contents( $filename, $wrapped ) ) {
-			throw new \RuntimeException( __( 'WPCodex: Failed to write PHP sandbox file.', 'wpcodex' ) );
+			throw new \RuntimeException( __( 'WPCodex: Failed to write PHP sandbox file.', 'wpcodex' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 		}
 
 		/** @var list<array{type: string, message: string, file: string, line: int}> $errors */
@@ -70,6 +70,7 @@ class PhpRunner {
 		$return_value = null;
 
 		// Install a custom error handler to capture warnings and notices.
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- intentional: captures PHP errors from user-supplied code; not for logging
 		set_error_handler( static function ( int $errno, string $errstr, string $errfile, int $errline ) use ( &$errors ): bool {
 			$type_map = [
 				E_WARNING        => 'warning',
@@ -98,7 +99,7 @@ class PhpRunner {
 
 			$execution_time_ms = ( hrtime( true ) - $start_ns ) / 1_000_000;
 			$output            = (string) ob_get_clean();
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $filename );
 
 			restore_error_handler();
@@ -116,7 +117,7 @@ class PhpRunner {
 		} catch ( \Throwable $e ) {
 			$execution_time_ms = ( hrtime( true ) - $start_ns ) / 1_000_000;
 			ob_end_clean();
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $filename );
 
 			restore_error_handler();

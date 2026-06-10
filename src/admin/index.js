@@ -11,7 +11,7 @@
  *  4. Skills page — auto-resize textarea
  */
 import './../scss/admin.scss';
-import './components/clipboard.js';
+import './components/copy-button.js';
 import './components/notices.js';
 import './components/abilities.js';
 import './components/skills.js';

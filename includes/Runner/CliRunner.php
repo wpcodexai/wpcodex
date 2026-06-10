@@ -48,13 +48,14 @@ class CliRunner {
 			2 => [ 'pipe', 'w' ],
 		];
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.proc_open_proc_open
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.proc_open_proc_open, Generic.PHP.ForbiddenFunctions.Found -- proc_open is required for WP-CLI subprocess management
 		$process = proc_open( $cmd, $descriptors, $pipes, ABSPATH, $this->safe_env() );
 
 		if ( ! is_resource( $process ) ) {
-			throw new \RuntimeException( __( 'WPCodex: Failed to open WP-CLI subprocess.', 'wpcodex' ) );
+			throw new \RuntimeException( __( 'WPCodex: Failed to open WP-CLI subprocess.', 'wpcodex' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- pipe I/O from proc_open; WP_Filesystem has no equivalent
 		fclose( $pipes[0] );
 
 		$output   = '';
@@ -66,6 +67,7 @@ class CliRunner {
 				$output .= "\n[WPCodex] Command timed out after {$timeout}s.";
 				break;
 			}
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread -- pipe I/O from proc_open
 			$chunk = fread( $pipes[1], 4096 );
 			if ( false !== $chunk ) {
 				$output .= $chunk;
@@ -73,7 +75,9 @@ class CliRunner {
 		}
 
 		$stderr = stream_get_contents( $pipes[2] );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- pipe I/O from proc_open
 		fclose( $pipes[1] );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- pipe I/O from proc_open
 		fclose( $pipes[2] );
 		proc_close( $process );
 
@@ -108,7 +112,7 @@ class CliRunner {
 			}
 		}
 
-		throw new \RuntimeException(
+		throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 			__( 'WPCodex: WP-CLI not found. Install WP-CLI to use this ability.', 'wpcodex' )
 		);
 	}

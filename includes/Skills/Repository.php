@@ -34,9 +34,9 @@ class Repository {
 	public function all(): array {
 		global $wpdb;
 		$table = Schema::table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
-			"SELECT id, name, description, enable_agentic, enable_prompt, created_at, updated_at FROM {$table} ORDER BY name ASC",
+			"SELECT id, name, description, enable_agentic, enable_prompt, created_at, updated_at FROM {$table} ORDER BY name ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			ARRAY_A
 		);
 		if ( ! is_array( $rows ) ) {
@@ -260,9 +260,9 @@ class Repository {
 	public function get_revisions( string $name ): array {
 		global $wpdb;
 		$table = Schema::revisions_table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE skill_name = %s ORDER BY id DESC LIMIT 10", $name ),
+			$wpdb->prepare( "SELECT * FROM {$table} WHERE skill_name = %s ORDER BY id DESC LIMIT 10", $name ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			ARRAY_A
 		);
 		if ( ! is_array( $rows ) ) {
@@ -286,9 +286,9 @@ class Repository {
 		global $wpdb;
 
 		$table = Schema::revisions_table_name();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rev = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d LIMIT 1", $revision_id ),
+			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d LIMIT 1", $revision_id ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			ARRAY_A
 		);
 
@@ -371,9 +371,9 @@ class Repository {
 		global $wpdb;
 		$table = Schema::revisions_table_name();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$count = (int) $wpdb->get_var(
-			$wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE skill_name = %s", $name )
+			$wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE skill_name = %s", $name ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		);
 
 		if ( $count <= $keep ) {
@@ -382,10 +382,10 @@ class Repository {
 
 		$delete_count = $count - $keep;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table} WHERE skill_name = %s ORDER BY id ASC LIMIT %d",
+				"DELETE FROM {$table} WHERE skill_name = %s ORDER BY id ASC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$name,
 				$delete_count
 			)

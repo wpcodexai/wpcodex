@@ -47,7 +47,7 @@ final class ConfigurationPage {
 		$user      = wp_get_current_user();
 		$username  = $user->user_login;
 		$app_pw_ok = self::application_passwords_available();
-		$site_slug = sanitize_title( parse_url( home_url(), PHP_URL_HOST ) ?? 'site' );
+		$site_slug = sanitize_title( wp_parse_url( home_url(), PHP_URL_HOST ) ?? 'site' );
 		$default_name = 'wpcodex-' . $site_slug;
 
 		// Existing application passwords for this user (WPCodex-generated ones).
@@ -165,9 +165,9 @@ final class ConfigurationPage {
 					<div>
 						<p class="wpcodex-config__card-desc" style="margin-bottom:10px;">
 							<?php
-							/* translators: %s: link to the Application Passwords section of the user profile */
 							printf(
 								wp_kses_post(
+									/* translators: %s: link to the Application Passwords section of the user profile */
 									__( 'Prefer to manage passwords manually? Go to %s, enter a name like <strong>"Claude Code"</strong>, and click <strong>Add New Application Password</strong>. Copy the generated password — it is shown only once.', 'wpcodex' )
 								),
 								'<a href="' . esc_url( admin_url( 'profile.php#application-passwords-section' ) ) . '" target="_blank">'
@@ -437,7 +437,7 @@ final class ConfigurationPage {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		update_option( AdminMenu::ABILITIES_ENABLED_OPTION, '1' === ( $_POST['wpcodex_abilities_value'] ?? '0' ), false );
+		update_option( AdminMenu::ABILITIES_ENABLED_OPTION, '1' === wp_unslash( $_POST['wpcodex_abilities_value'] ?? '0' ), false );
 	}
 
 	// -------------------------------------------------------------------------

@@ -3,7 +3,7 @@
  * Plugin Name:       WPCodex
  * Plugin URI:        https://github.com/wpcodex/wpcodex
  * Description:       The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.
- * Version:           1.0.0
+ * Version:           0.5.0
  * Requires at least: 6.9
  * Requires PHP:      8.0
  * Author:            WPCodex Team
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'WPCODEX_FILE',        __FILE__ );
 // Retrieve the version dynamically from this file's header comments
 $plugin_data = get_file_data( WPCODEX_FILE, array( 'Version' => 'Version' ), 'plugin' );
-$plugin_version = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : '1.0.0';
+$plugin_version = ! empty( $plugin_data['Version'] ) ? $plugin_data['Version'] : '0.5.0';
 
 define( 'WPCODEX_VERSION',     $plugin_version );
 define( 'WPCODEX_DIR',         plugin_dir_path( WPCODEX_FILE ) );

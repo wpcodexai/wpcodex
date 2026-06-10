@@ -16,6 +16,7 @@ namespace WPCodex\Runner;
  * All methods return typed arrays on success and throw \RuntimeException or
  * \InvalidArgumentException on failure so callers can convert to \WP_Error.
  */
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not HTML output; they go into error handling, not the browser.
 class FileManager {
 
 	private const BACKUP_TRANSIENT_PREFIX = 'wpcodex_bak_';
@@ -373,7 +374,7 @@ class FileManager {
 			return [ 'path' => $path, 'type' => 'dir', 'deleted' => true, 'items_deleted' => $items_deleted ];
 		}
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 		if ( ! unlink( $path ) ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
@@ -601,7 +602,7 @@ class FileManager {
 				rmdir( $full );
 				++$count;
 			} else {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 				unlink( $full );
 				++$count;
 			}
@@ -636,7 +637,7 @@ class FileManager {
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
 		if ( ! rename( $tmp, $path ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $tmp );
 			throw new \RuntimeException(
 				/* translators: %s: file path */

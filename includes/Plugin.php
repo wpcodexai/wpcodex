@@ -111,6 +111,7 @@ final class Plugin {
 	 * @return void
 	 */
 	private function load_textdomain(): void {
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- load_plugin_textdomain is correct for manually bundled/GlotPress translations
 		load_plugin_textdomain(
 			'wpcodex',
 			false,

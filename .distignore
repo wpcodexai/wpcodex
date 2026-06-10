@@ -1,0 +1,36 @@
+# Files and directories excluded from the WP.org SVN release.
+# These are development/tooling artifacts that should not ship to users.
+
+# Source (compiled assets go in assets/ instead)
+src/
+
+# Tests
+tests/
+phpunit.xml
+phpstan.neon
+
+# Composer / npm tooling
+composer.json
+composer.lock
+package.json
+package-lock.json
+webpack.config.js
+
+# CI and version control
+.github/
+.gitignore
+.gitattributes
+
+# Agent / AI context files
+AGENTS.md
+AGENT_SKILLS.md
+CLAUDE.md
+GEMINI.md
+
+# PHPUnit artifacts
+.phpunit.result.cache
+tests/Integration/.gitkeep
+
+# Misc dev files
+RND.md
+docs/RND.md

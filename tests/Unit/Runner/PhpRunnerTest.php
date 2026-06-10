@@ -10,6 +10,8 @@
 
 declare( strict_types=1 );
 
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test setup requires direct FS calls; WP_Filesystem is not available in unit test context
+
 namespace WPCodex\Tests\Unit\Runner;
 
 use Brain\Monkey;

@@ -52,7 +52,7 @@ class DbRunner {
 			return wp_json_encode( $results, JSON_PRETTY_PRINT ) ?: '[]';
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$affected = $wpdb->query( $prepared );
 		if ( false === $affected ) {
 			throw new \RuntimeException( '[WPCodex DB] ' . esc_html( $wpdb->last_error ) );

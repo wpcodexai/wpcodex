@@ -309,7 +309,7 @@ class UploadEndpoint {
 		fclose( $target ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		if ( is_wp_error( $bytes_written ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $resolved );
 			return $bytes_written;
 		}
@@ -335,7 +335,7 @@ class UploadEndpoint {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		$target = fopen( $tmp, 'wb' );
 		if ( false === $target ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $tmp );
 			return new \WP_Error( 'upload_write_failed', sprintf( 'Could not open destination for writing: %s', $resolved ) );
 		}
@@ -344,14 +344,14 @@ class UploadEndpoint {
 		fclose( $target ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		if ( is_wp_error( $bytes_written ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $tmp );
 			return $bytes_written;
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
 		if ( ! rename( $tmp, $resolved ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 			@unlink( $tmp );
 			return new \WP_Error( 'upload_move_failed', sprintf( 'Could not move uploaded file into place: %s', $resolved ) );
 		}
@@ -423,7 +423,7 @@ class UploadEndpoint {
 			}
 		}
 
-		throw new \InvalidArgumentException(
+		throw new \InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 			__( 'Path traversal outside WordPress root is not allowed.', 'wpcodex' )
 		);
 	}

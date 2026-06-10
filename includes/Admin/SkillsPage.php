@@ -57,10 +57,6 @@ final class SkillsPage {
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// Action handlers
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Handle form submissions and return any notices.
 	 *
@@ -110,12 +106,14 @@ final class SkillsPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_save(): array {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified in handle_actions()
 		$name            = sanitize_title( wp_unslash( $_POST['skill_name'] ?? '' ) );
 		$description     = sanitize_text_field( wp_unslash( $_POST['skill_description'] ?? '' ) );
 		$body            = wp_kses_post( wp_unslash( $_POST['skill_body'] ?? '' ) );
 		$enable_agentic  = isset( $_POST['enable_agentic'] ) && '1' === $_POST['enable_agentic'];
 		$enable_prompt   = isset( $_POST['enable_prompt'] )  && '1' === $_POST['enable_prompt'];
 		$original_name   = sanitize_title( wp_unslash( $_POST['original_name'] ?? '' ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		$is_edit         = '' !== $original_name;
 
 		if ( ! $name || ! $description || ! $body ) {
@@ -159,6 +157,7 @@ final class SkillsPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_delete(): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in handle_actions()
 		$name   = sanitize_title( wp_unslash( $_POST['skill_name'] ?? '' ) );
 		$result = Repository::instance()->delete( $name );
 
@@ -173,9 +172,11 @@ final class SkillsPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_toggle(): array {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified in handle_actions()
 		$name    = sanitize_title( wp_unslash( $_POST['skill_name'] ?? '' ) );
 		$field   = sanitize_key( wp_unslash( $_POST['toggle_field'] ?? '' ) );
 		$value   = isset( $_POST['toggle_value'] ) && '1' === $_POST['toggle_value'];
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		if ( ! in_array( $field, [ 'enable_agentic', 'enable_prompt' ], true ) ) {
 			return [];
@@ -194,12 +195,14 @@ final class SkillsPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_upload(): array {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in handle_actions(); $_FILES keys are standard PHP upload fields
 		if ( ! isset( $_FILES['skill_file'] ) || UPLOAD_ERR_OK !== $_FILES['skill_file']['error'] ) {
 			return [ [ 'type' => 'error', 'message' => __( 'File upload failed.', 'wpcodex' ) ] ];
 		}
 
 		$tmp  = $_FILES['skill_file']['tmp_name'];
 		$name = sanitize_file_name( $_FILES['skill_file']['name'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( ! str_ends_with( $name, '.md' ) ) {
 			return [ [ 'type' => 'error', 'message' => __( 'Only .md files can be uploaded as skills.', 'wpcodex' ) ] ];
@@ -238,6 +241,7 @@ final class SkillsPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_restore(): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in handle_actions()
 		$revision_id = isset( $_POST['revision_id'] ) ? (int) $_POST['revision_id'] : 0;
 
 		if ( $revision_id <= 0 ) {
@@ -253,9 +257,6 @@ final class SkillsPage {
 		return [ [ 'type' => 'success', 'message' => __( 'Revision restored successfully.', 'wpcodex' ) ] ];
 	}
 
-	// -------------------------------------------------------------------------
-	// Render helpers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * @param array{type: string, message: string}[] $notices
@@ -313,7 +314,7 @@ final class SkillsPage {
 	 * @param array{type: string, message: string}[] $notices
 	 */
 	private static function render_edit( string $action, array $notices ): void {
-		$name  = isset( $_GET['name'] ) ? sanitize_title( $_GET['name'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$name  = isset( $_GET['name'] ) ? sanitize_title( wp_unslash( $_GET['name'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$skill = 'edit' === $action && $name ? Repository::instance()->find( $name ) : null;
 		$title = 'edit' === $action ? __( 'Edit Skill', 'wpcodex' ) : __( 'New Skill', 'wpcodex' );
 		?>

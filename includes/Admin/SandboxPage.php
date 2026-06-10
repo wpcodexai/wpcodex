@@ -95,7 +95,7 @@ final class SandboxPage {
 
 			case 'delete':
 				if ( file_exists( $full_path ) && is_file( $full_path ) ) {
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 					unlink( $full_path );
 					delete_option( self::DISABLED_PREFIX . md5( $file_name ) );
 					return [ [ 'type' => 'success', 'message' => __( 'File deleted.', 'wpcodex' ) ] ];

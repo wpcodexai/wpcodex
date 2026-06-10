@@ -572,7 +572,7 @@ class GutenbergStorage {
 			'posts_per_page' => $posts_per_page,
 			'orderby'        => 'ID',
 			'order'          => 'DESC',
-			'meta_query'     => $meta_query,
+			'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is the correct WP_Query mechanism here; no viable alternative
 		] );
 	}
 
@@ -603,7 +603,7 @@ class GutenbergStorage {
 			'posts_per_page' => -1,
 			'orderby'        => 'ID',
 			'order'          => 'ASC',
-			'meta_query'     => $meta_query,
+			'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is the correct WP_Query mechanism here; no viable alternative
 		] );
 	}
 
@@ -1322,6 +1322,7 @@ class GutenbergStorage {
 			'posts_per_page' => 1,
 			'orderby'        => 'ID',
 			'order'          => 'ASC',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is the correct WP_Query mechanism here; no viable alternative
 			'meta_query'     => [
 				[ 'key' => self::META_KIND, 'value' => self::KIND_ITEM ],
 				[ 'key' => self::META_TARGET_ID, 'value' => $target_id, 'compare' => '=', 'type' => 'NUMERIC' ],

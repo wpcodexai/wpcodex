@@ -3,7 +3,7 @@ Contributors: wpcodexai
 Tags: ai, mcp, artificial-intelligence, developer-tools, automation
 Requires at least: 6.9
 Tested up to: 6.9
-Stable tag: 1.0.0
+Stable tag: 0.5.0
 Requires PHP: 8.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -149,7 +149,7 @@ For staging or production, enable an SSL certificate (Let's Encrypt is free on m
 
 == Changelog ==
 
-= 1.0.0 =
+= 0.5.0 =
 * Initial release
 * Core abilities: `php-execute`, `wpcli-run`, `db-query`, `site-info`, `post-query`, `option-get`, `option-set`
 * File abilities: `file-read`, `file-write`, `file-edit`, `file-list`, `file-delete`, `file-disable`, `file-enable`, `create-upload-link`
@@ -166,5 +166,5 @@ For staging or production, enable an SSL certificate (Let's Encrypt is free on m
 
 == Upgrade Notice ==
 
-= 0.9.0 =
+= 0.4.0 =
 Initial release. No upgrade steps required.

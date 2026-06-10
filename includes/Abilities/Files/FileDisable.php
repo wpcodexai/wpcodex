@@ -92,6 +92,7 @@ class FileDisable {
 					);
 				}
 
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- WP_Filesystem::move() requires filesystem init not available in this context
 				if ( ! rename( $resolved, $disabled_path ) ) {
 					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_rename_failed', sprintf( __( 'Failed to rename: %s', 'wpcodex' ), $resolved ) );

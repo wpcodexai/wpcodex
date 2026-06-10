@@ -1,9 +1,6 @@
 <?php
 /**
- * Abilities Hub page — lists every registered WPCodex ability with an enable/disable toggle.
- *
- * Mirrors Novamira's "Abilities Hub" screen (added v1.6.0): every ability available
- * to AI agents is listed, grouped by category, and can be toggled individually.
+ * Abilities page — lists every registered WPCodex ability with an enable/disable toggle.
  *
  * @package WPCodex\Admin
  */
@@ -18,7 +15,7 @@ namespace WPCodex\Admin;
 final class AbilitiesSettingsPage {
 
 	/**
-	 * Render the Abilities Hub page.
+	 * Render the Abilities page.
 	 */
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {

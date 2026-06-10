@@ -18,7 +18,12 @@ use WPCodex\Abilities\Skills;
 class Abilities {
 
 	public function __construct() {
-		add_action( 'wp_abilities_api_init', [ $this, 'register' ] );
+		// Priority 20 — must run after the MCP adapter's priority-10 registration
+		// so mcp-adapter/discover-abilities already exists when DiscoverAbilities
+		// unregisters and replaces it. Running at the same priority (10) causes a
+		// race: if WPCodex wins, it registers the replacement first, then the
+		// adapter tries to register the original and triggers a duplicate notice.
+		add_action( 'wp_abilities_api_init', [ $this, 'register' ], 20 );
 	}
 
 	/**

@@ -221,9 +221,9 @@ class Repository {
 	/**
 	 * Delete a skill by name. Idempotent — not-found is treated as success.
 	 *
-	 * @return true|\WP_Error
+	 * @return bool|\WP_Error
 	 */
-	public function delete( string $name ): true|\WP_Error {
+	public function delete( string $name ): bool|\WP_Error {
 		global $wpdb;
 
 		if ( null === $this->find( $name ) ) {
@@ -280,9 +280,9 @@ class Repository {
 	 *
 	 * The current state is snapshotted first so the restore itself is reversible.
 	 *
-	 * @return true|\WP_Error
+	 * @return bool|\WP_Error
 	 */
-	public function restore_revision( int $revision_id ): true|\WP_Error {
+	public function restore_revision( int $revision_id ): bool|\WP_Error {
 		global $wpdb;
 
 		$table = Schema::revisions_table_name();

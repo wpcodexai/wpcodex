@@ -2,7 +2,7 @@
 /**
  * Skills admin page — create, edit, delete, and toggle skills.
  *
- * Matches Novamira's Skills page: card layout, enable/disable toggle,
+ * Matches WPCodex's Skills page: card layout, enable/disable toggle,
  * inline editor with name/description/body fields, and file upload.
  *
  * @package WPCodex\Admin

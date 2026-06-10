@@ -449,9 +449,9 @@ class UploadEndpoint {
 	 *
 	 * Non-PHP files outside the sandbox are intentionally allowed.
 	 *
-	 * @return true|\WP_Error
+	 * @return bool|\WP_Error
 	 */
-	private static function check_php_execution_sandbox( string $path ): true|\WP_Error {
+	private static function check_php_execution_sandbox( string $path ): bool|\WP_Error {
 		if ( ! self::path_requires_sandbox( $path ) ) {
 			return true;
 		}

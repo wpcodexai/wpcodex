@@ -55,6 +55,7 @@ class FileDisable {
 
 				$resolved = realpath( $path );
 				if ( false === $resolved ) {
+					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_not_found', sprintf( __( 'File not found: %s', 'wpcodex' ), $path ) );
 				}
 
@@ -68,6 +69,7 @@ class FileDisable {
 				}
 
 				if ( ! is_file( $resolved ) ) {
+					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_not_a_file', sprintf( __( 'Not a file: %s', 'wpcodex' ), $resolved ) );
 				}
 
@@ -85,11 +87,13 @@ class FileDisable {
 				if ( file_exists( $disabled_path ) ) {
 					return new \WP_Error(
 						'wpcodex_disabled_exists',
+						/* translators: %s: file path */
 						sprintf( __( 'A disabled version already exists: %s', 'wpcodex' ), $disabled_path )
 					);
 				}
 
 				if ( ! rename( $resolved, $disabled_path ) ) {
+					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_rename_failed', sprintf( __( 'Failed to rename: %s', 'wpcodex' ), $resolved ) );
 				}
 

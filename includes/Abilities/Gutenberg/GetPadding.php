@@ -65,6 +65,7 @@ class GetPadding {
 				if ( ! $batch instanceof \WP_Post ) {
 					return new \WP_Error(
 						'gutenberg_batch_not_found',
+						/* translators: %d: batch ID */
 						sprintf( __( 'Gutenberg batch %d was not found.', 'wpcodex' ), $batch_id )
 					);
 				}

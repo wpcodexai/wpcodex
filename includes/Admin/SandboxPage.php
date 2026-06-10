@@ -3,9 +3,6 @@
  * Sandbox admin page — lists PHP files in the wpcodex-sandbox directory
  * with enable/disable toggles and delete actions.
  *
- * Matches Novamira's "Sandbox" page: compact card layout, file-type badges,
- * Enable/Disable toggle, and crash-recovery status.
- *
  * @package WPCodex\Admin
  */
 

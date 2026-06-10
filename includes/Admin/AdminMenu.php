@@ -2,7 +2,7 @@
 /**
  * Admin Menu — registers the WPCodex top-level menu and all sub-pages.
  *
- * Menu structure (mirrors Novamira's layout):
+ * Menu structure (mirrors WPCodex's layout):
  *   WPCodex
  *   ├── Configuration   ← default landing page (abilities on/off + connect)
  *   ├── Abilities Settings
@@ -118,13 +118,8 @@ final class AdminMenu {
 		// );
 	}
 
-	// -------------------------------------------------------------------------
-	// Admin bar indicator
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Show a red "WPCodex ON" indicator in the admin bar when abilities are enabled.
-	 * Mirrors Novamira's persistent visual reminder.
 	 */
 	public function admin_bar_indicator( \WP_Admin_Bar $wp_admin_bar ): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -210,7 +205,7 @@ final class AdminMenu {
 				// NOTE: we intentionally do NOT call wp_get_abilities() here.
 				// Doing so during admin_enqueue_scripts fires the Abilities registry
 				// singleton too early, triggering other plugins' category hooks before
-				// their categories are registered (causes PHP notices from e.g. Novamira).
+				// their categories are registered.
 				'i18n' => [
 					'saved'    => __( 'Saved.', 'wpcodex' ),
 					'deleted'  => __( 'Deleted.', 'wpcodex' ),
@@ -263,14 +258,18 @@ final class AdminMenu {
 	}
 
 	/**
-	 * SVG icon — "c" lettermark in WordPress admin grey (transparent bg,
-	 * white letter so it works in both light and dark admin colour schemes).
+	 * SVG icon — hexagon + code lettermark.
+	 * Uses currentColor so WordPress admin CSS controls
+	 * hover/active/focus states automatically.
 	 */
 	private function get_menu_icon(): string {
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">'
-			. '<rect width="20" height="20" rx="3" fill="#a7aaad"/>'
-			. '<text x="4" y="15" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1e2327">c</text>'
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+			. '<polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>'
+			. '<path d="M32,33 L44,47 L32,57" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>'
+			. '<line x1="52" y1="57" x2="68" y2="57" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'
+			. '<line x1="32" y1="68" x2="62" y2="68" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>'
 			. '</svg>';
+
 		return 'data:image/svg+xml;base64,' . base64_encode( $svg );
 	}
 	

@@ -68,6 +68,7 @@ class FileEnable {
 							'enabled'       => false,
 						];
 					}
+					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_not_found', sprintf( __( 'File not found: %s', 'wpcodex' ), $disabled_path ) );
 				}
 
@@ -80,6 +81,7 @@ class FileEnable {
 				}
 
 				if ( ! is_file( $resolved ) ) {
+					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_not_a_file', sprintf( __( 'Not a file: %s', 'wpcodex' ), $resolved ) );
 				}
 
@@ -89,11 +91,13 @@ class FileEnable {
 				if ( file_exists( $enabled_path ) ) {
 					return new \WP_Error(
 						'wpcodex_enabled_exists',
+						/* translators: %s: file path */
 						sprintf( __( 'An enabled version already exists: %s', 'wpcodex' ), $enabled_path )
 					);
 				}
 
 				if ( ! rename( $resolved, $enabled_path ) ) {
+					/* translators: %s: file path */
 					return new \WP_Error( 'wpcodex_rename_failed', sprintf( __( 'Failed to rename: %s', 'wpcodex' ), $resolved ) );
 				}
 

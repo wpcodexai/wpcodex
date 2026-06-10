@@ -780,6 +780,7 @@ class GutenbergStorage {
 		$title = trim( $target->post_title );
 		return $title !== ''
 			? $title
+			/* translators: %d: post ID */
 			: sprintf( __( '(no title) #%d', 'wpcodex' ), $target->ID );
 	}
 
@@ -1086,6 +1087,7 @@ class GutenbergStorage {
 	 */
 	public static function batch_label( WP_Post $batch ): string {
 		$label = trim( $batch->post_title );
+		/* translators: %d: batch post ID */
 		return $label !== '' ? $label : sprintf( __( 'Gutenberg batch #%d', 'wpcodex' ), $batch->ID );
 	}
 
@@ -1240,6 +1242,7 @@ class GutenbergStorage {
 			'target_type'           => self::meta_string( $item->ID, self::META_TARGET_TYPE ),
 			'target_title'          => $target instanceof WP_Post
 				? self::target_title( $target )
+				/* translators: %d: target post ID */
 				: sprintf( __( 'Missing target #%d', 'wpcodex' ), $target_id ),
 			'operation'             => self::meta_string( $item->ID, self::META_OPERATION ),
 			'status'                => self::gb_status( $item->ID ),
@@ -2045,10 +2048,6 @@ class GutenbergStorage {
 		$fresh = self::find_item( $item->ID ) ?? $item;
 		return self::shape_item( $fresh );
 	}
-
-	// -------------------------------------------------------------------------
-	// Finalizer runtime (ported from novamira runtime.php)
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Build the startup instruction string for an agent based on runtime state.

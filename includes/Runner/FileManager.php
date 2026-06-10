@@ -85,6 +85,7 @@ class FileManager {
 		$fh = fopen( $path, 'rb' );
 		if ( false === $fh ) {
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'Failed to open: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -101,6 +102,7 @@ class FileManager {
 
 		if ( false === $raw ) {
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'Failed to read: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -163,6 +165,7 @@ class FileManager {
 		// Reject writes through a symlink.
 		if ( is_link( $path ) ) {
 			throw new \InvalidArgumentException(
+				/* translators: %s: file path */
 				sprintf( __( 'Refusing to write through symlink: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -186,6 +189,7 @@ class FileManager {
 		if ( ! is_dir( $parent_dir ) ) {
 			if ( ! $create_directories ) {
 				throw new \RuntimeException(
+					/* translators: %s: directory path */
 					sprintf( __( 'Parent directory does not exist: %s', 'wpcodex' ), esc_html( $parent_dir ) )
 				);
 			}
@@ -194,6 +198,7 @@ class FileManager {
 
 		if ( ! wp_is_writable( $parent_dir ) ) {
 			throw new \RuntimeException(
+				/* translators: %s: directory path */
 				sprintf( __( 'Directory not writable: %s', 'wpcodex' ), esc_html( $parent_dir ) )
 			);
 		}
@@ -203,6 +208,7 @@ class FileManager {
 			$result = file_put_contents( $path, $content, FILE_APPEND | LOCK_EX );
 			if ( false === $result ) {
 				throw new \RuntimeException(
+					/* translators: %s: file path */
 					sprintf( __( 'Failed to append to: %s', 'wpcodex' ), esc_html( $path ) )
 				);
 			}
@@ -239,6 +245,7 @@ class FileManager {
 
 		if ( ! file_exists( $path ) ) {
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'File not found: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -247,6 +254,7 @@ class FileManager {
 		$current = file_get_contents( $path );
 		if ( false === $current ) {
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'Failed to read: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -302,6 +310,7 @@ class FileManager {
 
 		if ( ! is_dir( $path ) ) {
 			throw new \RuntimeException(
+				/* translators: %s: directory path */
 				sprintf( __( 'Not a directory: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -354,6 +363,7 @@ class FileManager {
 			if ( ! $recursive ) {
 				throw new \RuntimeException(
 					sprintf(
+						/* translators: %s: directory path */
 						__( 'Path is a directory — set recursive to true to delete it: %s', 'wpcodex' ),
 						esc_html( $path )
 					)
@@ -366,6 +376,7 @@ class FileManager {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
 		if ( ! unlink( $path ) ) {
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'Failed to delete: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -454,6 +465,7 @@ class FileManager {
 		) {
 			throw new \InvalidArgumentException(
 				sprintf(
+					/* translators: %s: sandbox directory path */
 					__( 'PHP files can only be written to the sandbox directory: %s', 'wpcodex' ),
 					esc_html( $sandbox )
 				)
@@ -478,6 +490,7 @@ class FileManager {
 			if ( $normalized === $prot || str_starts_with( $normalized . '/', $prot . '/' ) ) {
 				throw new \InvalidArgumentException(
 					sprintf(
+						/* translators: %s: directory path */
 						__( 'Deleting this path is not allowed — it is a protected WordPress directory: %s', 'wpcodex' ),
 						esc_html( $path )
 					)
@@ -617,6 +630,7 @@ class FileManager {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		if ( false === file_put_contents( $tmp, $content ) ) {
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'Failed to write temp file for: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}
@@ -625,6 +639,7 @@ class FileManager {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_unlink
 			@unlink( $tmp );
 			throw new \RuntimeException(
+				/* translators: %s: file path */
 				sprintf( __( 'Failed to rename temp file to: %s', 'wpcodex' ), esc_html( $path ) )
 			);
 		}

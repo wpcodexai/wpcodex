@@ -19,10 +19,7 @@ class DbQuery {
 	public function init(): void {
 		wp_register_ability( 'wpcodex/db-query', [
 			'label'       => __( 'Database Query', 'wpcodex' ),
-			'description' => __(
-				'Run a SQL query via $wpdb. Use %s, %d, %f placeholders with the args parameter for safe prepared queries. SELECT returns rows as JSON; INSERT/UPDATE/DELETE return affected row count.',
-				'wpcodex'
-			),
+			'description' => __( 'Run a SQL query via $wpdb. Use %s, %d, %f placeholders with the args parameter for safe prepared queries. SELECT returns rows as JSON; INSERT/UPDATE/DELETE return affected row count.', 'wpcodex' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment,WordPress.WP.I18n.UnorderedPlaceholdersText -- %s/%d/%f are wpdb placeholder types, not i18n format args
 			'category'    => 'wpcodex',
 
 			'input_schema' => [

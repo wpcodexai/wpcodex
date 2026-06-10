@@ -92,7 +92,7 @@ class CreateAdminAccessLink {
 					$user_id = get_current_user_id();
 				}
 
-				// Cap expires_in at 600 s (matching novamira security posture).
+				// Cap expires_in at 600 s.
 				$expires_in         = max( 30, min( 600, (int) ( $args['expires_in'] ?? 300 ) ) );
 				$session_expires_in = max( 60, min( 3600, (int) ( $args['session_expires_in'] ?? 1800 ) ) );
 				$admin_path         = is_string( $args['admin_path'] ?? null ) ? (string) $args['admin_path'] : '';

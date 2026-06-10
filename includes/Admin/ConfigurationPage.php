@@ -165,6 +165,7 @@ final class ConfigurationPage {
 					<div>
 						<p class="wpcodex-config__card-desc" style="margin-bottom:10px;">
 							<?php
+							/* translators: %s: link to the Application Passwords section of the user profile */
 							printf(
 								wp_kses_post(
 									__( 'Prefer to manage passwords manually? Go to %s, enter a name like <strong>"Claude Code"</strong>, and click <strong>Add New Application Password</strong>. Copy the generated password — it is shown only once.', 'wpcodex' )

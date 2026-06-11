@@ -45,6 +45,7 @@ final class AdminMenu {
 		add_action( 'admin_head',            [ $this, 'inline_menu_styles' ] );
 		add_action( 'admin_bar_menu',        [ $this, 'admin_bar_indicator' ], 100 );
 		new ConfigurationPage();
+		new FigmaConnectPage();
 	}
 
 	// -------------------------------------------------------------------------
@@ -106,6 +107,15 @@ final class AdminMenu {
 			'manage_options',
 			'wpcodex-block-editor-queue',
 			[ BlockEditorPage::class, 'render' ]
+		);
+
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Integrations — WPCodex', 'wpcodex' ),
+			__( 'Integrations', 'wpcodex' ),
+			'manage_options',
+			'wpcodex-integrations',
+			[ FigmaConnectPage::class, 'render' ]
 		);
 
 		// add_submenu_page(
@@ -252,6 +262,7 @@ final class AdminMenu {
 			'wpcodex_page_wpcodex-skills'              => 'skills',
 			'wpcodex_page_wpcodex-sandbox'             => 'sandbox',
 			'wpcodex_page_wpcodex-block-editor-queue'  => 'block-editor',
+			'wpcodex_page_wpcodex-integrations'        => 'integrations',
 			'wpcodex_page_wpcodex-get-pro'             => 'get-pro',
 		];
 		return $map[ $hook_suffix ] ?? 'configuration';

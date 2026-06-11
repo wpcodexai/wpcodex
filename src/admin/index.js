@@ -16,3 +16,4 @@ import './components/notices.js';
 import './components/abilities.js';
 import './components/skills.js';
 import './components/configuration.js';
+import './components/figma-connect.js';

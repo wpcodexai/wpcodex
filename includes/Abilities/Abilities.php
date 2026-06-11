@@ -10,10 +10,12 @@ declare( strict_types=1 );
 namespace WPCodex\Abilities;
 
 use WPCodex\Abilities\Core;
+use WPCodex\Abilities\Figma;
 use WPCodex\Abilities\Files;
 use WPCodex\Abilities\Gutenberg;
 use WPCodex\Abilities\Site;
 use WPCodex\Abilities\Skills;
+use WPCodex\Runner\FigmaClient;
 
 class Abilities {
 
@@ -62,6 +64,13 @@ class Abilities {
 		new Skills\SkillDelete();
 		new Skills\SkillListRevisions();
 		new Skills\SkillRestoreRevision();
+
+		// Figma abilities (only when integration is enabled + token saved).
+		if ( FigmaClient::is_connected() ) {
+			new Figma\GetFile();
+			new Figma\GetNode();
+			new Figma\GetImages();
+		}
 
 		// Gutenberg / Block Editor Queue abilities.
 		new Gutenberg\GetContent();

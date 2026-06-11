@@ -14,6 +14,7 @@ namespace WPCodex\Admin;
 
 use WPCodex\Skills\Notices as SkillNotices;
 use WPCodex\Skills\Repository;
+use WPCodex\Skills\Sources;
 
 /**
  * Class SkillsPage
@@ -262,7 +263,25 @@ final class SkillsPage {
 	 * @param array{type: string, message: string}[] $notices
 	 */
 	private static function render_list( array $notices ): void {
-		$skills = Repository::instance()->all();
+		$all_skills    = Sources::all();
+		$user_skills   = array_values( array_filter( $all_skills, static fn( array $s ) => 'user-db' === ( $s['source'] ?? '' ) ) );
+
+		// Group non-user-db skills by source for separate read-only sections.
+		/** @var array<string, array{label: string, skills: list<array<string, mixed>>}> $external_groups */
+		$external_groups = [];
+		foreach ( $all_skills as $skill ) {
+			$src = (string) ( $skill['source'] ?? '' );
+			if ( 'user-db' === $src ) {
+				continue;
+			}
+			if ( ! isset( $external_groups[ $src ] ) ) {
+				$external_groups[ $src ] = [
+					'label'  => (string) ( $skill['source_label'] ?? $src ),
+					'skills' => [],
+				];
+			}
+			$external_groups[ $src ]['skills'][] = $skill;
+		}
 		?>
 		<div class="wrap wpcodex-wrap" id="wpcodex-skills">
 			<div class="wpcodex-page-header">
@@ -293,17 +312,39 @@ final class SkillsPage {
 				</form>
 			</div>
 
-			<!-- Skills grid -->
-			<?php if ( empty( $skills ) ) : ?>
+			<!-- Your skills grid -->
+			<?php if ( empty( $user_skills ) && empty( $external_groups ) ) : ?>
 				<div class="wpcodex-empty-state">
 					<p><?php esc_html_e( 'No skills yet. Create your first skill or upload a .md file.', 'wpcodex' ); ?></p>
 				</div>
 			<?php else : ?>
-				<div class="wpcodex-cards">
-					<?php foreach ( $skills as $skill ) : ?>
-						<?php self::render_skill_card( $skill ); ?>
-					<?php endforeach; ?>
-				</div>
+				<?php if ( ! empty( $user_skills ) ) : ?>
+					<div class="wpcodex-cards">
+						<?php foreach ( $user_skills as $skill ) : ?>
+							<?php self::render_skill_card( $skill ); ?>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+
+				<?php foreach ( $external_groups as $group ) : ?>
+					<h2 style="margin-top:2em;">
+						<?php
+						printf(
+							/* translators: %s: source label, e.g. "Built-in" */
+							esc_html__( 'Skills from %s', 'wpcodex' ),
+							esc_html( $group['label'] )
+						);
+						?>
+						<span style="font-size:0.75em;font-weight:400;color:#666;margin-left:0.5em;">
+							<?php esc_html_e( '(read-only)', 'wpcodex' ); ?>
+						</span>
+					</h2>
+					<div class="wpcodex-cards">
+						<?php foreach ( $group['skills'] as $skill ) : ?>
+							<?php self::render_skill_card( $skill, true ); ?>
+						<?php endforeach; ?>
+					</div>
+				<?php endforeach; ?>
 			<?php endif; ?>
 		</div>
 		<?php
@@ -466,15 +507,16 @@ final class SkillsPage {
 
 	/**
 	 * @param array<string, mixed> $skill
+	 * @param bool                 $readonly True for built-in/external sources — hides Edit and Delete.
 	 */
-	private static function render_skill_card( array $skill ): void {
-		$name           = (string) $skill['name'];
-		$description    = (string) $skill['description'];
-		$enable_agentic = (bool) $skill['enable_agentic'];
-		$enable_prompt  = (bool) $skill['enable_prompt'];
+	private static function render_skill_card( array $skill, bool $readonly = false ): void {
+		$name           = (string) ( $skill['name'] ?? $skill['slug'] ?? '' );
+		$description    = (string) ( $skill['description'] ?? '' );
+		$enable_agentic = (bool) ( $skill['enable_agentic'] ?? true );
+		$enable_prompt  = (bool) ( $skill['enable_prompt'] ?? false );
 		$edit_url       = admin_url( 'admin.php?page=wpcodex-skills&action=edit&name=' . urlencode( $name ) );
 		?>
-		<div class="wpcodex-card">
+		<div class="wpcodex-card<?php echo $readonly ? ' wpcodex-card--readonly' : ''; ?>">
 			<div class="wpcodex-card__header">
 				<span class="wpcodex-card__name"><?php echo esc_html( $name ); ?></span>
 				<div class="wpcodex-card__badges">
@@ -487,6 +529,7 @@ final class SkillsPage {
 				</div>
 			</div>
 			<p class="wpcodex-card__description"><?php echo esc_html( $description ); ?></p>
+			<?php if ( ! $readonly ) : ?>
 			<div class="wpcodex-card__actions">
 				<a href="<?php echo esc_url( $edit_url ); ?>" class="button button-small">
 					<?php esc_html_e( 'Edit', 'wpcodex' ); ?>
@@ -501,6 +544,7 @@ final class SkillsPage {
 					</button>
 				</form>
 			</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

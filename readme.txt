@@ -2,7 +2,7 @@
 Contributors: wpcodexai
 Tags: ai, mcp, artificial-intelligence, developer-tools, automation
 Requires at least: 6.9
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 0.5.0
 Requires PHP: 8.0
 License: GPL-3.0-or-later

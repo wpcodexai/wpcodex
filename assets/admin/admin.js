@@ -36,48 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /***/ },
 
-/***/ "./src/admin/components/clipboard.js"
-/*!*******************************************!*\
-  !*** ./src/admin/components/clipboard.js ***!
-  \*******************************************/
-() {
-
-/**
- * Copy-to-clipboard for the Connect page prompt textarea.
- */
-
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('wpcodex-copy-prompt');
-  if (!btn) return;
-  const targetId = btn.getAttribute('data-target') ?? '';
-  const textarea = document.getElementById(targetId);
-  const originalText = btn.textContent ?? '';
-  btn.addEventListener('click', async () => {
-    if (!textarea) return;
-    try {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(textarea.value);
-      } else {
-        textarea.select();
-        document.execCommand('copy');
-      }
-      btn.textContent = window.wpcodexData?.i18n?.saved ?? 'Copied!';
-      btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }, 2000);
-    } catch {
-      btn.textContent = window.wpcodexData?.i18n?.error ?? 'Error';
-      setTimeout(() => {
-        btn.textContent = originalText;
-      }, 2000);
-    }
-  });
-});
-
-/***/ },
-
 /***/ "./src/admin/components/configuration.js"
 /*!***********************************************!*\
   !*** ./src/admin/components/configuration.js ***!
@@ -585,6 +543,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /***/ },
 
+/***/ "./src/admin/components/copy-button.js"
+/*!*********************************************!*\
+  !*** ./src/admin/components/copy-button.js ***!
+  \*********************************************/
+() {
+
+/**
+ * Copy-to-clipboard for the Connect page prompt textarea.
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('wpcodex-copy-prompt');
+  if (!btn) return;
+  const targetId = btn.getAttribute('data-target') ?? '';
+  const textarea = document.getElementById(targetId);
+  const originalText = btn.textContent ?? '';
+  btn.addEventListener('click', async () => {
+    if (!textarea) return;
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(textarea.value);
+      } else {
+        textarea.select();
+        document.execCommand('copy');
+      }
+      btn.textContent = window.wpcodexData?.i18n?.saved ?? 'Copied!';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 2000);
+    } catch {
+      btn.textContent = window.wpcodexData?.i18n?.error ?? 'Error';
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    }
+  });
+});
+
+/***/ },
+
 /***/ "./src/admin/components/notices.js"
 /*!*****************************************!*\
   !*** ./src/admin/components/notices.js ***!
@@ -758,8 +758,8 @@ var __webpack_exports__ = {};
   \****************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_admin_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../scss/admin.scss */ "./src/scss/admin.scss");
-/* harmony import */ var _components_clipboard_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/clipboard.js */ "./src/admin/components/clipboard.js");
-/* harmony import */ var _components_clipboard_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_components_clipboard_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_copy_button_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/copy-button.js */ "./src/admin/components/copy-button.js");
+/* harmony import */ var _components_copy_button_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_components_copy_button_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _components_notices_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/notices.js */ "./src/admin/components/notices.js");
 /* harmony import */ var _components_notices_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_components_notices_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _components_abilities_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/abilities.js */ "./src/admin/components/abilities.js");

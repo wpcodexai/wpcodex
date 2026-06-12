@@ -6,7 +6,7 @@
  * Manages the wpcodex_gb_change CPT, batch/item lifecycle, lease-based
  * concurrency, and the browser-side JS finalizer runtime heartbeat.
  *
- * @package WPCodex\Utils
+ * @package WPCodex
  * @since   1.0.0
  */
 
@@ -29,10 +29,6 @@ use WP_Post;
  */
 class GutenbergStorage {
 
-	// -------------------------------------------------------------------------
-	// Bootstrap
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Register the CPT registration, cron schedule, and cleanup hooks.
 	 *
@@ -43,10 +39,6 @@ class GutenbergStorage {
 		add_action( 'init', [ $this, 'schedule_cleanup' ] );
 		add_action( 'wpcodex_gutenberg_cleanup', [ $this, 'cleanup_queue' ] );
 	}
-
-	// -------------------------------------------------------------------------
-	// CPT / meta key constants
-	// -------------------------------------------------------------------------
 
 	/** @var string Custom post type slug for both batches and items. */
 	public const POST_TYPE = 'wpcodex_gb_change';
@@ -318,10 +310,6 @@ class GutenbergStorage {
 		return is_scalar( $value ) ? (int) $value : 0;
 	}
 
-	// -------------------------------------------------------------------------
-	// Status management
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Return the current gb_status for a post.
 	 *
@@ -449,10 +437,6 @@ class GutenbergStorage {
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// Leases
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Clear the finalizer lease meta from a post.
 	 *
@@ -501,10 +485,6 @@ class GutenbergStorage {
 		$expires = strtotime( $expires_at . ' UTC' );
 		return $expires !== false && $expires > time();
 	}
-
-	// -------------------------------------------------------------------------
-	// Finders and queries
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Fetch a batch post by ID, or null if not found / wrong type.
@@ -607,10 +587,6 @@ class GutenbergStorage {
 		] );
 	}
 
-	// -------------------------------------------------------------------------
-	// Create
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Create a new draft batch post.
 	 *
@@ -710,10 +686,6 @@ class GutenbergStorage {
 
 		return $item_id;
 	}
-
-	// -------------------------------------------------------------------------
-	// Target helpers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Fetch a target post by ID, or null if not found.
@@ -815,10 +787,6 @@ class GutenbergStorage {
 		$revision = reset( $revisions );
 		return $revision->ID;
 	}
-
-	// -------------------------------------------------------------------------
-	// Block normalisation
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Normalize a raw block_spec value into a validated list of block arrays.
@@ -1048,10 +1016,6 @@ class GutenbergStorage {
 		);
 	}
 
-	// -------------------------------------------------------------------------
-	// URLs
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Return the finalization URL for a batch (currently the dashboard URL).
 	 *
@@ -1073,10 +1037,6 @@ class GutenbergStorage {
 	public static function finalizer_dashboard_url(): string {
 		return add_query_arg( [ 'page' => 'wpcodex-block-editor' ], admin_url( 'admin.php' ) );
 	}
-
-	// -------------------------------------------------------------------------
-	// Shapes
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Return a human-readable label for a batch post.
@@ -1276,10 +1236,6 @@ class GutenbergStorage {
 		return self::normalize_blocks( $decoded );
 	}
 
-	// -------------------------------------------------------------------------
-	// Pending summary / conflict helpers
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Build a pending-summary payload for a target post.
 	 *
@@ -1378,10 +1334,6 @@ class GutenbergStorage {
 		return true;
 	}
 
-	// -------------------------------------------------------------------------
-	// Lifecycle: stale, cleanup
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Mark draft batches older than DRAFT_STALE_SECONDS as stale.
 	 *
@@ -1470,10 +1422,6 @@ class GutenbergStorage {
 		self::release_expired_leases_for_batch( $batch );
 		return self::find_batch( $batch->ID ) ?? $batch;
 	}
-
-	// -------------------------------------------------------------------------
-	// Claim / finalization
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Claim a batch for finalization by the Block Editor Queue JS runtime.
@@ -1726,10 +1674,6 @@ class GutenbergStorage {
 		return self::commit_prepared_items( $batch, self::get_items( $batch->ID, [ self::STATUS_PREPARED ] ) );
 	}
 
-	// -------------------------------------------------------------------------
-	// Validation errors
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Determine whether a JS validation payload contains any failures.
 	 *
@@ -1844,10 +1788,6 @@ class GutenbergStorage {
 		$errors = array_values( array_filter( $value, static fn( mixed $e ): bool => is_array( $e ) ) );
 		return $errors;
 	}
-
-	// -------------------------------------------------------------------------
-	// Item complete / fail / conflict
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Transition a prepared item to conflicted and mark the batch as failed.

@@ -2,12 +2,14 @@
 /**
  * Abilities page — lists every registered WPCodex ability with an enable/disable toggle.
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
 
 namespace WPCodex\Admin;
+
+use WPCodex\Abilities\Abilities;
 
 /**
  * Class AbilitiesSettingsPage
@@ -78,9 +80,13 @@ final class AbilitiesSettingsPage {
 			return;
 		}
 
-		$abilities = wp_get_abilities();
+		// Read the full in-memory index (enabled + disabled) built during
+		// wp_abilities_api_init. wp_get_abilities() only returns currently
+		// registered (enabled) abilities, so disabled abilities would silently
+		// disappear from this page and become impossible to re-enable.
+		$index = Abilities::get_all_ability_data();
 
-		if ( empty( $abilities ) ) {
+		if ( empty( $index ) ) {
 			echo '<div class="wpcodex-empty-state"><p>';
 			esc_html_e( 'No abilities registered yet. Abilities appear here once the plugin is fully loaded.', 'wpcodex' );
 			echo '</p></div>';
@@ -89,24 +95,11 @@ final class AbilitiesSettingsPage {
 
 		// Group by category — only wpcodex/ abilities.
 		$groups = [];
-		foreach ( $abilities as $id => $ability ) {
+		foreach ( $index as $id => $item ) {
 			if ( ! is_string( $id ) || ! str_starts_with( $id, 'wpcodex/' ) ) {
 				continue;
 			}
-			// wp_get_abilities() returns WP_Ability objects — use getters.
-			if ( $ability instanceof \WP_Ability ) {
-				$category = $ability->get_category() ?? 'general';
-				$item     = [
-					'id'          => $id,
-					'label'       => $ability->get_label(),
-					'description' => $ability->get_description(),
-					'category'    => $category,
-				];
-			} else {
-				// Fallback for plain arrays (older / custom implementations).
-				$category = $ability['category'] ?? 'general';
-				$item     = array_merge( (array) $ability, [ 'id' => $id ] );
-			}
+			$category            = (string) ( $item['category'] ?? 'general' );
 			$groups[ $category ][] = $item;
 		}
 

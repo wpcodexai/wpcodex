@@ -11,7 +11,7 @@
  *   ├── Block Editor
  *   └── Get Pro  (styled accent link)
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -20,18 +20,41 @@ namespace WPCodex\Admin;
 
 /**
  * Class AdminMenu
+ *
+ * @since 1.0.0
  */
 final class AdminMenu {
 
-	/** Top-level menu slug. */
+	/**
+	 * Top-level menu slug.
+	 *
+	 * @since 1.0.0
+	 * @var   string
+	 */
 	public const MENU_SLUG = 'wpcodex';
 
-	/** Option that gates whether AI abilities are active. */
+	/**
+	 * Option that gates whether AI abilities are active.
+	 *
+	 * @since 1.0.0
+	 * @var   string
+	 */
 	public const ABILITIES_ENABLED_OPTION = 'wpcodex_abilities_enabled';
 
-	/** @var self|null */
+	/**
+	 * Singleton instance.
+	 *
+	 * @since 1.0.0
+	 * @var   self|null
+	 */
 	private static ?self $instance = null;
 
+	/**
+	 * Returns (and lazily creates) the singleton instance.
+	 *
+	 * @since  1.0.0
+	 * @return self
+	 */
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -39,6 +62,11 @@ final class AdminMenu {
 		return self::$instance;
 	}
 
+	/**
+	 * Sets up admin hooks and instantiates the configuration page.
+	 *
+	 * @since 1.0.0
+	 */
 	private function __construct() {
 		add_action( 'admin_menu',            [ $this, 'register_menus' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
@@ -47,10 +75,11 @@ final class AdminMenu {
 		new ConfigurationPage();
 	}
 
-	// -------------------------------------------------------------------------
-	// Menu registration
-	// -------------------------------------------------------------------------
-
+	/**
+	 * Registers the top-level menu page and all sub-pages.
+	 *
+	 * @since 1.0.0
+	 */
 	public function register_menus(): void {
 		add_menu_page(
 			__( 'WPCodex', 'wpcodex' ),
@@ -119,7 +148,10 @@ final class AdminMenu {
 	}
 
 	/**
-	 * Show a red "WPCodex ON" indicator in the admin bar when abilities are enabled.
+	 * Shows a red "WPCodex ON" indicator in the admin bar when abilities are enabled.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
 	 */
 	public function admin_bar_indicator( \WP_Admin_Bar $wp_admin_bar ): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -150,10 +182,12 @@ final class AdminMenu {
 		] );
 	}
 
-	// -------------------------------------------------------------------------
 	// Page callbacks
-	// -------------------------------------------------------------------------
-
+	/**
+	 * Renders the Get Pro redirect page.
+	 *
+	 * @since 1.0.0
+	 */
 	public function render_get_pro_redirect(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
@@ -164,10 +198,13 @@ final class AdminMenu {
 		<?php
 	}
 
-	// -------------------------------------------------------------------------
 	// Assets
-	// -------------------------------------------------------------------------
-
+	/**
+	 * Enqueues admin scripts and styles for WPCodex pages.
+	 *
+	 * @since 1.0.0
+	 * @param string $hook_suffix The current admin page hook suffix.
+	 */
 	public function enqueue_assets( string $hook_suffix ): void {
 		if ( ! $this->is_wpcodex_page( $hook_suffix ) ) {
 			return;
@@ -226,25 +263,35 @@ final class AdminMenu {
 		wp_set_script_translations( 'wpcodex-admin', 'wpcodex' );
 	}
 
-	// -------------------------------------------------------------------------
-	// Static helpers
-	// -------------------------------------------------------------------------
-
 	/**
-	 * Whether AI abilities are currently enabled sitewide.
+	 * Checks whether AI abilities are currently enabled sitewide.
+	 *
+	 * @since  1.0.0
+	 * @return bool True when abilities are enabled; false otherwise.
 	 */
 	public static function are_abilities_enabled(): bool {
 		return (bool) get_option( self::ABILITIES_ENABLED_OPTION, false );
 	}
 
-	// -------------------------------------------------------------------------
 	// Private helpers
-	// -------------------------------------------------------------------------
-
+	/**
+	 * Checks whether the given hook suffix belongs to a WPCodex admin page.
+	 *
+	 * @since  1.0.0
+	 * @param  string $hook_suffix The current admin page hook suffix.
+	 * @return bool True when on a WPCodex admin page; false otherwise.
+	 */
 	private function is_wpcodex_page( string $hook_suffix ): bool {
 		return str_contains( $hook_suffix, 'wpcodex' );
 	}
 
+	/**
+	 * Returns the WPCodex page ID for the given hook suffix.
+	 *
+	 * @since  1.0.0
+	 * @param  string $hook_suffix The current admin page hook suffix.
+	 * @return string The page identifier, e.g. 'configuration', 'skills'.
+	 */
 	private function current_page_id( string $hook_suffix ): string {
 		$map = [
 			'toplevel_page_wpcodex'                    => 'configuration',
@@ -258,9 +305,13 @@ final class AdminMenu {
 	}
 
 	/**
-	 * SVG icon — hexagon + code lettermark.
-	 * Uses currentColor so WordPress admin CSS controls
-	 * hover/active/focus states automatically.
+	 * Returns the base64-encoded SVG icon for the admin menu.
+	 *
+	 * Uses currentColor so WordPress admin CSS controls hover/active/focus
+	 * states automatically.
+	 *
+	 * @since  1.0.0
+	 * @return string Base64-encoded data URI for the SVG icon.
 	 */
 	private function get_menu_icon(): string {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
@@ -280,6 +331,11 @@ final class AdminMenu {
 	// injected directly into admin_head to take effect reliably.
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Outputs inline CSS for the admin menu accent colour and admin bar indicator.
+	 *
+	 * @since 1.0.0
+	 */
 	public function inline_menu_styles(): void {
 		?>
 		<style>

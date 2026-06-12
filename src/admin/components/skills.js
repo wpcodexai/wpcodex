@@ -1,13 +1,16 @@
 /**
  * Skills page enhancements.
  *
+ * @file  src/admin/components/skills.js
+ * @since 1.0.0
+ *
  *  1. Auto-grow the Markdown body textarea as content grows.
  *  2. Confirm skill name slug format before submitting the new-skill form.
  *  3. Highlight the active frontmatter format hint.
  */
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	// ── Auto-grow textarea ──────────────────────────────────────────────────
+	// Auto-grow textarea 
 	const textarea = document.querySelector( '.wpcodex-skill-editor' );
 	if ( textarea ) {
 		const autoGrow = () => {
@@ -18,7 +21,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		autoGrow(); // Run once on load.
 	}
 
-	// ── Slug validation ─────────────────────────────────────────────────────
+	// Slug validation 
 	const nameInput = document.getElementById( 'skill_name' );
 	const form      = nameInput?.closest( 'form' );
 

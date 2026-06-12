@@ -5,7 +5,7 @@
  * Provides the REST routes used by the browser-side JS finalizer runtime
  * to heartbeat, claim batches, process items, and stream SSE status events.
  *
- * @package WPCodex\REST
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -104,10 +104,6 @@ class GutenbergFinalizerEndpoint {
 		] );
 	}
 
-	// -------------------------------------------------------------------------
-	// Permission callbacks
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Permission callback: requires edit_posts capability.
 	 *
@@ -178,9 +174,6 @@ class GutenbergFinalizerEndpoint {
 		return true;
 	}
 
-	// -------------------------------------------------------------------------
-	// REST callbacks
-	// -------------------------------------------------------------------------
 
 	/**
 	 * GET /gutenberg/batches — list all batches the current user can finalize.

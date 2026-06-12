@@ -5,7 +5,7 @@
  * Matches WPCodex's Skills page: card layout, enable/disable toggle,
  * inline editor with name/description/body fields, and file upload.
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -563,10 +563,6 @@ final class SkillsPage {
 			);
 		}
 	}
-
-	// -------------------------------------------------------------------------
-	// Frontmatter parser
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Parse YAML-style frontmatter from a Markdown document.

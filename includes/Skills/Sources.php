@@ -5,7 +5,7 @@
  * Sources are registered via the wpcodex_skill_sources filter. Each source
  * provides a loader callable that returns a list of skill records.
  *
- * @package WPCodex\Skills
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

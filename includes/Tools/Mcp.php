@@ -5,7 +5,7 @@
  *
  * Instantiated once from Plugin::init().
  *
- * @package WPCodex\Tools
+ * @package WPCodex
  * @since   1.0.0
  */
 

@@ -3,7 +3,7 @@
  * Sandbox admin page — lists PHP files in the wpcodex-sandbox directory
  * with enable/disable toggles and delete actions.
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -57,10 +57,6 @@ final class SandboxPage {
 		<?php
 	}
 
-	// -------------------------------------------------------------------------
-	// Action handler
-	// -------------------------------------------------------------------------
-
 	/**
 	 * @return array{type: string, message: string}[]
 	 */
@@ -106,10 +102,6 @@ final class SandboxPage {
 		return [];
 	}
 
-	// -------------------------------------------------------------------------
-	// File listing
-	// -------------------------------------------------------------------------
-
 	/**
 	 * @return array<int, array<string, mixed>>
 	 */
@@ -150,10 +142,6 @@ final class SandboxPage {
 
 		return $files;
 	}
-
-	// -------------------------------------------------------------------------
-	// Rendering
-	// -------------------------------------------------------------------------
 
 	/**
 	 * @param array<string, mixed> $file

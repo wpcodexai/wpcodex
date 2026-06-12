@@ -31,10 +31,20 @@ use WPCodex\Utils\Requirements;
  */
 final class Plugin {
 
-	/** @var self|null */
+	/**
+	 * Singleton instance.
+	 *
+	 * @since 1.0.0
+	 * @var   self|null
+	 */
 	private static ?self $instance = null;
 
-	/** @var Abilities|null Holds the Abilities instance so it is not GC'd. */
+	/**
+	 * Holds the Abilities instance so it is not garbage-collected.
+	 *
+	 * @since 1.0.0
+	 * @var   Abilities|null
+	 */
 	private ?Abilities $abilities = null;
 
 	private function __construct() {}
@@ -53,10 +63,9 @@ final class Plugin {
 	}
 
 	/**
-	 * Initialise on plugins_loaded.
+	 * Initialises the plugin on plugins_loaded.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function init(): void {
 		if ( ! Requirements::check() ) {
@@ -83,10 +92,9 @@ final class Plugin {
 	}
 
 	/**
-	 * Run on plugin activation.
+	 * Runs on plugin activation.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public static function activate(): void {
 		SkillsSchema::create_table();
@@ -95,20 +103,18 @@ final class Plugin {
 	}
 
 	/**
-	 * Run on plugin deactivation.
+	 * Runs on plugin deactivation.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public static function deactivate(): void {
 		flush_rewrite_rules();
 	}
 
 	/**
-	 * Load the plugin text domain for translations.
+	 * Loads the plugin text domain for translations.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	private function load_textdomain(): void {
 		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- load_plugin_textdomain is correct for manually bundled/GlotPress translations
@@ -120,10 +126,9 @@ final class Plugin {
 	}
 
 	/**
-	 * Create the PHP execution sandbox directory on activation.
+	 * Creates the PHP execution sandbox directory on activation.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	private static function create_sandbox_directory(): void {
 		if ( ! is_dir( WPCODEX_SANDBOX_DIR ) ) {

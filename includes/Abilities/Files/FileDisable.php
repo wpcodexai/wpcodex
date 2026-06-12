@@ -2,115 +2,135 @@
 /**
  * Ability: wpcodex/file-disable
  *
- * @package WPCodex\Abilities
+ * @package WPCodex
+ * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
 namespace WPCodex\Abilities\Files;
 
-use WPCodex\Utils\Helpers;
+use WPCodex\Abilities\AbstractAbility;
 
-class FileDisable {
+/**
+ * Class FileDisable
+ *
+ * @since 1.0.0
+ */
+class FileDisable extends AbstractAbility {
 
-	public function __construct() {
-        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
-    }
-	public function init(): void {
-		wp_register_ability( 'wpcodex/file-disable', [
-			'label'       => __( 'Disable Sandbox File', 'wpcodex' ),
-			'description' => __(
-				'Disables a PHP file in the WPCodex sandbox (wp-content/wpcodex-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
-				'wpcodex'
-			),
-			'category'    => 'wpcodex-general',
+	/** {@inheritDoc} */
+	public function get_category(): string {
+		return 'wpcodex-general';
+	}
 
-			'input_schema' => [
-				'type'                 => 'object',
-				'properties'           => [
-					'path' => [
-						'type'        => 'string',
-						'description' => 'Absolute path to the sandbox file to disable. Must be inside wp-content/wpcodex-sandbox/.',
-						'minLength'   => 1,
-					],
+	/** {@inheritDoc} */
+	public function get_name(): string {
+		return 'wpcodex/file-disable';
+	}
+
+	/** {@inheritDoc} */
+	public function get_label(): string {
+		return __( 'Disable Sandbox File', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_description(): string {
+		return __(
+			'Disables a PHP file in the WPCodex sandbox (wp-content/wpcodex-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
+			'wpcodex'
+		);
+	}
+
+	/** {@inheritDoc} */
+	public function get_input_schema(): array {
+		return [
+			'type'                 => 'object',
+			'properties'           => [
+				'path' => [
+					'type'        => 'string',
+					'description' => 'Absolute path to the sandbox file to disable. Must be inside wp-content/wpcodex-sandbox/.',
+					'minLength'   => 1,
 				],
-				'required'             => [ 'path' ],
-				'additionalProperties' => false,
 			],
+			'required'             => [ 'path' ],
+			'additionalProperties' => false,
+		];
+	}
 
-			'output_schema' => [
-				'type'       => 'object',
-				'properties' => [
-					'original_path' => [ 'type' => 'string', 'description' => 'Absolute path of the original file.' ],
-					'disabled_path' => [ 'type' => 'string', 'description' => 'Absolute path after renaming (.disabled suffix).' ],
-					'disabled'      => [ 'type' => 'boolean', 'description' => 'Whether the file was actually renamed.' ],
-				],
+	/** {@inheritDoc} */
+	public function get_output_schema(): array {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'original_path' => [ 'type' => 'string', 'description' => 'Absolute path of the original file.' ],
+				'disabled_path' => [ 'type' => 'string', 'description' => 'Absolute path after renaming (.disabled suffix).' ],
+				'disabled'      => [ 'type' => 'boolean', 'description' => 'Whether the file was actually renamed.' ],
 			],
+		];
+	}
 
-			'execute_callback' => static function ( array $args ): array|\WP_Error {
-				$path = isset( $args['path'] ) ? (string) $args['path'] : '';
-				if ( '' === $path ) {
-					return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
-				}
+	/** {@inheritDoc} */
+	public function get_annotations(): array {
+		return [ 'readonly' => false, 'destructive' => false, 'idempotent' => true ];
+	}
 
-				$resolved = realpath( $path );
-				if ( false === $resolved ) {
-					/* translators: %s: file path */
-					return new \WP_Error( 'wpcodex_not_found', sprintf( __( 'File not found: %s', 'wpcodex' ), $path ) );
-				}
+	/** {@inheritDoc} */
+	public function execute( array $input ): array|\WP_Error {
+		$path = isset( $input['path'] ) ? (string) $input['path'] : '';
+		if ( '' === $path ) {
+			return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
+		}
 
-				// Must be inside sandbox directory.
-				$sandbox = rtrim( (string) realpath( WPCODEX_SANDBOX_DIR ), '/\\' );
-				if ( ! str_starts_with( $resolved, $sandbox . DIRECTORY_SEPARATOR ) && $resolved !== $sandbox ) {
-					return new \WP_Error(
-						'wpcodex_path_outside_sandbox',
-						__( 'Path must be inside the WPCodex sandbox directory.', 'wpcodex' )
-					);
-				}
+		$resolved = realpath( $path );
+		if ( false === $resolved ) {
+			/* translators: %s: file path */
+			return new \WP_Error( 'wpcodex_not_found', sprintf( __( 'File not found: %s', 'wpcodex' ), $path ) );
+		}
 
-				if ( ! is_file( $resolved ) ) {
-					/* translators: %s: file path */
-					return new \WP_Error( 'wpcodex_not_a_file', sprintf( __( 'Not a file: %s', 'wpcodex' ), $resolved ) );
-				}
+		// Must be inside sandbox directory.
+		$sandbox = rtrim( (string) realpath( WPCODEX_SANDBOX_DIR ), '/\\' );
+		if ( ! str_starts_with( $resolved, $sandbox . DIRECTORY_SEPARATOR ) && $resolved !== $sandbox ) {
+			return new \WP_Error(
+				'wpcodex_path_outside_sandbox',
+				__( 'Path must be inside the WPCodex sandbox directory.', 'wpcodex' )
+			);
+		}
 
-				// Idempotent: already disabled.
-				if ( str_ends_with( $resolved, '.disabled' ) ) {
-					return [
-						'original_path' => $resolved,
-						'disabled_path' => $resolved,
-						'disabled'      => false,
-					];
-				}
+		if ( ! is_file( $resolved ) ) {
+			/* translators: %s: file path */
+			return new \WP_Error( 'wpcodex_not_a_file', sprintf( __( 'Not a file: %s', 'wpcodex' ), $resolved ) );
+		}
 
-				$disabled_path = $resolved . '.disabled';
+		// Idempotent: already disabled.
+		if ( str_ends_with( $resolved, '.disabled' ) ) {
+			return [
+				'original_path' => $resolved,
+				'disabled_path' => $resolved,
+				'disabled'      => false,
+			];
+		}
 
-				if ( file_exists( $disabled_path ) ) {
-					return new \WP_Error(
-						'wpcodex_disabled_exists',
-						/* translators: %s: file path */
-						sprintf( __( 'A disabled version already exists: %s', 'wpcodex' ), $disabled_path )
-					);
-				}
+		$disabled_path = $resolved . '.disabled';
 
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- WP_Filesystem::move() requires filesystem init not available in this context
-				if ( ! rename( $resolved, $disabled_path ) ) {
-					/* translators: %s: file path */
-					return new \WP_Error( 'wpcodex_rename_failed', sprintf( __( 'Failed to rename: %s', 'wpcodex' ), $resolved ) );
-				}
+		if ( file_exists( $disabled_path ) ) {
+			return new \WP_Error(
+				'wpcodex_disabled_exists',
+				/* translators: %s: file path */
+				sprintf( __( 'A disabled version already exists: %s', 'wpcodex' ), $disabled_path )
+			);
+		}
 
-				return [
-					'original_path' => $resolved,
-					'disabled_path' => $disabled_path,
-					'disabled'      => true,
-				];
-			},
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- WP_Filesystem::move() requires filesystem init not available in this context
+		if ( ! rename( $resolved, $disabled_path ) ) {
+			/* translators: %s: file path */
+			return new \WP_Error( 'wpcodex_rename_failed', sprintf( __( 'Failed to rename: %s', 'wpcodex' ), $resolved ) );
+		}
 
-			'permission_callback' => [ Helpers::class, 'ability_permission' ],
-
-			'meta' => [
-				'annotations' => [ 'readonly' => false, 'destructive' => false, 'idempotent' => true ],
-				'mcp'         => [ 'public' => true, 'type' => 'tool' ],
-			],
-		] );
+		return [
+			'original_path' => $resolved,
+			'disabled_path' => $disabled_path,
+			'disabled'      => true,
+		];
 	}
 }

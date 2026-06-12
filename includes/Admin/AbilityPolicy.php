@@ -2,7 +2,7 @@
 /**
  * Ability policy enforcement — unregisters abilities disabled via the Abilities Hub.
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -19,14 +19,23 @@ namespace WPCodex\Admin;
  *
  * The mcp-adapter/* abilities are never unregistered here because they
  * are hub internals.
+ *
+ * @since 1.0.0
  */
 class AbilityPolicy {
 
-	/** Option name prefix used by AbilitiesSettingsPage. */
+	/**
+	 * Option name prefix used by AbilitiesSettingsPage.
+	 *
+	 * @since 1.0.0
+	 * @var   string
+	 */
 	private const OPTION_PREFIX = 'wpcodex_ability_';
 
 	/**
-	 * Wire the late wp_abilities_api_init hook.
+	 * Wires the late wp_abilities_api_init hook.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		// Priority 9999 — run after all ability classes have registered.
@@ -34,7 +43,24 @@ class AbilityPolicy {
 	}
 
 	/**
-	 * Unregister all wpcodex/ abilities whose stored option is 'no'.
+	 * Checks whether a specific ability is currently enabled.
+	 *
+	 * Reads the same option that AbilitiesSettingsPage writes and that apply()
+	 * acts on. Pure read — no side effects.
+	 *
+	 * @since  1.0.0
+	 * @param  string $ability_name Full ability name, e.g. 'wpcodex/file-read'.
+	 * @return bool True if the ability is enabled; false if explicitly disabled.
+	 */
+	public static function is_enabled( string $ability_name ): bool {
+		$option_key = self::OPTION_PREFIX . sanitize_key( str_replace( '/', '_', $ability_name ) );
+		return get_option( $option_key, 'yes' ) !== 'no';
+	}
+
+	/**
+	 * Unregisters all wpcodex/ abilities whose stored option is 'no'.
+	 *
+	 * @since 1.0.0
 	 */
 	public function apply(): void {
 		if ( ! function_exists( 'wp_get_abilities' ) || ! function_exists( 'wp_unregister_ability' ) ) {

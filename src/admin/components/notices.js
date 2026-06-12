@@ -1,5 +1,9 @@
 /**
  * Dismissible admin notices.
+ *
+ * @file  src/admin/components/notices.js
+ * @since 1.0.0
+ *
  * Delegates to WordPress's built-in notice dismissal; this just handles
  * any custom .wpcodex-notice elements that aren't standard .notice divs.
  */

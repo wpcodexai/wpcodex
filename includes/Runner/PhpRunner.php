@@ -2,7 +2,7 @@
 /**
  * PHP Runner — temp-file sandbox execution engine.
  *
- * @package WPCodex\Runner
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

@@ -2,7 +2,7 @@
 /**
  * Skills Repository — all database operations for skill records.
  *
- * @package WPCodex\Skills
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

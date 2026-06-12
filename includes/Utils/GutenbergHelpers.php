@@ -5,7 +5,7 @@
  * Provides utility methods for converting WordPress's raw parse_blocks() output
  * into compact, agent-readable block trees.
  *
- * @package WPCodex\Utils
+ * @package WPCodex
  * @since   1.0.0
  */
 

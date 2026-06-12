@@ -2,7 +2,7 @@
 /**
  * DB Runner — $wpdb query interface.
  *
- * @package WPCodex\Runner
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

@@ -2,7 +2,7 @@
 /**
  * File Manager — filesystem operations with path traversal protection.
  *
- * @package WPCodex\Runner
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -44,13 +44,10 @@ class FileManager {
 		return self::$instance;
 	}
 
-	// -------------------------------------------------------------------------
-	// Public structured API
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Read a file and return structured metadata + content.
 	 *
+	 * @since 1.0.0
 	 * @return array{path: string, content: string, encoding: string, size: int, bytes_read: int, truncated: bool, mime_type: string}
 	 * @throws \InvalidArgumentException On path traversal.
 	 * @throws \RuntimeException On I/O errors.
@@ -425,10 +422,7 @@ class FileManager {
 		return $path;
 	}
 
-	// -------------------------------------------------------------------------
 	// Private helpers
-	// -------------------------------------------------------------------------
-
 	private function is_absolute_path( string $path ): bool {
 		return str_starts_with( $path, '/' )
 			|| str_starts_with( $path, '\\' )

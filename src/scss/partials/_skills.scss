@@ -1,0 +1,42 @@
+/**
+ * WPCodex — Skills page.
+ *
+ * Scoped to #wpcodex-skills (list view) and #wpcodex-skill-editor (edit view).
+ */
+
+#wpcodex-skills {
+
+	.wpcodex-upload-area {
+		background: $color-bg-white;
+		border: 1px solid $color-border-lt;
+		border-radius: $radius-md;
+		padding: 14px 16px;
+		margin-bottom: 20px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+
+		form {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
+			margin: 0;
+		}
+	}
+}
+
+#wpcodex-skill-editor {
+
+	.wpcodex-skill-editor {
+		font-family: $font-mono;
+		font-size: .875rem;
+		line-height: 1.6;
+		resize: vertical;
+	}
+
+	.form-table th {
+		width: 180px;
+	}
+}

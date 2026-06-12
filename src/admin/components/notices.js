@@ -9,14 +9,16 @@
  */
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	document.querySelectorAll( '.wpcodex-notice .notice-dismiss' ).forEach( ( btn ) => {
-		btn.addEventListener( 'click', () => {
-			const notice = btn.closest( '.wpcodex-notice' );
-			if ( notice ) {
-				notice.style.transition = 'opacity .2s';
-				notice.style.opacity   = '0';
-				setTimeout( () => notice.remove(), 200 );
-			}
+	document
+		.querySelectorAll( '.wpcodex-notice .notice-dismiss' )
+		.forEach( ( btn ) => {
+			btn.addEventListener( 'click', () => {
+				const notice = btn.closest( '.wpcodex-notice' );
+				if ( notice ) {
+					notice.style.transition = 'opacity .2s';
+					notice.style.opacity = '0';
+					setTimeout( () => notice.remove(), 200 );
+				}
+			} );
 		} );
-	} );
 } );

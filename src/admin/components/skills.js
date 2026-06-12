@@ -10,7 +10,7 @@
  */
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	// Auto-grow textarea 
+	// Auto-grow textarea
 	const textarea = document.querySelector( '.wpcodex-skill-editor' );
 	if ( textarea ) {
 		const autoGrow = () => {
@@ -21,9 +21,9 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		autoGrow(); // Run once on load.
 	}
 
-	// Slug validation 
+	// Slug validation
 	const nameInput = document.getElementById( 'skill_name' );
-	const form      = nameInput?.closest( 'form' );
+	const form = nameInput?.closest( 'form' );
 
 	if ( nameInput && form && ! nameInput.readOnly ) {
 		// Auto-slugify as user types.

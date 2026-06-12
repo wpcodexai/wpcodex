@@ -1,0 +1,239 @@
+/**
+ * WPCodex — Common / shared styles.
+ *
+ * Used on every admin page: page wrap, empty state, generic card grid,
+ * badges, and the toggle switch component.
+ */
+
+// ─── Page wrap ────────────────────────────────────────────────────────────────
+
+.wpcodex-wrap {
+
+	.wpcodex-page-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin: 16px 0 8px;
+	}
+
+	.wpcodex-page-title {
+		margin: 0;
+		font-size: 1.5rem;
+		color: $color-text;
+	}
+
+	.wpcodex-page-actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	.wpcodex-page-description {
+		color: $color-text-muted;
+		margin-bottom: 20px;
+		max-width: 720px;
+	}
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+.wpcodex-empty-state {
+	background: $color-bg-white;
+	border: 1px solid $color-border-lt;
+	border-radius: $radius-md;
+	padding: 40px 24px;
+	text-align: center;
+	color: $color-text-muted;
+	margin-top: 16px;
+
+	p {
+		margin: 0;
+	}
+}
+
+// ─── Generic card grid ────────────────────────────────────────────────────────
+
+.wpcodex-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.wpcodex-card {
+	background: $color-bg-white;
+	border: 1px solid $color-border-lt;
+	border-radius: $radius-md;
+	padding: 16px;
+	box-shadow: $shadow-card;
+	transition: box-shadow .15s ease, border-color .15s ease;
+
+	&:hover {
+		box-shadow: $shadow-card-hover;
+		border-color: $color-border;
+	}
+
+	&.is-disabled {
+		background: $color-disabled-bg;
+		opacity: .75;
+	}
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 8px;
+		margin-bottom: 8px;
+	}
+
+	&__name {
+		font-weight: 600;
+		font-size: .9375rem;
+		color: $color-text;
+		word-break: break-all;
+	}
+
+	&__id {
+		font-family: $font-mono;
+		font-size: .75rem;
+		color: $color-text-muted;
+		margin-top: 2px;
+	}
+
+	&__description,
+	&__meta {
+		font-size: .875rem;
+		color: $color-text-muted;
+		margin: 0 0 12px;
+		line-height: 1.5;
+	}
+
+	&__badges {
+		display: flex;
+		gap: 4px;
+		flex-wrap: wrap;
+		flex-shrink: 0;
+	}
+
+	&__footer,
+	&__actions {
+		display: flex;
+		gap: 8px;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: 4px;
+	}
+}
+
+// ─── Badges ───────────────────────────────────────────────────────────────────
+
+.wpcodex-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 7px;
+	border-radius: $radius-lg;
+	font-size: .6875rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	white-space: nowrap;
+
+	&--agentic {
+		background: #d7f0e0;
+		color: #1a5c35;
+	}
+
+	&--prompt {
+		background: #dde8f5;
+		color: #1a4778;
+	}
+
+	&--php {
+		background: #ede4f5;
+		color: #4a1b8c;
+	}
+
+	&--disabled {
+		background: #f0f0f0;
+		color: #646970;
+	}
+}
+
+// ─── Toggle switch ────────────────────────────────────────────────────────────
+
+.wpcodex-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+
+	input[type="checkbox"] {
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	&__slider {
+		position: relative;
+		width: 36px;
+		height: 20px;
+		background: $color-border;
+		border-radius: 10px;
+		flex-shrink: 0;
+		transition: background .2s ease;
+
+		&::after {
+			content: '';
+			position: absolute;
+			top: 3px;
+			left: 3px;
+			width: 14px;
+			height: 14px;
+			background: $color-bg-white;
+			border-radius: 50%;
+			transition: transform .2s ease;
+		}
+	}
+
+	input:checked+&__slider {
+		background: $color-success;
+
+		&::after {
+			transform: translateX(16px);
+		}
+	}
+
+	&__label {
+		font-size: .8125rem;
+		color: $color-text-muted;
+		user-select: none;
+	}
+
+	// ── Large variant ──
+	&--lg {
+
+		.wpcodex-toggle__slider {
+			width: 52px;
+			height: 28px;
+
+			&::after {
+				width: 20px;
+				height: 20px;
+				top: 4px;
+				left: 4px;
+			}
+		}
+
+		input:checked+.wpcodex-toggle__slider::after {
+			transform: translateX(24px);
+		}
+
+		.wpcodex-toggle__label {
+			font-size: .9375rem;
+			font-weight: 600;
+			color: $color-text;
+		}
+	}
+}

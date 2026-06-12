@@ -1,6 +1,7 @@
 /*!********************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/scss/admin.scss ***!
   \********************************************************************************************************************************************************************************************************************************************/
+@charset "UTF-8";
 /**
  * WPCodex Admin Styles
  *
@@ -8,6 +9,26 @@
  * Output : assets/admin/admin.css  (via wp-scripts build)
  *
  * Naming convention: .wpcodex-* for all custom classes.
+ *
+ * Partials load order:
+ *  1. _variables     — design tokens (colours, radii, shadows, fonts)
+ *  2. _common        — page wrap, cards, badges, toggle — shared across all pages
+ *  3. _abilities     — Abilities Hub page
+ *  4. _skills        — Skills list + editor pages
+ *  5. _sandbox       — Sandbox page
+ *  6. _block-editor  — Block Editor Queue page
+ *  7. _configuration — Configuration page (step-by-step connect flow)
+ */
+/**
+ * WPCodex — Design tokens & shared variables.
+ *
+ * Imported first so every partial has access to these values.
+ */
+/**
+ * WPCodex — Common / shared styles.
+ *
+ * Used on every admin page: page wrap, empty state, generic card grid,
+ * badges, and the toggle switch component.
  */
 .wpcodex-wrap .wpcodex-page-header {
   display: flex;
@@ -130,6 +151,74 @@
   background: #f0f0f0;
   color: #646970;
 }
+.wpcodex-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.wpcodex-toggle input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.wpcodex-toggle__slider {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: #c3c4c7;
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+.wpcodex-toggle__slider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+input:checked + .wpcodex-toggle__slider {
+  background: #00a32a;
+}
+input:checked + .wpcodex-toggle__slider::after {
+  transform: translateX(-16px);
+}
+.wpcodex-toggle__label {
+  font-size: 0.8125rem;
+  color: #646970;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.wpcodex-toggle--lg .wpcodex-toggle__slider {
+  width: 52px;
+  height: 28px;
+}
+.wpcodex-toggle--lg .wpcodex-toggle__slider::after {
+  width: 20px;
+  height: 20px;
+  top: 4px;
+  right: 4px;
+}
+.wpcodex-toggle--lg input:checked + .wpcodex-toggle__slider::after {
+  transform: translateX(-24px);
+}
+.wpcodex-toggle--lg .wpcodex-toggle__label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1e2327;
+}
+/**
+ * WPCodex — Abilities Hub page.
+ *
+ * Scoped to #wpcodex-abilities-settings.
+ */
 #wpcodex-abilities-settings .wpcodex-ability-group {
   margin-bottom: 32px;
 }
@@ -181,51 +270,11 @@
 #wpcodex-abilities-settings .wpcodex-ability-card__footer {
   margin-top: auto;
 }
-.wpcodex-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.wpcodex-toggle input[type=checkbox] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.wpcodex-toggle__slider {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  background: #c3c4c7;
-  border-radius: 10px;
-  flex-shrink: 0;
-  transition: background 0.2s ease;
-}
-.wpcodex-toggle__slider::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  width: 14px;
-  height: 14px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
-}
-input:checked + .wpcodex-toggle__slider {
-  background: #00a32a;
-}
-input:checked + .wpcodex-toggle__slider::after {
-  transform: translateX(-16px);
-}
-.wpcodex-toggle__label {
-  font-size: 0.8125rem;
-  color: #646970;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-}
+/**
+ * WPCodex — Skills page.
+ *
+ * Scoped to #wpcodex-skills (list view) and #wpcodex-skill-editor (edit view).
+ */
 #wpcodex-skills .wpcodex-upload-area {
   background: #fff;
   border: 1px solid #dcdcde;
@@ -253,9 +302,33 @@ input:checked + .wpcodex-toggle__slider::after {
 #wpcodex-skill-editor .form-table th {
   width: 180px;
 }
+/**
+ * WPCodex — Sandbox page.
+ *
+ * Scoped to #wpcodex-sandbox.
+ */
+#wpcodex-sandbox .wpcodex-flex {
+  display: unset;
+}
 #wpcodex-sandbox .wpcodex-card__meta {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.75rem;
+}
+#wpcodex-sandbox .wpcodex-card.is-suspended {
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}
+.wpcodex-badge--warn {
+  background: #fff3cd;
+  color: #7a4f00;
+}
+/**
+ * WPCodex — Block Editor Queue page.
+ *
+ * Scoped to #wpcodex-block-editor.
+ */
+#wpcodex-block-editor .wpcodex-flex {
+  display: unset;
 }
 #wpcodex-block-editor .wpcodex-queue-table-wrap {
   margin-top: 16px;
@@ -277,6 +350,10 @@ input:checked + .wpcodex-toggle__slider::after {
   font-size: 0.75rem;
   font-weight: 600;
 }
+#wpcodex-block-editor .wpcodex-status--draft {
+  background: #f0f0f0;
+  color: #646970;
+}
 #wpcodex-block-editor .wpcodex-status--pending {
   background: #fef3cd;
   color: #7a4f00;
@@ -285,9 +362,33 @@ input:checked + .wpcodex-toggle__slider::after {
   background: #d7f0e0;
   color: #1a5c35;
 }
-#wpcodex-block-editor .wpcodex-status--complete {
+#wpcodex-block-editor .wpcodex-status--running {
+  background: #e8f0fb;
+  color: #1a4778;
+}
+#wpcodex-block-editor .wpcodex-status--prepared {
+  background: #e8f0fb;
+  color: #1a4778;
+}
+#wpcodex-block-editor .wpcodex-status--complete, #wpcodex-block-editor .wpcodex-status--finalized {
   background: #dde8f5;
   color: #1a4778;
+}
+#wpcodex-block-editor .wpcodex-status--failed {
+  background: #fde8e8;
+  color: #8b1a1a;
+}
+#wpcodex-block-editor .wpcodex-status--conflicted {
+  background: #fff0e6;
+  color: #7a3500;
+}
+#wpcodex-block-editor .wpcodex-status--canceled, #wpcodex-block-editor .wpcodex-status--cancelled {
+  background: #f0f0f0;
+  color: #646970;
+}
+#wpcodex-block-editor .wpcodex-status--stale {
+  background: #f0f0f0;
+  color: #646970;
 }
 #wpcodex-block-editor .wpcodex-info-box {
   background: #fff;
@@ -312,35 +413,17 @@ input:checked + .wpcodex-toggle__slider::after {
   line-height: 1.6;
   font-size: 0.875rem;
 }
-.wpcodex-connect {
-  max-width: 760px;
-}
-.wpcodex-connect .wpcodex-prompt-textarea {
-  display: block;
-  width: 100%;
-  padding: 12px 14px;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  background: #f6f7f7;
-  border: 1px solid #dcdcde;
-  border-radius: 6px;
-  resize: vertical;
-  box-sizing: border-box;
-}
-.wpcodex-connect .wpcodex-prompt-textarea:focus {
-  border-color: #2271b1;
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 1px #2271b1;
-}
-.wpcodex-connect code {
-  background: #f6f7f7;
-  border: 1px solid #dcdcde;
-  border-radius: 3px;
-  padding: 2px 6px;
-  font-size: 0.8125rem;
-  word-break: break-all;
-}
+/**
+ * WPCodex — Configuration page.
+ *
+ * Covers the full step-by-step connect flow:
+ *  - .wpcodex-config            step cards and BEM children
+ *  - .wpcodex-paste-block       paste prompt block (step 3)
+ *  - .wpcodex-client-tabs       pill-tab row for client selection
+ *  - .wpcodex-config-block      dark code block with copy button
+ *  - .wpcodex-config-footer     hint + file-path rows below the code block
+ *  - .wpcodex-pw-*              application passwords table (step 2)
+ */
 .wpcodex-config__notice {
   margin-bottom: 16px;
 }
@@ -351,14 +434,18 @@ input:checked + .wpcodex-toggle__slider::after {
   padding: 20px 24px;
   margin-bottom: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, opacity 0.25s ease, filter 0.25s ease;
 }
 .wpcodex-config__card.is-active {
   border-right: 4px solid #00a32a;
 }
 .wpcodex-config__card.is-locked {
-  opacity: 0.6;
+  opacity: 0.45;
+  filter: grayscale(0.4);
   pointer-events: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 .wpcodex-config__card-header {
   display: flex;
@@ -399,6 +486,14 @@ input:checked + .wpcodex-toggle__slider::after {
 .wpcodex-config__status.is-off {
   background: #f0f0f0;
   color: #646970;
+}
+.wpcodex-config__step-hint {
+  margin-right: auto;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #646970;
+  font-style: italic;
+  white-space: nowrap;
 }
 .wpcodex-config__card-desc {
   color: #646970;
@@ -710,41 +805,4 @@ input:checked + .wpcodex-toggle__slider::after {
   background: #d63638 !important;
   border-color: #d63638 !important;
   color: #fff !important;
-}
-.wpcodex-toggle--lg .wpcodex-toggle__slider {
-  width: 52px;
-  height: 28px;
-}
-.wpcodex-toggle--lg .wpcodex-toggle__slider::after {
-  width: 20px;
-  height: 20px;
-  top: 4px;
-  right: 4px;
-}
-.wpcodex-toggle--lg input:checked + .wpcodex-toggle__slider::after {
-  transform: translateX(-24px);
-}
-.wpcodex-toggle--lg .wpcodex-toggle__label {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: #1e2327;
-}
-.wpcodex-config__card {
-  transition: opacity 0.25s ease, filter 0.25s ease;
-}
-.wpcodex-config__card.is-locked {
-  opacity: 0.45;
-  filter: grayscale(0.4);
-  pointer-events: none;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-}
-.wpcodex-config__step-hint {
-  margin-right: auto;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #646970;
-  font-style: italic;
-  white-space: nowrap;
 }

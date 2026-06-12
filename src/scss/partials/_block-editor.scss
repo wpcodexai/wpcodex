@@ -1,0 +1,114 @@
+/**
+ * WPCodex — Block Editor Queue page.
+ *
+ * Scoped to #wpcodex-block-editor.
+ */
+
+#wpcodex-block-editor {
+	.wpcodex-flex {
+		display: unset;
+	}
+
+	.wpcodex-queue-table-wrap {
+		margin-top: 16px;
+		overflow-x: auto;
+	}
+
+	.wpcodex-queue-table {
+		min-width: 700px;
+
+		code {
+			font-size: .75rem;
+			background: $color-bg;
+			padding: 2px 5px;
+			border-radius: $radius-sm;
+		}
+	}
+
+	.wpcodex-status {
+		display: inline-block;
+		padding: 2px 8px;
+		border-radius: $radius-lg;
+		font-size: .75rem;
+		font-weight: 600;
+
+		&--draft {
+			background: #f0f0f0;
+			color: $color-text-muted;
+		}
+
+		&--pending {
+			background: #fef3cd;
+			color: #7a4f00;
+		}
+
+		&--ready {
+			background: #d7f0e0;
+			color: #1a5c35;
+		}
+
+		&--running {
+			background: #e8f0fb;
+			color: #1a4778;
+		}
+
+		&--prepared {
+			background: #e8f0fb;
+			color: #1a4778;
+		}
+
+		&--complete,
+		&--finalized {
+			background: #dde8f5;
+			color: #1a4778;
+		}
+
+		&--failed {
+			background: #fde8e8;
+			color: #8b1a1a;
+		}
+
+		&--conflicted {
+			background: #fff0e6;
+			color: #7a3500;
+		}
+
+		&--canceled,
+		&--cancelled {
+			background: #f0f0f0;
+			color: $color-text-muted;
+		}
+
+		&--stale {
+			background: #f0f0f0;
+			color: $color-text-muted;
+		}
+	}
+
+	.wpcodex-info-box {
+		background: $color-bg-white;
+		border: 1px solid $color-border-lt;
+		border-left: 4px solid $color-primary;
+		border-radius: $radius-md;
+		padding: 16px 20px;
+		margin-top: 32px;
+		max-width: 700px;
+
+		h3 {
+			margin: 0 0 10px;
+			font-size: .9375rem;
+		}
+
+		ol {
+			margin: 0;
+			padding-left: 20px;
+
+			li {
+				margin-bottom: 6px;
+				color: $color-text-muted;
+				line-height: 1.6;
+				font-size: .875rem;
+			}
+		}
+	}
+}

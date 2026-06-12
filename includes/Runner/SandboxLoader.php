@@ -10,7 +10,7 @@
  * WordPress hooks are registered directly in __construct.
  * load() must be called explicitly from Plugin::init().
  *
- * @package WPCodex\Runner
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

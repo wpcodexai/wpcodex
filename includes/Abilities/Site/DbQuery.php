@@ -2,65 +2,81 @@
 /**
  * Ability: wpcodex/db-query
  *
- * @package WPCodex\Abilities
+ * @package WPCodex
+ * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
 namespace WPCodex\Abilities\Site;
 
+use WPCodex\Abilities\AbstractAbility;
 use WPCodex\Runner\DbRunner;
-use WPCodex\Utils\Helpers;
 
-class DbQuery {
-	public function __construct() {
-        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
-    }
-	public function init(): void {
-		wp_register_ability( 'wpcodex/db-query', [
-			'label'       => __( 'Database Query', 'wpcodex' ),
-			'description' => __( 'Run a SQL query via $wpdb. Use %s, %d, %f placeholders with the args parameter for safe prepared queries. SELECT returns rows as JSON; INSERT/UPDATE/DELETE return affected row count.', 'wpcodex' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment,WordPress.WP.I18n.UnorderedPlaceholdersText -- %s/%d/%f are wpdb placeholder types, not i18n format args
-			'category'    => 'wpcodex',
+/**
+ * Class DbQuery
+ *
+ * @since 1.0.0
+ */
+class DbQuery extends AbstractAbility {
 
-			'input_schema' => [
-				'type'       => 'object',
-				'properties' => [
-					'sql'  => [
-						'type'        => 'string',
-						'description' => 'SQL query, optionally with $wpdb->prepare() placeholders.',
-					],
-					'args' => [
-						'type'        => 'array',
-						'description' => 'Values to bind to placeholders.',
-						'items'       => [ 'type' => 'string' ],
-					],
+	/** {@inheritDoc} */
+	public function get_name(): string {
+		return 'wpcodex/db-query';
+	}
+
+	/** {@inheritDoc} */
+	public function get_label(): string {
+		return __( 'Database Query', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_description(): string {
+		return __( 'Run a SQL query via $wpdb. Use %s, %d, %f placeholders with the args parameter for safe prepared queries. SELECT returns rows as JSON; INSERT/UPDATE/DELETE return affected row count.', 'wpcodex' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment,WordPress.WP.I18n.UnorderedPlaceholdersText -- %s/%d/%f are wpdb placeholder types, not i18n format args
+	}
+
+	/** {@inheritDoc} */
+	public function get_input_schema(): array {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'sql'  => [
+					'type'        => 'string',
+					'description' => 'SQL query, optionally with $wpdb->prepare() placeholders.',
 				],
-				'required'   => [ 'sql' ],
+				'args' => [
+					'type'        => 'array',
+					'description' => 'Values to bind to placeholders.',
+					'items'       => [ 'type' => 'string' ],
+				],
 			],
+			'required'   => [ 'sql' ],
+		];
+	}
 
-			'output_schema' => [
-				'type'        => 'string',
-				'description' => 'JSON array for SELECT queries, or affected row count string.',
-			],
+	/** {@inheritDoc} */
+	public function get_output_schema(): array {
+		return [
+			'type'        => 'string',
+			'description' => 'JSON array for SELECT queries, or affected row count string.',
+		];
+	}
 
-			'execute_callback' => static function ( array $args ): string|\WP_Error {
-				if ( empty( $args['sql'] ) || ! is_string( $args['sql'] ) ) {
-					return new \WP_Error( 'wpcodex_invalid_input', __( 'sql must be a non-empty string.', 'wpcodex' ) );
-				}
-				$query_args = isset( $args['args'] ) && is_array( $args['args'] ) ? $args['args'] : [];
-				try {
-					return DbRunner::instance()->query( $args['sql'], $query_args );
-				} catch ( \Throwable $e ) {
-					return new \WP_Error( 'wpcodex_db_error', $e->getMessage() );
-				}
-			},
+	/** {@inheritDoc} */
+	public function get_annotations(): array {
+		return [ 'readonly' => false, 'destructive' => true, 'idempotent' => false ];
+	}
 
-			'permission_callback' => [ Helpers::class, 'ability_permission' ],
-
-			'meta' => [
-				'annotations' => [ 'readonly' => false, 'destructive' => true, 'idempotent' => false ],
-				'mcp'         => [ 'public' => true, 'type' => 'tool' ],
-			],
-		] );
+	/** {@inheritDoc} */
+	public function execute( array $input ): string|\WP_Error {
+		if ( empty( $input['sql'] ) || ! is_string( $input['sql'] ) ) {
+			return new \WP_Error( 'wpcodex_invalid_input', __( 'sql must be a non-empty string.', 'wpcodex' ) );
+		}
+		$query_args = isset( $input['args'] ) && is_array( $input['args'] ) ? $input['args'] : [];
+		try {
+			return DbRunner::instance()->query( $input['sql'], $query_args );
+		} catch ( \Throwable $e ) {
+			return new \WP_Error( 'wpcodex_db_error', $e->getMessage() );
+		}
 	}
 }

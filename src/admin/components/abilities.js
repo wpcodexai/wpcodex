@@ -1,6 +1,9 @@
 /**
  * Abilities Hub — enhance toggle experience.
  *
+ * @file  src/admin/components/abilities.js
+ * @since 1.0.0
+ *
  * The checkboxes already submit a form via onchange. This module adds
  * optimistic UI (immediate card class swap) and a brief loading state.
  */

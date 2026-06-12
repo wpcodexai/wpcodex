@@ -6,7 +6,7 @@
  * browser automation tool POSTs the token + nonce to the exchange endpoint
  * and gets back a short-lived login URL that sets a WordPress auth cookie.
  *
- * @package WPCodex\REST
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -59,10 +59,6 @@ class AdminAccessEndpoint {
 		);
 	}
 
-	// -------------------------------------------------------------------------
-	// Token creation (called by the CreateAdminAccessLink ability)
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Create a one-time admin access token and binding nonce.
 	 *
@@ -106,10 +102,6 @@ class AdminAccessEndpoint {
 			'expires_at' => $expires_at,
 		];
 	}
-
-	// -------------------------------------------------------------------------
-	// REST handlers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Exchange the one-time token + nonce for a short-lived browser login URL.
@@ -214,10 +206,6 @@ class AdminAccessEndpoint {
 
 		return self::create_redirect_response( $access );
 	}
-
-	// -------------------------------------------------------------------------
-	// Private helpers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Resolve an admin-relative redirect path to a full admin URL.

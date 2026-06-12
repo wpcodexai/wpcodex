@@ -2,7 +2,7 @@
 /**
  * Requirements checker.
  *
- * @package WPCodex\Utils
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

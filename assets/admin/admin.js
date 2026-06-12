@@ -10,6 +10,9 @@
 /**
  * Abilities Hub — enhance toggle experience.
  *
+ * @file  src/admin/components/abilities.js
+ * @since 1.0.0
+ *
  * The checkboxes already submit a form via onchange. This module adds
  * optimistic UI (immediate card class swap) and a brief loading state.
  */
@@ -45,6 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Configuration page — all logic for Steps 1–3.
  *
+ * @file  src/admin/components/configuration.js
+ * @since 1.0.0
+ *
  * Server-side data is passed via window.wpcodexConfig (set by wp_add_inline_script
  * in ConfigurationPage::render() before this script loads).
  *
@@ -56,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const page = document.getElementById('wpcodex-configuration');
   if (!page) return;
 
-  // Server-side config 
+  // Server-side config
   const cfg = window.wpcodexConfig || {};
   const MCP_URL = cfg.mcpUrl || '';
   const USERNAME = cfg.username || '';
@@ -69,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const AJAX_REVOKE = cfg.ajaxRevoke || '';
   const L10N = cfg.l10n || {};
 
-  //  State 
+  //  State
   let mcpName = DEFAULT_NAME;
   let passwordValue = '';
   let passwordPlaceholder = true;
@@ -78,10 +84,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const NAME_PH = '__WPCODEX_MCP_NAME__';
   const PW_PH = '__WPCODEX_PW_SLOT__';
 
-  //  Per-client configs 
+  //  Per-client configs
+
+  /**
+   * Returns the current application password, or a placeholder string.
+   *
+   * @since  1.0.0
+   * @return {string} The actual password value or 'YOUR-APP-PASSWORD'.
+   */
   function pw() {
     return passwordPlaceholder ? 'YOUR-APP-PASSWORD' : passwordValue;
   }
+
+  /**
+   * Builds a JSON MCP server configuration object for the given root key.
+   *
+   * @since  1.0.0
+   * @param  {string} rootKey Top-level key in the config JSON (e.g. 'mcpServers').
+   * @return {string} Formatted JSON string.
+   */
   function buildServerObj(rootKey) {
     const obj = {};
     obj[rootKey] = {
@@ -240,17 +261,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  //  Render 
+  //  Render
+
+  /**
+   * Re-renders all output sections (paste block, manual config, npx-free config).
+   *
+   * @since 1.0.0
+   */
   function renderAll() {
     renderPaste();
     renderManualConfig();
     renderNpxless();
   }
+
+  /**
+   * Renders the Claude paste block with the current MCP name and password.
+   *
+   * @since 1.0.0
+   */
   function renderPaste() {
     const el = document.getElementById('wpcodex-paste-text');
     if (!el) return;
     el.textContent = PASTE_TPL.split(NAME_PH).join(mcpName).split(PW_PH).join(passwordPlaceholder ? 'YOUR-APP-PASSWORD' : passwordValue);
   }
+
+  /**
+   * Renders the manual client config code block and hint for the active client tab.
+   *
+   * @since 1.0.0
+   */
   function renderManualConfig() {
     const c = CONFIGS[manualClient];
     if (!c) return;
@@ -269,6 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
       pathsEl.style.display = 'none';
     }
   }
+
+  /**
+   * Renders the npx-free (streamable HTTP) config code block for the active client tab.
+   *
+   * @since 1.0.0
+   */
   function renderNpxless() {
     const codeEl = document.getElementById('wpcodex-npxless-code');
     const hintEl = document.getElementById('wpcodex-npxless-hint');
@@ -297,7 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Step unlock helpers 
+  // Step unlock helpers
+
+  /**
+   * Reveals a step card with a fade-in animation and scrolls it into view.
+   *
+   * @since 1.0.0
+   * @param {string} stepId The element ID of the step card to reveal.
+   */
   function unlockStep(stepId) {
     const card = document.getElementById(stepId);
     if (!card) return;
@@ -321,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 
-  // Client tab switching 
+  // Client tab switching
   page.querySelectorAll('#wpcodex-manual-tabs .wpcodex-client-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       manualClient = tab.dataset.client;
@@ -338,6 +390,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Server name
+
+  /**
+   * Updates the MCP server name and re-renders all config blocks.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {string} value The new server name entered by the user.
+   */
   window.wpcodexUpdateName = value => {
     mcpName = value.trim() || DEFAULT_NAME;
     const warning = document.getElementById('wpcodex-name-warning');
@@ -346,6 +406,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (suggestion) suggestion.style.display = value.trim().length > 0 && !value.toLowerCase().includes('wpcodex') ? '' : 'none';
     renderAll();
   };
+
+  /**
+   * Toggles the server name input field visibility.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The toggle button element.
+   */
   window.wpcodexToggleServerName = btn => {
     const field = document.getElementById('wpcodex-name-field');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -354,7 +422,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!expanded) document.getElementById('wpcodex-mcp-name')?.focus();
   };
 
-  //  Manual config collapsible 
+  //  Manual config collapsible
+
+  /**
+   * Toggles the manual config panel open or closed.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The toggle button element.
+   */
   window.wpcodexToggleManualConfig = btn => {
     const panel = document.getElementById('wpcodex-manual-config');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -362,6 +438,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.setAttribute('aria-expanded', String(!expanded));
     if (!expanded) renderManualConfig();
   };
+
+  /**
+   * Opens the manual config panel and scrolls it into view.
+   *
+   * @global
+   * @since 1.0.0
+   */
   window.wpcodexOpenManualConfig = () => {
     const panel = document.getElementById('wpcodex-manual-config');
     const toggle = document.getElementById('wpcodex-manual-toggle');
@@ -375,6 +458,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // npx-free collapsible
+
+  /**
+   * Toggles the npx-free (streamable HTTP) config panel open or closed.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The toggle button element.
+   */
   window.wpcodexToggleNpxless = btn => {
     const panel = document.getElementById('wpcodex-npxless-config');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -383,7 +474,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!expanded) renderNpxless();
   };
 
-  // Paste block 
+  // Paste block
+
+  /**
+   * Toggles the Claude paste block between collapsed and expanded views.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The expand/collapse button element.
+   */
   window.wpcodexToggleExpandPaste = btn => {
     const content = document.getElementById('wpcodex-paste-content');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -391,6 +490,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.setAttribute('aria-expanded', String(!expanded));
     btn.textContent = expanded ? L10N.showFull || 'Show full text' : L10N.showLess || 'Show less';
   };
+
+  /**
+   * Copies the Claude paste block text to the clipboard.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The copy button element.
+   */
   window.wpcodexCopyPaste = btn => {
     const text = document.getElementById('wpcodex-paste-text')?.textContent || '';
     const warning = document.getElementById('wpcodex-paste-warning');
@@ -405,9 +512,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Copy buttons (config + npx-free) 
+  // Copy buttons (config + npx-free)
+
+  /**
+   * Copies the manual config code block to the clipboard.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The copy button element.
+   */
   window.wpcodexCopyConfig = btn => copyEl('wpcodex-config-code', btn);
+
+  /**
+   * Copies the npx-free config code block to the clipboard.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The copy button element.
+   */
   window.wpcodexCopyNpxless = btn => copyEl('wpcodex-npxless-code', btn);
+
+  /**
+   * Copies the text content of a DOM element to the clipboard.
+   *
+   * @since  1.0.0
+   * @param  {string}      id  The element ID whose text content to copy.
+   * @param  {HTMLElement} btn The copy button element (receives a temporary "Copied!" label).
+   */
   function copyEl(id, btn) {
     const text = document.getElementById(id)?.textContent || '';
     navigator.clipboard.writeText(text).then(() => {
@@ -419,7 +550,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Application Password — copy 
+  // Application Password — copy
+
+  /**
+   * Copies the generated application password to the clipboard.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The copy button element.
+   */
   window.wpcodexCopyPassword = btn => {
     navigator.clipboard.writeText(passwordValue).then(() => {
       const orig = btn.textContent;
@@ -431,6 +570,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Application Password — generate (AJAX)
+
+  /**
+   * Sends an AJAX request to generate a new WordPress application password.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {HTMLElement} btn The "Generate" button element.
+   */
   window.wpcodexGeneratePassword = btn => {
     const nameWrap = document.getElementById('wpcodex-pw-name-wrap');
     const nameInput = document.getElementById('wpcodex-pw-name');
@@ -508,6 +655,15 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Application Password — revoke (AJAX)
+
+  /**
+   * Sends an AJAX request to revoke an existing WordPress application password.
+   *
+   * @global
+   * @since  1.0.0
+   * @param  {string}      uuid The UUID of the application password to revoke.
+   * @param  {HTMLElement} btn  The "Revoke" button element.
+   */
   window.wpcodexRevokePassword = (uuid, btn) => {
     if (!confirm(L10N.revokeConfirm)) return;
     const fd = new FormData();
@@ -537,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Init 
+  // Init
   renderAll();
 });
 
@@ -551,6 +707,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Copy-to-clipboard for the Connect page prompt textarea.
+ *
+ * @file  src/admin/components/copy-button.js
+ * @since 1.0.0
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -593,6 +752,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Dismissible admin notices.
+ *
+ * @file  src/admin/components/notices.js
+ * @since 1.0.0
+ *
  * Delegates to WordPress's built-in notice dismissal; this just handles
  * any custom .wpcodex-notice elements that aren't standard .notice divs.
  */
@@ -621,13 +784,16 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Skills page enhancements.
  *
+ * @file  src/admin/components/skills.js
+ * @since 1.0.0
+ *
  *  1. Auto-grow the Markdown body textarea as content grows.
  *  2. Confirm skill name slug format before submitting the new-skill form.
  *  3. Highlight the active frontmatter format hint.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ── Auto-grow textarea ──────────────────────────────────────────────────
+  // Auto-grow textarea 
   const textarea = document.querySelector('.wpcodex-skill-editor');
   if (textarea) {
     const autoGrow = () => {
@@ -638,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
     autoGrow(); // Run once on load.
   }
 
-  // ── Slug validation ─────────────────────────────────────────────────────
+  // Slug validation 
   const nameInput = document.getElementById('skill_name');
   const form = nameInput?.closest('form');
   if (nameInput && form && !nameInput.readOnly) {
@@ -770,6 +936,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_configuration_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_components_configuration_js__WEBPACK_IMPORTED_MODULE_5__);
 /**
  * WPCodex Admin — entry point.
+ *
+ * @file   src/admin/index.js
+ * @since  1.0.0
  *
  * Source : src/admin/index.js
  * Output : assets/admin/admin.js  (via wp-scripts build)

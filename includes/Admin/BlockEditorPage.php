@@ -6,7 +6,7 @@
  * Batches must be finalized through the browser to apply block changes cleanly
  * via the block editor's JavaScript runtime.
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -78,10 +78,6 @@ final class BlockEditorPage {
 		<?php
 	}
 
-	// -------------------------------------------------------------------------
-	// Action handler
-	// -------------------------------------------------------------------------
-
 	/**
 	 * @return array{type: string, message: string}[]
 	 */
@@ -129,10 +125,6 @@ final class BlockEditorPage {
 		$batches = array_filter( $batches, static fn( $b ) => ( $b['id'] ?? '' ) !== $batch_id );
 		update_option( self::BATCHES_OPTION, array_values( $batches ), false );
 	}
-
-	// -------------------------------------------------------------------------
-	// Rendering
-	// -------------------------------------------------------------------------
 
 	/**
 	 * @param array<string, mixed> $batch

@@ -1,6 +1,9 @@
 /**
  * WPCodex Admin — entry point.
  *
+ * @file   src/admin/index.js
+ * @since  1.0.0
+ *
  * Source : src/admin/index.js
  * Output : assets/admin/admin.js  (via wp-scripts build)
  *

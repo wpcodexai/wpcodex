@@ -6,7 +6,7 @@
  * Step 2 — Application Password (generate inline, list existing, revoke)
  * Step 3 — Connect Your AI Client (paste prompt + per-client JSON snippets)
  *
- * @package WPCodex\Admin
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -425,10 +425,7 @@ final class ConfigurationPage {
 		);
 	}
 
-	// -------------------------------------------------------------------------
 	// Action handlers
-	// -------------------------------------------------------------------------
-
 	private static function handle_toggle(): void {
 		if ( ! isset( $_POST['wpcodex_abilities_toggle'] ) ) {
 			return;
@@ -440,10 +437,7 @@ final class ConfigurationPage {
 		update_option( AdminMenu::ABILITIES_ENABLED_OPTION, '1' === wp_unslash( $_POST['wpcodex_abilities_value'] ?? '0' ), false );
 	}
 
-	// -------------------------------------------------------------------------
 	// AJAX handlers
-	// -------------------------------------------------------------------------
-
 	public function ajax_generate_password(): void {
 		check_ajax_referer( self::AJAX_GENERATE, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -503,10 +497,7 @@ final class ConfigurationPage {
 		wp_send_json_success();
 	}
 
-	// -------------------------------------------------------------------------
 	// Helpers
-	// -------------------------------------------------------------------------
-
 	/**
 	 * @return array<int, array<string, string>>
 	 */

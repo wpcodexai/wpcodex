@@ -2,7 +2,7 @@
 /**
  * Shared helpers used across ability files.
  *
- * @package WPCodex\Utils
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

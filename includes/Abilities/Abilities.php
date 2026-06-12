@@ -2,85 +2,194 @@
 /**
  * Ability registration aggregator.
  *
- * @package WPCodex\Abilities
+ * Instantiates every built-in ability and registers them all at once.
+ * Pro plugins extend the list via the 'wpcodex_abilities' filter:
+ *
+ *   add_filter( 'wpcodex_abilities', function ( array $abilities ): array {
+ *       $abilities[] = new \MyProPlugin\Abilities\MyProAbility();
+ *       return $abilities;
+ *   } );
+ *
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
 
 namespace WPCodex\Abilities;
 
+use WPCodex\Admin\AbilityPolicy;
 use WPCodex\Abilities\Core;
 use WPCodex\Abilities\Files;
 use WPCodex\Abilities\Gutenberg;
 use WPCodex\Abilities\Site;
 use WPCodex\Abilities\Skills;
 
+/**
+ * Class Abilities
+ *
+ * @since 1.1.0
+ */
 class Abilities {
 
+	/**
+	 * Full ability index built during register(), keyed by ability name.
+	 *
+	 * Stored in a static so AbilitiesSettingsPage can read it in the same
+	 * request without a DB round-trip. Includes disabled abilities that are
+	 * excluded from wp_register_ability() but must remain visible in the UI.
+	 *
+	 * @since 1.1.0
+	 * @var   array<string, array<string, string>>
+	 */
+	private static array $all_abilities = [];
+
+	/**
+	 * Sets up the wp_abilities_api_init registration hook.
+	 *
+	 * @since 1.1.0
+	 */
 	public function __construct() {
 		// Priority 20 — must run after the MCP adapter's priority-10 registration
 		// so mcp-adapter/discover-abilities already exists when DiscoverAbilities
-		// unregisters and replaces it. Running at the same priority (10) causes a
-		// race: if WPCodex wins, it registers the replacement first, then the
-		// adapter tries to register the original and triggers a duplicate notice.
+		// unregisters and replaces it.
 		add_action( 'wp_abilities_api_init', [ $this, 'register' ], 20 );
 	}
 
 	/**
-	 * Register all abilities. Each ability is responsible for its own registration
-	 * via the wpcodex/register_abilities action hook.
-	 * New abilities should be added here.
+	 * Returns the full flat ability index, building it on-demand if needed.
+	 *
+	 * Includes both enabled and disabled abilities so the settings page can
+	 * always display every known ability and let the admin re-enable any of them.
+	 *
+	 * When called during a normal admin page load (before wp_abilities_api_init
+	 * has fired), the index is built directly from create_abilities() so the
+	 * settings page never shows an empty list.
+	 *
+	 * @since  1.1.0
+	 * @return array<string, array<string, string>>
+	 */
+	public static function get_all_ability_data(): array {
+		if ( empty( self::$all_abilities ) ) {
+			/** @var AbstractAbility[] $abilities */
+			$abilities = apply_filters( 'wpcodex_abilities', static::create_abilities() );
+			foreach ( $abilities as $ability ) {
+				self::$all_abilities[ $ability->get_name() ] = [
+					'id'          => $ability->get_name(),
+					'label'       => $ability->get_label(),
+					'description' => $ability->get_description(),
+					'category'    => $ability->get_category(),
+				];
+			}
+		}
+		return self::$all_abilities;
+	}
+
+	/**
+	 * Registers all built-in and filtered abilities.
+	 *
+	 * Before registering, populates the static $all_abilities index with every
+	 * ability (enabled and disabled) so the settings page can display them all
+	 * regardless of their enabled/disabled state.
+	 *
+	 * The 'wpcodex_abilities' filter lets pro plugins append their own ability
+	 * instances without touching this file.
+	 *
+	 * @since 1.1.0
 	 */
 	public function register(): void {
-		new Core\DiscoverAbilities();
+		/** @var AbstractAbility[] $abilities */
+		$abilities = apply_filters( 'wpcodex_abilities', static::create_abilities() );
 
-		// File abilities.
-		new Files\FileRead();
-		new Files\FileWrite();
-		new Files\FileEdit();
-		new Files\FileDelete();
-		new Files\FileList();
-		new Files\FileDisable();
-		new Files\FileEnable();
-		new Files\CreateUploadLink();
+		// Rebuild the static index on every invocation so it reflects the
+		// current filter output (e.g. pro-plugin additions).
+		self::$all_abilities = [];
+		foreach ( $abilities as $ability ) {
+			self::$all_abilities[ $ability->get_name() ] = [
+				'id'          => $ability->get_name(),
+				'label'       => $ability->get_label(),
+				'description' => $ability->get_description(),
+				'category'    => $ability->get_category(),
+			];
+		}
 
-		// Site / WordPress abilities.
-		new Site\WpCliRun();
-		new Site\SiteInfo();
-		new Site\PostQuery();
-		new Site\OptionGet();
-		new Site\OptionSet();
-		new Site\DbQuery();
-		new Site\PhpExecute();
-		new Site\CreateAdminAccessLink();
+		foreach ( $abilities as $ability ) {
+			if ( $this->should_register( $ability ) ) {
+				$ability->register();
+			}
+		}
+	}
 
-		// Skills abilities.
-		new Skills\SkillList();
-		new Skills\SkillRead();
-		new Skills\SkillCreate();
-		new Skills\SkillUpdate();
-		new Skills\SkillDelete();
-		new Skills\SkillListRevisions();
-		new Skills\SkillRestoreRevision();
+	/**
+	 * Determines whether an ability should be registered.
+	 *
+	 * Reads the wpcodex_ability_* option set in AbilityPolicy (the admin
+	 * Enable/Disable toggle). Abilities are enabled by default.
+	 *
+	 * @since  1.1.0
+	 * @param  AbstractAbility $ability The ability instance to check.
+	 * @return bool True if the ability is enabled; false if explicitly disabled.
+	 */
+	private function should_register( AbstractAbility $ability ): bool {
+		return AbilityPolicy::is_enabled( $ability->get_name() );
+	}
 
-		// Gutenberg / Block Editor Queue abilities.
-		new Gutenberg\GetContent();
-		new Gutenberg\WriteContent();
-		new Gutenberg\GetFinalizationUrl();
-		new Gutenberg\CreatePadding();
-		new Gutenberg\AddPaddingChange();
-		new Gutenberg\EnableFinalization();
-		new Gutenberg\DeletePadding();
-		new Gutenberg\DeletePaddingChange();
-		new Gutenberg\GetPadding();
-		new Gutenberg\ListPadding();
-		new Gutenberg\GetFinalizerRuntime();
+	/**
+	 * Returns the complete list of built-in ability instances.
+	 *
+	 * Static so get_all_ability_data() can build the index on admin page
+	 * loads without constructing a registering Abilities instance. The
+	 * wpcodex_abilities filter is still applied by every caller, so
+	 * third-party abilities added via the filter are always included.
+	 *
+	 * @since  1.1.0
+	 * @return AbstractAbility[]
+	 */
+	public static function create_abilities(): array {
+		return [
+			// Core.
+			new Core\DiscoverAbilities(),
 
-		/**
-		 * Fire wpcodex/register_abilities so every ability class
-		 * runs its init() method at exactly the right moment —
-		 * inside wp_abilities_api_init, after all classes are instantiated.
-		 */
-		do_action( 'wpcodex/register_abilities' );
+			// File abilities.
+			new Files\FileRead(),
+			new Files\FileWrite(),
+			new Files\FileEdit(),
+			new Files\FileDelete(),
+			new Files\FileList(),
+			new Files\FileDisable(),
+			new Files\FileEnable(),
+			new Files\CreateUploadLink(),
+
+			// Site / WordPress abilities.
+			new Site\WpCliRun(),
+			new Site\SiteInfo(),
+			new Site\PostQuery(),
+			new Site\OptionGet(),
+			new Site\OptionSet(),
+			new Site\DbQuery(),
+			new Site\PhpExecute(),
+			new Site\CreateAdminAccessLink(),
+
+			// Skills abilities.
+			new Skills\SkillList(),
+			new Skills\SkillRead(),
+			new Skills\SkillCreate(),
+			new Skills\SkillUpdate(),
+			new Skills\SkillDelete(),
+			new Skills\SkillListRevisions(),
+			new Skills\SkillRestoreRevision(),
+
+			// Gutenberg / Block Editor Queue abilities.
+			new Gutenberg\GetContent(),
+			new Gutenberg\WriteContent(),
+			new Gutenberg\GetFinalizationUrl(),
+			new Gutenberg\CreatePadding(),
+			new Gutenberg\AddPaddingChange(),
+			new Gutenberg\EnableFinalization(),
+			new Gutenberg\DeletePadding(),
+			new Gutenberg\DeletePaddingChange(),
+			new Gutenberg\GetPadding(),
+			new Gutenberg\ListPadding(),
+			new Gutenberg\GetFinalizerRuntime(),
+		];
 	}
 }

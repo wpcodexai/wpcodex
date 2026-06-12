@@ -2,7 +2,7 @@
 /**
  * Skills frontmatter parser.
  *
- * @package WPCodex\Skills
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

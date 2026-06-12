@@ -2,7 +2,7 @@
 /**
  * Ability: wpcodex/gutenberg-delete-pending-batch
  *
- * @package WPCodex\Abilities\Gutenberg
+ * @package WPCodex
  * @since   1.0.0
  */
 
@@ -10,8 +10,8 @@ declare( strict_types=1 );
 
 namespace WPCodex\Abilities\Gutenberg;
 
+use WPCodex\Abilities\AbstractAbility;
 use WPCodex\Utils\GutenbergStorage;
-use WPCodex\Utils\Helpers;
 
 /**
  * Class DeletePadding
@@ -20,59 +20,61 @@ use WPCodex\Utils\Helpers;
  *
  * @since 1.0.0
  */
-class DeletePadding {
+class DeletePadding extends AbstractAbility {
 
-	/**
-	 * Register the wpcodex/register_abilities hook.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
-		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+	/** {@inheritDoc} */
+	public function get_category(): string {
+		return 'wpcodex-gutenberg';
 	}
 
-	/**
-	 * Register the ability with the WordPress Abilities API.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function init(): void {
-		wp_register_ability( 'wpcodex/gutenberg-delete-pending-batch', [
-			'label'       => __( 'Delete Gutenberg Pending Batch', 'wpcodex' ),
-			'description' => __( 'Cancels an entire Gutenberg pending batch and all its non-finalized items. Does not modify any target post_content.', 'wpcodex' ),
-			'category'    => 'wpcodex-gutenberg',
+	/** {@inheritDoc} */
+	public function get_name(): string {
+		return 'wpcodex/gutenberg-delete-pending-batch';
+	}
 
-			'input_schema' => [
-				'type'       => 'object',
-				'properties' => [
-					'batch_id' => [
-						'type'        => 'integer',
-						'description' => 'Gutenberg batch id to cancel.',
-					],
+	/** {@inheritDoc} */
+	public function get_label(): string {
+		return __( 'Delete Gutenberg Pending Batch', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_description(): string {
+		return __( 'Cancels an entire Gutenberg pending batch and all its non-finalized items. Does not modify any target post_content.', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_input_schema(): array {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'batch_id' => [
+					'type'        => 'integer',
+					'description' => 'Gutenberg batch id to cancel.',
 				],
-				'required'             => [ 'batch_id' ],
-				'additionalProperties' => false,
 			],
+			'required'             => [ 'batch_id' ],
+			'additionalProperties' => false,
+		];
+	}
 
-			'output_schema' => [ 'type' => 'object' ],
+	/** {@inheritDoc} */
+	public function get_output_schema(): array {
+		return [ 'type' => 'object' ];
+	}
 
-			'execute_callback' => static function ( array $args ): array|\WP_Error {
-				$batch_id = is_scalar( $args['batch_id'] ?? null ) ? (int) $args['batch_id'] : 0;
-				return GutenbergStorage::cancel_batch( $batch_id );
-			},
+	/** {@inheritDoc} */
+	public function get_annotations(): array {
+		return [ 'readonly' => false, 'destructive' => true, 'idempotent' => true ];
+	}
 
-			'permission_callback' => [ Helpers::class, 'ability_permission' ],
+	/** {@inheritDoc} */
+	public function get_instructions(): string {
+		return 'Cancels a Gutenberg batch. It does not alter any target post_content. Use for recovery when a batch is stuck or the agent wants to start over.';
+	}
 
-			'meta' => [
-				'annotations' => [
-					'instructions' => 'Cancels a Gutenberg batch. It does not alter any target post_content. Use for recovery when a batch is stuck or the agent wants to start over.',
-					'readonly'    => false,
-					'destructive' => true,
-					'idempotent'  => true,
-				],
-				'mcp' => [ 'public' => true, 'type' => 'tool' ],
-			],
-		] );
+	/** {@inheritDoc} */
+	public function execute( array $input ): array|\WP_Error {
+		$batch_id = is_scalar( $input['batch_id'] ?? null ) ? (int) $input['batch_id'] : 0;
+		return GutenbergStorage::cancel_batch( $batch_id );
 	}
 }

@@ -1,5 +1,8 @@
 /**
  * Copy-to-clipboard for the Connect page prompt textarea.
+ *
+ * @file  src/admin/components/copy-button.js
+ * @since 1.0.0
  */
 
 document.addEventListener( 'DOMContentLoaded', () => {

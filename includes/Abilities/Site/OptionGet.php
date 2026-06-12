@@ -2,61 +2,77 @@
 /**
  * Ability: wpcodex/option-get
  *
- * @package WPCodex\Abilities
+ * @package WPCodex
+ * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
 namespace WPCodex\Abilities\Site;
 
-use WPCodex\Utils\Helpers;
+use WPCodex\Abilities\AbstractAbility;
 
-class OptionGet {
-	public function __construct() {
-        add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
-    }
-	public function init(): void {
-		wp_register_ability( 'wpcodex/option-get', [
-			'label'       => __( 'Get Option', 'wpcodex' ),
-			'description' => __( 'Get a WordPress option value by name. Returns the value as JSON.', 'wpcodex' ),
-			'category'    => 'wpcodex',
+/**
+ * Class OptionGet
+ *
+ * @since 1.0.0
+ */
+class OptionGet extends AbstractAbility {
 
-			'input_schema' => [
-				'type'       => 'object',
-				'properties' => [
-					'option_name' => [
-						'type'        => 'string',
-						'description' => 'The WordPress option name.',
-					],
-					'default' => [
-						'type'        => 'string',
-						'description' => 'Default value if the option does not exist.',
-						'default'     => '',
-					],
+	/** {@inheritDoc} */
+	public function get_name(): string {
+		return 'wpcodex/option-get';
+	}
+
+	/** {@inheritDoc} */
+	public function get_label(): string {
+		return __( 'Get Option', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_description(): string {
+		return __( 'Get a WordPress option value by name. Returns the value as JSON.', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_input_schema(): array {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'option_name' => [
+					'type'        => 'string',
+					'description' => 'The WordPress option name.',
 				],
-				'required'   => [ 'option_name' ],
+				'default' => [
+					'type'        => 'string',
+					'description' => 'Default value if the option does not exist.',
+					'default'     => '',
+				],
 			],
+			'required'   => [ 'option_name' ],
+		];
+	}
 
-			'output_schema' => [
-				'type'        => 'string',
-				'description' => 'JSON-encoded option value.',
-			],
+	/** {@inheritDoc} */
+	public function get_output_schema(): array {
+		return [
+			'type'        => 'string',
+			'description' => 'JSON-encoded option value.',
+		];
+	}
 
-			'execute_callback' => static function ( array $args ): string|\WP_Error {
-				if ( empty( $args['option_name'] ) || ! is_string( $args['option_name'] ) ) {
-					return new \WP_Error( 'wpcodex_invalid_input', __( 'option_name must be a non-empty string.', 'wpcodex' ) );
-				}
-				$default = isset( $args['default'] ) ? $args['default'] : '';
-				$value   = get_option( sanitize_key( $args['option_name'] ), $default );
-				return wp_json_encode( $value, JSON_PRETTY_PRINT ) ?: 'null';
-			},
+	/** {@inheritDoc} */
+	public function get_annotations(): array {
+		return [ 'readonly' => true, 'destructive' => false, 'idempotent' => true ];
+	}
 
-			'permission_callback' => [ Helpers::class, 'ability_permission' ],
-
-			'meta' => [
-				'annotations' => [ 'readonly' => true, 'destructive' => false, 'idempotent' => true ],
-				'mcp'         => [ 'public' => true, 'type' => 'tool' ],
-			],
-		] );
+	/** {@inheritDoc} */
+	public function execute( array $input ): string|\WP_Error {
+		if ( empty( $input['option_name'] ) || ! is_string( $input['option_name'] ) ) {
+			return new \WP_Error( 'wpcodex_invalid_input', __( 'option_name must be a non-empty string.', 'wpcodex' ) );
+		}
+		$default = $input['default'] ?? '';
+		$value   = get_option( sanitize_key( $input['option_name'] ), $default );
+		return wp_json_encode( $value, JSON_PRETTY_PRINT ) ?: 'null';
 	}
 }

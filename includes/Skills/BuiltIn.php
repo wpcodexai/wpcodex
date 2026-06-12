@@ -5,7 +5,7 @@
  * Registered with the wpcodex_skill_sources filter at priority 10 so built-ins
  * appear before user skills in the catalog.
  *
- * @package WPCodex\Skills
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

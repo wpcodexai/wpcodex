@@ -2,7 +2,7 @@
 /**
  * CLI Runner — WP-CLI subprocess wrapper.
  *
- * @package WPCodex\Runner
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

@@ -6,7 +6,7 @@
  * (e.g. curl) can use to upload files directly into the WordPress filesystem
  * without sending the file through the MCP JSON transport.
  *
- * @package WPCodex\REST
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
@@ -47,10 +47,6 @@ class UploadEndpoint {
 			]
 		);
 	}
-
-	// -------------------------------------------------------------------------
-	// Token helpers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Sign an upload-link payload into a bearer token.
@@ -117,10 +113,6 @@ class UploadEndpoint {
 		return $payload;
 	}
 
-	// -------------------------------------------------------------------------
-	// REST handler
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Handle a signed upload request.
 	 *
@@ -176,9 +168,6 @@ class UploadEndpoint {
 		];
 	}
 
-	// -------------------------------------------------------------------------
-	// Destination preparation
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Resolve and validate the upload destination from a verified token payload.
@@ -234,9 +223,6 @@ class UploadEndpoint {
 		];
 	}
 
-	// -------------------------------------------------------------------------
-	// Stream handling
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Open the uploaded file as a stream (multipart or raw body).
@@ -395,10 +381,6 @@ class UploadEndpoint {
 		return $bytes_written;
 	}
 
-	// -------------------------------------------------------------------------
-	// Path resolution & sandbox enforcement
-	// -------------------------------------------------------------------------
-
 	/**
 	 * Resolve a path and ensure it stays within ABSPATH.
 	 *
@@ -498,10 +480,6 @@ class UploadEndpoint {
 
 		return $dirs_created;
 	}
-
-	// -------------------------------------------------------------------------
-	// Misc helpers
-	// -------------------------------------------------------------------------
 
 	/**
 	 * Extract the upload token from the request (custom header or Bearer).

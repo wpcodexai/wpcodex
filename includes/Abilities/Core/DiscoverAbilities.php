@@ -1,32 +1,136 @@
 <?php
 /**
- * Ability: wpcodex/discover-abilities
+ * Ability: mcp-adapter/discover-abilities
  *
  * Replaces the MCP Adapter's built-in mcp-adapter/discover-abilities so the
  * response includes WPCodex environment instructions and the skill catalog.
  * Agents read this at session start and immediately know what tools and skills
  * are available without a separate tool call.
  *
- * @package WPCodex\Abilities
+ * @package WPCodex
  */
 
 declare( strict_types=1 );
 
 namespace WPCodex\Abilities\Core;
 
+use WPCodex\Abilities\AbstractAbility;
 use WPCodex\Skills\Sources;
-use WPCodex\Utils\Helpers;
 
-class DiscoverAbilities {
-	public function __construct() {
-		add_action( 'wpcodex/register_abilities', [ $this, 'init' ] );
+class DiscoverAbilities extends AbstractAbility {
+
+	/** {@inheritDoc} */
+	public function get_name(): string {
+		return 'mcp-adapter/discover-abilities';
 	}
 
-	public function init(): void {
+	/** {@inheritDoc} */
+	public function get_label(): string {
+		return __( 'Discover Abilities', 'wpcodex' );
+	}
+
+	/** {@inheritDoc} */
+	public function get_description(): string {
+		return __(
+			'Discover all available WordPress abilities. Returns the full ability list plus WPCodex environment instructions and skill catalog. Call this at the start of every session.',
+			'wpcodex'
+		);
+	}
+
+	/** {@inheritDoc} */
+	public function get_input_schema(): array {
+		return [
+			'type'       => 'object',
+			'properties' => new \stdClass(),
+		];
+	}
+
+	/** {@inheritDoc} */
+	public function get_output_schema(): array {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'instructions' => [
+					'type'        => 'string',
+					'description' => 'WPCodex environment instructions and skill catalog for this session.',
+				],
+				'abilities'    => [
+					'type'  => 'array',
+					'items' => [
+						'type'       => 'object',
+						'properties' => [
+							'name'        => [ 'type' => 'string' ],
+							'label'       => [ 'type' => 'string' ],
+							'description' => [ 'type' => 'string' ],
+						],
+						'required' => [ 'name', 'label', 'description' ],
+					],
+				],
+			],
+			'required' => [ 'instructions', 'abilities' ],
+		];
+	}
+
+	/** {@inheritDoc} */
+	public function get_annotations(): array {
+		return [ 'readonly' => true, 'destructive' => false, 'idempotent' => true ];
+	}
+
+	/**
+	 * Custom permission callback: returns a WP_Error on auth failure so the
+	 * MCP adapter can return the correct HTTP status code.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public function check_permission(): bool|\WP_Error {
+		if ( ! is_user_logged_in() ) {
+			return new \WP_Error( 'wpcodex_not_authenticated', 'Authentication required.', [ 'status' => 401 ] );
+		}
+		/** @var string $cap */
+		$cap = apply_filters( 'wpcodex_discover_abilities_capability', 'read' );
+		if ( ! current_user_can( $cap ) ) {
+			return new \WP_Error( 'wpcodex_insufficient_capability', 'Insufficient capability.', [ 'status' => 403 ] );
+		}
+		return true;
+	}
+
+	/**
+	 * @param array<string, mixed> $input
+	 * @return array<string, mixed>
+	 */
+	public function execute( array $input ): array {
+		// Build ability list — only public tool-type abilities.
+		$ability_list = [];
+		if ( function_exists( 'wp_get_abilities' ) ) {
+			foreach ( wp_get_abilities() as $ability ) {
+				if ( ! ( $ability instanceof \WP_Ability ) ) {
+					continue;
+				}
+				$meta = $ability->get_meta();
+				if ( ! ( $meta['mcp']['public'] ?? false ) ) {
+					continue;
+				}
+				if ( ( $meta['mcp']['type'] ?? 'tool' ) !== 'tool' ) {
+					continue;
+				}
+				$ability_list[] = [
+					'name'        => $ability->get_name(),
+					'label'       => $ability->get_label(),
+					'description' => $ability->get_description(),
+				];
+			}
+		}
+
+		return [
+			'instructions' => self::build_instructions(),
+			'abilities'    => $ability_list,
+		];
+	}
+
+	public function register(): void {
 		// wp_get_ability( 'name' ) calls WP_Abilities_Registry::get_registered()
 		// which triggers _doing_it_wrong() in WP 6.9 when the ability doesn't exist.
-		// The safe way to check existence is via wp_get_abilities() — it returns
-		// the full registry array without any per-key error triggering.
+		// The safe way to check existence is via wp_get_abilities().
 		$registered = function_exists( 'wp_get_abilities' ) ? wp_get_abilities() : [];
 
 		// Unregister the MCP Adapter's default so we can replace it.
@@ -42,88 +146,7 @@ class DiscoverAbilities {
 			return;
 		}
 
-		wp_register_ability( 'mcp-adapter/discover-abilities', [
-			'label'       => __( 'Discover Abilities', 'wpcodex' ),
-			'description' => __(
-				'Discover all available WordPress abilities. Returns the full ability list plus WPCodex environment instructions and skill catalog. Call this at the start of every session.',
-				'wpcodex'
-			),
-			'category'    => 'wpcodex',
-
-			'input_schema' => [
-				'type'       => 'object',
-				'properties' => new \stdClass(),
-			],
-
-			'output_schema' => [
-				'type'       => 'object',
-				'properties' => [
-					'instructions' => [
-						'type'        => 'string',
-						'description' => 'WPCodex environment instructions and skill catalog for this session.',
-					],
-					'abilities'    => [
-						'type'  => 'array',
-						'items' => [
-							'type'       => 'object',
-							'properties' => [
-								'name'        => [ 'type' => 'string' ],
-								'label'       => [ 'type' => 'string' ],
-								'description' => [ 'type' => 'string' ],
-							],
-							'required' => [ 'name', 'label', 'description' ],
-						],
-					],
-				],
-				'required' => [ 'instructions', 'abilities' ],
-			],
-
-			'execute_callback' => static function (): array {
-				// Build ability list — only public tool-type abilities.
-				$ability_list = [];
-				if ( function_exists( 'wp_get_abilities' ) ) {
-					foreach ( wp_get_abilities() as $ability ) {
-						if ( ! ( $ability instanceof \WP_Ability ) ) {
-							continue;
-						}
-						$meta = $ability->get_meta();
-						if ( ! ( $meta['mcp']['public'] ?? false ) ) {
-							continue;
-						}
-						if ( ( $meta['mcp']['type'] ?? 'tool' ) !== 'tool' ) {
-							continue;
-						}
-						$ability_list[] = [
-							'name'        => $ability->get_name(),
-							'label'       => $ability->get_label(),
-							'description' => $ability->get_description(),
-						];
-					}
-				}
-
-				return [
-					'instructions' => self::build_instructions(),
-					'abilities'    => $ability_list,
-				];
-			},
-
-			'permission_callback' => static function (): bool|\WP_Error {
-				if ( ! is_user_logged_in() ) {
-					return new \WP_Error( 'wpcodex_not_authenticated', 'Authentication required.', [ 'status' => 401 ] );
-				}
-				/** @var string $cap */
-				$cap = apply_filters( 'wpcodex_discover_abilities_capability', 'read' );
-				if ( ! current_user_can( $cap ) ) {
-					return new \WP_Error( 'wpcodex_insufficient_capability', 'Insufficient capability.', [ 'status' => 403 ] );
-				}
-				return true;
-			},
-
-			'meta' => [
-				'annotations' => [ 'readonly' => true, 'destructive' => false, 'idempotent' => true ],
-				'mcp'         => [ 'public' => true, 'type' => 'tool' ],
-			],
-		] );
+		wp_register_ability( $this->get_name(), $this->get_config() );
 	}
 
 	/**

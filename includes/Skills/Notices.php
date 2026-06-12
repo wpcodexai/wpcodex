@@ -2,7 +2,7 @@
 /**
  * Skills admin notices — surfaces an MCP-reload reminder after skill changes.
  *
- * @package WPCodex\Skills
+ * @package WPCodex
  */
 
 declare( strict_types=1 );

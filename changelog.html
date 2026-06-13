@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog — WPCodex</title>
+<meta name="description" content="WPCodex release history — new features, fixes, and breaking changes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="container">
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;margin-bottom:16px;">Changelog</span>
+    <h1>What's new in WPCodex</h1>
+    <p>Every release, documented. Subscribe to the <a href="news.html" style="color:var(--light-blue);">newsletter</a> for announcements.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:800px;">
+
+    <div class="changelog-entry">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;">
+        <h3>v1.0.0 — First Stable Release</h3>
+        <span class="tag tag-new">New</span>
+      </div>
+      <div class="date">June 13, 2026</div>
+      <ul>
+        <li>Initial stable release of WPCodex</li>
+        <li>Registered 10 core MCP abilities: <code>php-execute</code>, <code>wpcli-run</code>, <code>db-query</code>, <code>file-read</code>, <code>file-write</code>, <code>file-list</code>, <code>site-info</code>, <code>option-get</code>, <code>option-set</code>, <code>post-query</code></li>
+        <li>Skills system: create, read, update, delete, and list playbooks stored in the database</li>
+        <li>Agentic skills (loaded at session start) and prompt skills (surfaced in AI interfaces)</li>
+        <li>WordPress Application Password authentication on all MCP endpoints</li>
+        <li><code>manage_options</code> capability check on every ability</li>
+        <li>Atomic file writes with <code>.bak</code> backup on <code>file-write</code></li>
+        <li>Disabled by default — requires <code>WPCODEX_ENABLE_MCP</code> constant in <code>wp-config.php</code></li>
+        <li>WordPress Abilities API integration via <code>wordpress/mcp-adapter</code></li>
+        <li><code>wp_codex_abilities</code> filter for third-party ability registration</li>
+        <li>PHPStan level 8 compliance throughout</li>
+        <li>Full PHPUnit test coverage for all abilities and runners</li>
+        <li>Admin UI: Skills management page, settings, and MCP connection info</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry" style="border-left-color:var(--gray);">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;">
+        <h3>v0.9.0 — Release Candidate</h3>
+        <span class="tag tag-fix">Fix</span>
+        <span class="tag tag-perf">Perf</span>
+      </div>
+      <div class="date">May 30, 2026</div>
+      <ul>
+        <li>Fixed: <code>file-write</code> could overwrite without creating a backup if target directory was non-writable</li>
+        <li>Fixed: <code>wpcli-run</code> timeout not applied when WP-CLI path was resolved via PATH environment</li>
+        <li>Improved: <code>db-query</code> now returns column names even on empty result sets</li>
+        <li>Performance: <code>site-info</code> response cached per-request to avoid redundant filesystem calls</li>
+        <li>Added: <code>wpcodex_after_activate</code> and <code>wpcodex_after_deactivate</code> action hooks</li>
+        <li>Docs: added ability reference and Skills system docs to README</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry" style="border-left-color:var(--gray);">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;">
+        <h3>v0.8.0 — Skills System Beta</h3>
+        <span class="tag tag-new">New</span>
+      </div>
+      <div class="date">May 10, 2026</div>
+      <ul>
+        <li>Introduced Skills system: database-backed Markdown playbooks for agents</li>
+        <li>Added <code>skill-list</code>, <code>skill-read</code>, <code>skill-create</code>, <code>skill-update</code>, <code>skill-delete</code> abilities</li>
+        <li>Skills admin page added to WordPress admin menu</li>
+        <li><code>enable_agentic</code> and <code>enable_prompt</code> flags on skills</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry" style="border-left-color:var(--gray);">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px;">
+        <h3>v0.5.0 — Core Abilities Alpha</h3>
+        <span class="tag tag-new">New</span>
+        <span class="tag tag-break">Breaking</span>
+      </div>
+      <div class="date">April 18, 2026</div>
+      <ul>
+        <li>First working implementation of core abilities via WordPress Abilities API</li>
+        <li>MCP transport over WordPress REST API (<code>/wp-json/wpcodex/v1/mcp</code>)</li>
+        <li>Breaking: renamed ability namespace from <code>novamira/*</code> to <code>wpcodex/*</code></li>
+        <li>Authentication switched from API keys to WordPress Application Passwords</li>
+        <li>Added <code>WPCODEX_ENABLE_MCP</code> constant guard</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<script src="components.js"></script>
+</body>
+</html>

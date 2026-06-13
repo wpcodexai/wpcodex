@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — WPCodex</title>
+<meta name="description" content="Get help with WPCodex — documentation, community forums, and priority support for Pro users.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="dark-style.css">
+<style>.faq-q svg{width:20px;height:20px;flex-shrink:0;}</style>
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="container">
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;margin-bottom:16px;">Support</span>
+    <h1>How can we help?</h1>
+    <p>Find your answer in the docs, ask the community, or get priority help on Pro.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <div class="grid-3" style="margin-bottom:72px;">
+
+      <div class="support-card">
+        <div class="support-icon">📚</div>
+        <h3>Documentation</h3>
+        <p>Comprehensive guides, ability references, and code examples covering everything from installation to custom ability development.</p>
+        <a href="docs.html" class="btn btn-primary">Read the Docs</a>
+      </div>
+
+      <div class="support-card" style="border-color:var(--blue);">
+        <div class="support-icon">⚡</div>
+        <h3>Quick Start</h3>
+        <p>New to WPCodex? The Quick Start guide walks you from zero to a connected agent in under 5 minutes, with copy-paste config snippets.</p>
+        <a href="quickstart.html" class="btn btn-primary">Quick Start →</a>
+      </div>
+
+      <div class="support-card">
+        <div class="support-icon">🐙</div>
+        <h3>GitHub Issues</h3>
+        <p>Found a bug or have a feature request? Open an issue on GitHub. Community contributors and the core team monitor issues actively.</p>
+        <a href="https://github.com/wpcodexai/wpcodex/issues" target="_blank" class="btn btn-dark">Open an Issue</a>
+      </div>
+
+      <div class="support-card">
+        <div class="support-icon">💬</div>
+        <h3>Community Forum</h3>
+        <p>Ask questions, share what you've built, and get help from other WPCodex users. Free for everyone.</p>
+        <a href="#" class="btn btn-outline">Join the Community</a>
+      </div>
+
+      <div class="support-card">
+        <div class="support-icon">📧</div>
+        <h3>Email Support</h3>
+        <p>Pro subscribers get priority email support with responses within one business day from the WPCodex team.</p>
+        <a href="mailto:support@wpcodex.com" class="btn btn-outline">Email Us</a>
+      </div>
+
+      <div class="support-card">
+        <div class="support-icon">💼</div>
+        <h3>Agency / Enterprise</h3>
+        <p>Dedicated Slack support, SLA, custom ability development, and onboarding calls for Agency plan customers.</p>
+        <a href="mailto:sales@wpcodex.com" class="btn btn-outline">Contact Sales</a>
+      </div>
+
+    </div>
+
+    <!-- Common issues -->
+    <div style="max-width:720px;margin:0 auto;">
+      <h2 style="margin-bottom:32px;text-align:center;">Common issues</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">"Cannot connect to MCP server" error
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="faq-a">Check that (1) <code>WPCODEX_ENABLE_MCP</code> is defined and <code>true</code> in wp-config.php, (2) the REST API is accessible (not blocked by a security plugin or WAF), (3) your credentials are correct, and (4) the application password hasn't expired or been revoked.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">HTTP 403 Forbidden on all ability calls
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="faq-a">The authenticating user needs the <code>manage_options</code> capability. Ensure your WordPress account is an Administrator. Also check that Application Passwords haven't been disabled by a security plugin (e.g., some configurations of Wordfence or All In One WP Security disable them).</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">WP-CLI commands return "command not found"
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="faq-a">WP-CLI must be installed and accessible on the server's PATH for the web server process. Some shared hosts restrict CLI access. If WP-CLI isn't available, all other abilities still work over HTTP.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Skills aren't loading at session start
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="faq-a">Skills with <code>enable_agentic: true</code> are loaded by the agent, not by WPCodex automatically. Your agent's system prompt or session protocol must call <code>wpcodex/skill-list</code> and then <code>wpcodex/skill-read</code> for each agentic skill. See the <a href="docs.html" style="color:var(--light-blue);">Session Start Protocol in the docs</a>.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">PHP execute returns a blank result
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="faq-a">Your code must explicitly return a value. PHP code that only echoes output will return an empty string. Use <code>return</code> to pass data back: <code>return get_bloginfo('name');</code></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script src="dark-components.js"></script>
+</body>
+</html>

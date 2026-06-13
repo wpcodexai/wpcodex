@@ -1,0 +1,196 @@
+/* ============================================================
+   WPCodex Dark — Dark Mode Stylesheet
+   Imports the shared light stylesheet then overrides colors.
+   Brand: #1e1e1e | #3858e9 | #7b90ff | #ECE8E2
+   ============================================================ */
+
+@import url('../style.css');
+
+/* ── Dark color tokens ── */
+:root {
+  --white:      #141414;
+  --gray-light: #252525;
+  --border:     rgba(255,255,255,0.09);
+  --gray:       rgba(224,220,215,0.55);
+  --shadow:     0 4px 24px rgba(0,0,0,.45);
+  --shadow-lg:  0 8px 48px rgba(0,0,0,.55);
+}
+
+/* ── Base ── */
+body  { background: #141414; color: #f0ede8; }
+p     { color: rgba(224,220,215,.65) !important; }
+h1, h2, h3, h4 { color: #f0ede8 !important; }
+code  { color: var(--light-blue); }
+
+/* ── Nav ── */
+.site-nav {
+  background: rgba(18,18,18,.95);
+  border-bottom-color: rgba(255,255,255,.08);
+}
+.nav-logo { color: #f0ede8; }
+.nav-links a { color: rgba(224,220,215,.7); }
+.nav-links a:hover, .nav-links a.active {
+  background: rgba(120,150,255,.12);
+  color: var(--light-blue);
+}
+.nav-hamburger span { background: #f0ede8; }
+.mobile-nav {
+  background: #181818;
+  border-top-color: rgba(255,255,255,.08);
+}
+.mobile-nav a { color: rgba(224,220,215,.7); }
+.mobile-nav a:hover { background: #252525; color: var(--light-blue); }
+
+/* ── Buttons ── */
+.btn-dark  { background: #2a2a2a; color: #f0ede8; }
+.btn-dark:hover { background: #383838; }
+.btn-outline { border-color: var(--light-blue); color: var(--light-blue); }
+.btn-outline:hover { background: var(--light-blue); color: #141414; }
+
+/* ── Badge ── */
+.badge-cream { background: #2a2a2a; color: rgba(224,220,215,.8); }
+
+/* ── Cards ── */
+.card { background: #1e1e1e; border-color: rgba(255,255,255,.09); }
+.card p { color: rgba(224,220,215,.55) !important; }
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #0b0b0b 0%, #12122a 100%);
+}
+.hero::before {
+  background: radial-gradient(circle, rgba(56,88,233,.2) 0%, transparent 70%);
+}
+.hero-desc { color: rgba(224,220,215,.65); }
+
+/* ── Sections ── */
+.section-cream { background: #1c1c1c; }
+.section-header p { color: rgba(224,220,215,.55) !important; }
+
+/* ── Trust logos ── */
+.logo-pill { border-color: rgba(255,255,255,.12); color: rgba(224,220,215,.55); }
+
+/* ── Pricing ── */
+.pricing-card { background: #1e1e1e; border-color: rgba(255,255,255,.09); }
+.pricing-card.featured { border-color: var(--blue); }
+.price { color: #f0ede8; }
+.pricing-features li {
+  border-bottom-color: rgba(255,255,255,.09);
+  color: rgba(224,220,215,.75);
+}
+
+/* ── Compare table ── */
+.compare-table th {
+  background: #252525;
+  color: #f0ede8;
+}
+.compare-table td { color: rgba(224,220,215,.75); }
+.compare-table th,
+.compare-table td { border-bottom-color: rgba(255,255,255,.09); }
+.compare-table tr:hover td { background: rgba(56,88,233,.07); }
+
+/* ── FAQ ── */
+.faq-item { border-bottom-color: rgba(255,255,255,.09); }
+.faq-q { color: #f0ede8; }
+.faq-a { color: rgba(224,220,215,.65) !important; }
+
+/* ── Steps ── */
+.step-body p { color: rgba(224,220,215,.65) !important; }
+
+/* ── Tool cards ── */
+.tool-card {
+  background: #1e1e1e !important;
+  border-color: rgba(255,255,255,.09) !important;
+}
+.tool-card h3 { color: #f0ede8; }
+.tool-card p  { color: rgba(224,220,215,.55) !important; }
+.param        { background: #252525 !important; color: rgba(224,220,215,.75) !important; }
+.param.req    { background: rgba(56,88,233,.12) !important; color: var(--light-blue) !important; }
+.category-label { color: rgba(224,220,215,.4) !important; }
+
+/* ── Security cards ── */
+.security-card {
+  background: #1e1e1e;
+  border-color: rgba(255,255,255,.09);
+}
+.security-card h3 { color: #f0ede8; }
+.security-card p  { color: rgba(224,220,215,.55) !important; }
+.checklist li { color: rgba(224,220,215,.75) !important; }
+
+/* ── Download cards ── */
+.dl-card {
+  background: #1e1e1e;
+  border-color: rgba(255,255,255,.09);
+}
+.dl-card h3 { color: #f0ede8; }
+
+/* ── Quickstart steps ── */
+.qs-step {
+  background: #1e1e1e;
+  border-color: rgba(255,255,255,.09);
+}
+
+/* ── Changelog ── */
+.changelog-entry .date { color: rgba(224,220,215,.4) !important; }
+.changelog-entry ul   { color: rgba(224,220,215,.65) !important; }
+
+/* ── Docs ── */
+.docs-sidebar h5 { color: rgba(224,220,215,.4); }
+.docs-sidebar a  { color: rgba(224,220,215,.6); }
+.docs-sidebar a:hover,
+.docs-sidebar a.active {
+  background: rgba(120,150,255,.12);
+  color: var(--light-blue);
+}
+.docs-content h2 { border-top-color: rgba(255,255,255,.09); }
+.docs-content p  { color: rgba(224,220,215,.65) !important; }
+.docs-content ul { color: rgba(224,220,215,.65) !important; }
+
+/* ── News ── */
+.news-card {
+  border-color: rgba(255,255,255,.09);
+  background: #1e1e1e;
+}
+.news-body h3  { color: #f0ede8; }
+.news-body p   { color: rgba(224,220,215,.55) !important; }
+.news-meta     { color: rgba(224,220,215,.4) !important; }
+
+/* ── Video ── */
+.video-card { border-color: rgba(255,255,255,.09); }
+.video-info { background: #1e1e1e; }
+.video-info h4  { color: #f0ede8; }
+.video-info span { color: rgba(224,220,215,.4) !important; }
+
+/* ── Support ── */
+.support-card {
+  border-color: rgba(255,255,255,.09);
+  background: #1e1e1e;
+}
+.support-card:hover { border-color: var(--blue); }
+.support-card h3 { color: #f0ede8; }
+.support-card p  { color: rgba(224,220,215,.55) !important; }
+
+/* ── Legal content ── */
+.legal-content h2 { color: #f0ede8; }
+.legal-content p  { color: rgba(224,220,215,.65) !important; }
+.legal-content ul { color: rgba(224,220,215,.65) !important; }
+.legal-content a  { color: var(--light-blue); }
+.updated {
+  background: #252525;
+  color: rgba(224,220,215,.5);
+}
+
+/* ── Cookie table ── */
+.cookie-table th {
+  background: #252525;
+  color: #f0ede8;
+}
+.cookie-table td { color: rgba(224,220,215,.75); }
+.cookie-table th,
+.cookie-table td { border-bottom-color: rgba(255,255,255,.09); }
+
+/* ── Code block — deeper dark ── */
+.code-block { background: #0d0d0d; }
+
+/* ── Footer — slightly deeper ── */
+.site-footer { background: #0d0d0d; }

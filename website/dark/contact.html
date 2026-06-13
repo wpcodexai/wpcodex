@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — WPCodex</title>
+<meta name="description" content="Get in touch with the WPCodex team — support questions, sales enquiries, partnerships, and general feedback.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="dark-style.css">
+<style>
+/* ── Contact layout ─────────────────────────────────── */
+.contact-shell{
+  display:grid;
+  grid-template-columns:1fr 400px;
+  gap:56px;
+  align-items:start;
+  max-width:960px;
+  margin:0 auto;
+}
+@media(max-width:860px){
+  .contact-shell{grid-template-columns:1fr;gap:40px;}
+  .contact-sidebar{order:-1;}
+}
+
+/* Form */
+.contact-form{background:#1e1e1e;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:40px;}
+.contact-form h2{font-size:1.35rem;font-weight:700;margin:0 0 28px;color:#f0ede8;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.form-group label{font-size:.85rem;font-weight:600;color:rgba(240,237,232,.7);}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  padding:10px 14px;
+  border:1.5px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  font-size:.95rem;
+  font-family:inherit;
+  color:#f0ede8;
+  background:#141414;
+  outline:none;
+  transition:border-color .18s;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder{color:rgba(240,237,232,.3);}
+.form-group select option{background:#1e1e1e;color:#f0ede8;}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{border-color:#7b90ff;}
+.form-group textarea{resize:vertical;min-height:140px;}
+.form-submit{margin-top:4px;}
+.form-submit .btn{width:100%;justify-content:center;}
+.form-note{font-size:.8rem;color:rgba(240,237,232,.4);margin-top:12px;text-align:center;}
+
+/* Sidebar cards */
+.contact-sidebar{display:flex;flex-direction:column;gap:20px;}
+.contact-card{background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px 26px;}
+.contact-card .cc-icon{font-size:1.6rem;margin-bottom:10px;}
+.contact-card h4{font-size:.95rem;font-weight:700;margin:0 0 6px;color:#f0ede8;}
+.contact-card p{font-size:.875rem;color:rgba(240,237,232,.55);margin:0 0 14px;line-height:1.55;}
+.contact-card a.cc-link{font-size:.875rem;font-weight:600;color:#7b90ff;text-decoration:none;}
+.contact-card a.cc-link:hover{text-decoration:underline;}
+
+/* Success banner */
+.form-success{display:none;background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.3);border-radius:10px;padding:18px 20px;color:#4ade80;font-size:.9rem;margin-bottom:20px;}
+.form-success.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="page-hero">
+  <div class="container">
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;margin-bottom:16px;">Contact</span>
+    <h1>Get in touch</h1>
+    <p>Questions about WPCodex, Pro plans, or partnerships — we're happy to help.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="contact-shell">
+
+      <!-- Contact form -->
+      <div class="contact-form">
+        <h2>Send us a message</h2>
+        <div class="form-success" id="formSuccess">
+          ✅ Message sent! We'll get back to you within one business day.
+        </div>
+        <form id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Aminul" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Islam">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject">
+              <option value="">Choose a topic…</option>
+              <option value="support">Technical support</option>
+              <option value="pro">Pro / licensing</option>
+              <option value="agency">Agency / Enterprise</option>
+              <option value="partnership">Partnership or integration</option>
+              <option value="bug">Bug report</option>
+              <option value="feature">Feature request</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Describe your question or issue in detail…" required></textarea>
+          </div>
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary btn-lg">Send message</button>
+          </div>
+          <p class="form-note">We typically respond within one business day.</p>
+        </form>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="contact-sidebar">
+
+        <div class="contact-card">
+          <div class="cc-icon">📧</div>
+          <h4>General enquiries</h4>
+          <p>Questions about WPCodex, the plugin, or anything else.</p>
+          <a href="mailto:hello@wpcodex.com" class="cc-link">hello@wpcodex.com</a>
+        </div>
+
+        <div class="contact-card">
+          <div class="cc-icon">⚡</div>
+          <h4>Pro &amp; sales</h4>
+          <p>Licensing, Agency plans, or volume pricing.</p>
+          <a href="mailto:sales@wpcodex.com" class="cc-link">sales@wpcodex.com</a>
+        </div>
+
+        <div class="contact-card">
+          <div class="cc-icon">🔒</div>
+          <h4>Security disclosures</h4>
+          <p>Please report vulnerabilities privately — do not open a public GitHub issue.</p>
+          <a href="mailto:security@wpcodex.com" class="cc-link">security@wpcodex.com</a>
+        </div>
+
+        <div class="contact-card">
+          <div class="cc-icon">🐙</div>
+          <h4>Bug reports &amp; feature requests</h4>
+          <p>Open an issue on GitHub for bugs or feature suggestions.</p>
+          <a href="https://github.com/wpcodexai/wpcodex/issues" target="_blank" class="cc-link">Open an issue →</a>
+        </div>
+
+      </div>
+    </div><!-- /.contact-shell -->
+  </div>
+</section>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('formSuccess').classList.add('show');
+  this.reset();
+  this.scrollIntoView({behavior:'smooth', block:'start'});
+});
+</script>
+<script src="dark-components.js"></script>
+</body>
+</html>

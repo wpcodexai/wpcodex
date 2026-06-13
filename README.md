@@ -1,8 +1,8 @@
 # WPCodex
 
-> **The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.**
+> **AI agent tools for WordPress — read, inspect, manage, and build via MCP.**
 
-WPCodex is a WordPress plugin that turns your WordPress installation into a fully programmable environment for AI agents. It exposes PHP execution, WP-CLI commands, database access, and filesystem operations through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/), so any compatible AI client can build, debug, and manage your site in real time.
+WPCodex connects AI agents to your WordPress site through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Any compatible AI client — Claude, Cursor, Codex, Windsurf, GitHub Copilot, and more — can inspect and interact with your site in real time using WordPress Application Passwords.
 
 No proxy. No hosted service. The AI client connects directly to your server over HTTPS.
 
@@ -14,7 +14,6 @@ No proxy. No hosted service. The AI client connects directly to your server over
 |---|---|
 | WordPress | 6.9+ |
 | PHP | 8.0+ |
-| WP-CLI | 2.8+ *(optional, for CLI tools)* |
 | HTTPS | Required |
 
 WordPress 6.9+ is required because WPCodex uses the **WordPress Abilities API** (`wp_register_ability()`), which is part of WordPress core since 6.9.
@@ -38,7 +37,7 @@ Go to **WPCodex → Connect**. Copy the MCP configuration for your client and pa
 
 ## MCP Abilities
 
-WPCodex registers the following abilities via the WordPress Abilities API. Each ability is exposed as an MCP tool through the bundled `wordpress/mcp-adapter`.
+WPCodex registers the following abilities via the WordPress Abilities API. Each ability is exposed as an MCP tool through the bundled `wordpress/mcp-adapter`. All abilities are authenticated via **WordPress Application Passwords** over HTTPS.
 
 ### Free abilities
 
@@ -71,23 +70,20 @@ WPCodex registers the following abilities via the WordPress Abilities API. Each 
 | `wpcodex/file-edit` | Find-and-replace in a file |
 | `wpcodex/file-delete` | Delete a file or directory |
 
-All abilities are authenticated via **WordPress Application Passwords** over HTTPS. See [SECURITY.md](./SECURITY.md).
+Pro abilities are injected via the `wp_codex_abilities` filter when WPCodex Pro is active. They appear in **WPCodex → Ability Settings** alongside free abilities and can be enabled or disabled individually. See [SECURITY.md](./SECURITY.md).
 
 ---
 
 ## Security Model
 
-WPCodex is designed for **development and staging environments**.
-
 - Authentication uses **WordPress Application Passwords** — native WordPress, revocable per client
 - Every request validated by the `wordpress/mcp-adapter` against the WordPress user table
-- Each ability has a `permission_callback` requiring `manage_options` capability
-- PHP execution uses a temp-file sandbox with automatic cleanup
-- File writes are atomic and create `.bak` backups before overwriting
-- Subprocess env vars are sanitised before WP-CLI calls
+- Each ability has a `permission_callback` requiring `manage_options` capability (super-admin on Multisite)
 - HTTPS enforced — plugin warns if SSL is not detected
+- The sandbox directory (`wp-content/wpcodex-sandbox/`) isolates PHP snippets; files that cause fatal errors are auto-disabled
+- PHP file uploads via `create-upload-link` are restricted to the sandbox directory
 
-**Do not activate on production without understanding what arbitrary PHP execution means.** See [SECURITY.md](./SECURITY.md).
+**Pro abilities** (PHP execution, WP-CLI, direct SQL, filesystem writes) are intended for development and staging environments. See [SECURITY.md](./SECURITY.md).
 
 ---
 
@@ -131,25 +127,34 @@ wpcodex/
 │   │   ├── SettingsPage.php           # Settings page (ability toggles)
 │   │   └── ConnectPage.php            # Connect page (Application Password setup)
 │   ├── Abilities/                     # One file per ability — each calls wp_register_ability()
-│   │   ├── PhpExecute.php
-│   │   ├── WpCliRun.php
-│   │   ├── DbQuery.php
-│   │   ├── FileRead.php
-│   │   ├── FileWrite.php
-│   │   ├── FileList.php
-│   │   ├── SiteInfo.php
-│   │   ├── OptionGet.php
-│   │   ├── OptionSet.php
-│   │   ├── PostQuery.php
-│   │   ├── SkillList.php
-│   │   ├── SkillRead.php
-│   │   ├── SkillCreate.php
-│   │   ├── SkillUpdate.php
-│   │   └── SkillDelete.php
+│   │   ├── Core/
+│   │   │   └── DiscoverAbilities.php
+│   │   ├── Files/
+│   │   │   ├── FileRead.php
+│   │   │   ├── FileList.php
+│   │   │   ├── FileDisable.php
+│   │   │   ├── FileEnable.php
+│   │   │   └── CreateUploadLink.php
+│   │   ├── Site/
+│   │   │   ├── SiteInfo.php
+│   │   │   ├── OptionGet.php
+│   │   │   ├── OptionSet.php
+│   │   │   ├── PostQuery.php
+│   │   │   └── CreateAdminAccessLink.php
+│   │   ├── Skills/
+│   │   │   ├── SkillList.php
+│   │   │   ├── SkillRead.php
+│   │   │   ├── SkillCreate.php
+│   │   │   ├── SkillUpdate.php
+│   │   │   ├── SkillDelete.php
+│   │   │   ├── SkillListRevisions.php
+│   │   │   └── SkillRestoreRevision.php
+│   │   ├── Gutenberg/                 # Block Editor Queue abilities
+│   │   └── Themes/
 │   ├── Runner/
-│   │   ├── PhpRunner.php              # Temp-file PHP sandbox
-│   │   ├── CliRunner.php              # WP-CLI proc_open wrapper
-│   │   ├── DbRunner.php               # $wpdb query interface
+│   │   ├── PhpRunner.php              # Temp-file PHP sandbox (used by Pro)
+│   │   ├── CliRunner.php              # WP-CLI proc_open wrapper (used by Pro)
+│   │   ├── DbRunner.php               # $wpdb query interface (used by Pro)
 │   │   └── FileManager.php            # Atomic read/write/list
 │   ├── Skills/
 │   │   ├── Repository.php             # DB read/write for skill records
@@ -167,19 +172,10 @@ wpcodex/
 │       └── frontend.scss              # Frontend styles
 │
 ├── assets/                            # Compiled output (committed, not edited directly)
-│   ├── admin/
-│   │   ├── admin.js
-│   │   ├── admin.css
-│   │   └── admin.asset.php
-│   └── frontend/
-│       ├── frontend.js
-│       ├── frontend.css
-│       └── frontend.asset.php
 │
 ├── tests/
 │   ├── bootstrap.php
 │   ├── Unit/
-│   │   └── AbilityTest.php
 │   └── Integration/
 │
 ├── docs/
@@ -233,41 +229,22 @@ npm run build        # webpack build (must pass before committing)
 
 All PRs must pass all checks above. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-### Adding a Custom Ability
+### Adding a Free Ability
 
 1. Create `includes/Abilities/YourAbility.php` in namespace `WPCodex\Abilities`
-2. Register on the `wp_abilities_api_init` hook:
+2. Extend `AbstractAbility` and implement all abstract methods
+3. Add it to `Abilities::create_abilities()` in `includes/Abilities/Abilities.php`
+4. Add a unit test in `tests/Unit/Abilities/YourAbilityTest.php`
 
-```php
-add_action( 'wp_abilities_api_init', function (): void {
-    wp_register_ability( 'wpcodex/your-ability', [
-        'label'               => __( 'Your Ability', 'wpcodex' ),
-        'description'         => __( 'What this ability does for the agent.', 'wpcodex' ),
-        'category'            => 'wpcodex',
-        'input_schema'        => [
-            'type'       => 'object',
-            'properties' => [
-                'param' => [ 'type' => 'string', 'description' => 'Parameter description.' ],
-            ],
-            'required'   => [ 'param' ],
-        ],
-        'execute_callback'    => static function ( array $args ): string {
-            // Delegate to a Runner class.
-            return ( new \WPCodex\Runner\YourRunner() )->run( $args['param'] );
-        },
-        'permission_callback' => static fn(): bool => current_user_can( 'manage_options' ),
-        'meta'                => [
-            'mcp' => [ 'public' => true, 'type' => 'tool' ],
-        ],
-    ] );
-} );
-```
+### Adding a Pro Ability
+
+Pro abilities live in [WPCodex Pro](https://wpcodex.ai/pro/) under `includes/Abilities/Pro/`. They extend `WPCodex\Abilities\AbstractAbility` and are injected via the `wp_codex_abilities` filter — the Runner classes (`PhpRunner`, `CliRunner`, `DbRunner`, `FileManager`) remain in the free plugin for Pro to use.
 
 ---
 
 ## Roadmap
 
-See [docs/RND.md](./docs/RND.md) for the full plan, including background job queue, multisite support, read-only mode, and the Pro builder specialisation tier.
+See [docs/RND.md](./docs/RND.md) for the full plan.
 
 ---
 

@@ -98,7 +98,7 @@ final class Plugin {
 			new GutenbergStorage();
 			( new SandboxLoader() )->load();
 		} else {
-			$this->add_mcp_disabled_notice();
+			add_action( 'admin_notices', [ $this, 'add_mcp_disabled_notice' ] );
 		}
 
 		if ( is_admin() ) {
@@ -114,47 +114,47 @@ final class Plugin {
 	 *
 	 * @since 1.0.0
 	 */
-	private function add_mcp_disabled_notice(): void {
-		add_action(
-			'admin_notices',
-			static function (): void {
-				if ( ! current_user_can( 'manage_options' ) ) {
-					return;
-				}
-				echo '<div class="notice notice-info">';
-				echo '<p><strong>';
-				esc_html_e( 'WPCodex — MCP server is disabled (safe by default).', 'wpcodex' );
-				echo '</strong></p><p>';
-				esc_html_e(
-					'To enable the MCP server and give your AI agent access to this site, add the following line to your wp-config.php:',
-					'wpcodex'
-				);
-				echo '</p>';
-				echo '<pre style="background:#f6f7f7;border:1px solid #dcdcde;padding:8px 14px;display:inline-block;border-radius:3px;font-size:13px;">';
-				echo "define( 'WP_CODEX_ENABLE_MCP', true );";
-				echo '</pre>';
-				echo '<p>';
-				echo wp_kses(
-					sprintf(
-						/* translators: %s: documentation URL */
-						__(
-							'This constant must be set intentionally — it activates PHP execution, filesystem access, database queries, and WP-CLI for authenticated AI clients. Only enable it on development or staging sites. ',
-							'wpcodex'
-						),
-						//<a href="%s" target="_blank" rel="noopener noreferrer">Read the documentation →</a>
-						//esc_url( 'https://wpcodex.ai/docs/getting-started' )
-					),
-					[
-						'a' => [
-							'href'   => [],
-							'target' => [],
-							'rel'    => [],
-						],
-					]
-				);
-				echo '</p></div>';
-			}
+	public function add_mcp_disabled_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$screen = get_current_screen();
+		if ( ! $screen || 'toplevel_page_wpcodex' !== $screen->id ) {
+			return;
+		}
+
+		echo '<div class="notice notice-info">';
+		echo '<p><strong>';
+		esc_html_e( 'WPCodex — MCP server is disabled (safe by default).', 'wpcodex' );
+		echo '</strong></p><p>';
+		esc_html_e(
+			'To enable the MCP server and give your AI agent access to this site, add the following line to your wp-config.php:',
+			'wpcodex'
 		);
+		echo '</p>';
+		echo '<pre style="background:#f6f7f7;border:1px solid #dcdcde;padding:8px 14px;display:inline-block;border-radius:3px;font-size:13px;">';
+		echo "define( 'WP_CODEX_ENABLE_MCP', true );";
+		echo '</pre>';
+		echo '<p>';
+		echo wp_kses(
+			sprintf(
+				/* translators: %s: documentation URL */
+				__(
+					'This constant must be set intentionally — it activates PHP execution, filesystem access, database queries, and WP-CLI for authenticated AI clients. Only enable it on development or staging sites. ',
+					'wpcodex'
+				),
+				//<a href="%s" target="_blank" rel="noopener noreferrer">Read the documentation →</a>
+				//esc_url( 'https://wpcodex.ai/docs/getting-started' )
+			),
+			[
+				'a' => [
+					'href'   => [],
+					'target' => [],
+					'rel'    => [],
+				],
+			]
+		);
+		echo '</p></div>';
 	}
 
 	/**

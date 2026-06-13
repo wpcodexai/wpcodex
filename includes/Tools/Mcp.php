@@ -125,6 +125,21 @@ class Mcp {
 			'label'       => __( 'WPCodex General', 'wpcodex' ),
 			'description' => __( 'General-purpose abilities that may be used by WPCodex or other plugins.', 'wpcodex' ),
 		] );
+		
+		// wp_register_ability_category( 'wpcodex-site', [
+		// 	'label'       => __( 'WPCodex Site', 'wpcodex' ),
+		// 	'description' => __( 'Abilities for reading and updating site settings and content.', 'wpcodex' ),
+		// ] );
+
+		// wp_register_ability_category( 'wpcodex-plugins', [
+		// 	'label'       => __( 'WPCodex Plugins', 'wpcodex' ),
+		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'wpcodex' ),
+		// ] );
+
+		// wp_register_ability_category( 'wpcodex-themes', [
+		// 	'label'       => __( 'WPCodex Themes', 'wpcodex' ),
+		// 	'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'wpcodex' ),
+		// ] );
 	}
 
 	/**

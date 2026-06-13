@@ -108,6 +108,9 @@ final class AbilitiesSettingsPage {
 			'wpcodex'        => __( 'WPCodex', 'wpcodex' ),
 			'wpcodex-skills' => __( 'WPCodex Skills', 'wpcodex' ),
 			'wpcodex-gutenberg' => __( 'WPCodex Gutenberg', 'wpcodex' ),
+			'wpcodex-site' => __( 'WPCodex Site', 'wpcodex' ),
+			'wpcodex-plugins' => __( 'Plugins', 'wpcodex' ),
+			'wpcodex-themes' => __( 'Themes', 'wpcodex' ),
 		];
 
 		foreach ( $groups as $category => $items ) {

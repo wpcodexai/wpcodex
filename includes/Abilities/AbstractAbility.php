@@ -9,9 +9,9 @@
  *
  * Pro-plugin extensibility
  * ------------------------
- * A pro plugin adds abilities by filtering 'wpcodex_abilities':
+ * A pro plugin adds abilities by filtering 'wp_codex_abilities':
  *
- *   add_filter( 'wpcodex_abilities', function ( array $abilities ): array {
+ *   add_filter( 'wp_codex_abilities', function ( array $abilities ): array {
  *       $abilities[] = new \MyProPlugin\Abilities\MyProAbility();
  *       return $abilities;
  *   } );

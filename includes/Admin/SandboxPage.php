@@ -18,16 +18,20 @@ final class SandboxPage {
 	/** Option prefix for disabled sandbox files. */
 	private const DISABLED_PREFIX = 'wpcodex_sandbox_disabled_';
 
+	/** Filename of the crash marker inside the sandbox directory. */
+	private const CRASHED_MARKER = '.crashed';
+
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
 		}
 
-		$notices = self::handle_actions();
-		$files   = self::get_sandbox_files();
+		$notices    = self::handle_actions();
+		$files      = self::get_sandbox_files();
+		$is_crashed = file_exists( WPCODEX_SANDBOX_DIR . self::CRASHED_MARKER );
 		?>
 		<div class="wrap wpcodex-wrap" id="wpcodex-sandbox">
-			<div class="wpcodex-page-header">
+			<div class="wpcodex-page-header wpcodex-flex">
 				<h1 class="wpcodex-page-title"><?php esc_html_e( 'Sandbox', 'wpcodex' ); ?></h1>
 			</div>
 			<p class="wpcodex-page-description">
@@ -42,6 +46,24 @@ final class SandboxPage {
 
 			<?php self::render_notices( $notices ); ?>
 
+			<?php if ( $is_crashed ) : ?>
+				<div class="notice notice-error">
+					<p>
+						<strong><?php esc_html_e( 'Safe mode is active.', 'wpcodex' ); ?></strong>
+						<?php esc_html_e( 'A sandbox file caused a fatal error on a previous request. All sandbox files are suspended until you fix or delete the broken file and exit safe mode.', 'wpcodex' ); ?>
+					</p>
+					<p>
+						<a href="<?php echo esc_url( wp_nonce_url(
+							admin_url( 'admin.php?page=wpcodex-sandbox&sandbox_action=exit_safe_mode&file_name=' . rawurlencode( self::CRASHED_MARKER ) ),
+							'wpcodex_sandbox_action',
+							'wpcodex_sandbox_nonce'
+						) ); ?>" class="button button-primary">
+							<?php esc_html_e( 'Exit Safe Mode', 'wpcodex' ); ?>
+						</a>
+					</p>
+				</div>
+			<?php endif; ?>
+
 			<?php if ( empty( $files ) ) : ?>
 				<div class="wpcodex-empty-state">
 					<p><?php esc_html_e( 'The sandbox is empty. PHP files created by the AI agent will appear here.', 'wpcodex' ); ?></p>
@@ -49,7 +71,7 @@ final class SandboxPage {
 			<?php else : ?>
 				<div class="wpcodex-cards">
 					<?php foreach ( $files as $file ) : ?>
-						<?php self::render_file_card( $file ); ?>
+						<?php self::render_file_card( $file, $is_crashed ); ?>
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
@@ -61,6 +83,29 @@ final class SandboxPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_actions(): array {
+		// GET-based actions (exit_safe_mode).
+		if ( isset( $_GET['sandbox_action'], $_GET['wpcodex_sandbox_nonce'] ) ) {
+			check_admin_referer( 'wpcodex_sandbox_action', 'wpcodex_sandbox_nonce' );
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return [];
+			}
+
+			$get_action = sanitize_key( wp_unslash( $_GET['sandbox_action'] ) );
+
+			if ( 'exit_safe_mode' === $get_action ) {
+				$crashed_file = WPCODEX_SANDBOX_DIR . self::CRASHED_MARKER;
+				if ( file_exists( $crashed_file ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+					unlink( $crashed_file );
+				}
+				return [ [ 'type' => 'success', 'message' => __( 'Safe mode deactivated. Sandbox files will load on the next request.', 'wpcodex' ) ] ];
+			}
+
+			return [];
+		}
+
+		// POST-based actions (enable / disable / delete).
 		if ( ! isset( $_POST['wpcodex_sandbox_nonce'] ) ) {
 			return [];
 		}
@@ -146,18 +191,21 @@ final class SandboxPage {
 	/**
 	 * @param array<string, mixed> $file
 	 */
-	private static function render_file_card( array $file ): void {
-		$name     = (string) $file['name'];
-		$enabled  = (bool) $file['enabled'];
-		$size     = (int) $file['size'];
-		$modified = (int) $file['modified'];
+	private static function render_file_card( array $file, bool $is_crashed = false ): void {
+		$name      = (string) $file['name'];
+		$enabled   = (bool) $file['enabled'];
+		$size      = (int) $file['size'];
+		$modified  = (int) $file['modified'];
+		$suspended = $is_crashed;
 		?>
-		<div class="wpcodex-card <?php echo $enabled ? 'is-enabled' : 'is-disabled'; ?>">
+		<div class="wpcodex-card <?php echo $suspended ? 'is-suspended' : ( $enabled ? 'is-enabled' : 'is-disabled' ); ?>">
 			<div class="wpcodex-card__header">
 				<span class="wpcodex-card__name"><?php echo esc_html( $name ); ?></span>
 				<div class="wpcodex-card__badges">
 					<span class="wpcodex-badge wpcodex-badge--php">PHP</span>
-					<?php if ( ! $enabled ) : ?>
+					<?php if ( $suspended ) : ?>
+						<span class="wpcodex-badge wpcodex-badge--warn"><?php esc_html_e( 'Suspended', 'wpcodex' ); ?></span>
+					<?php elseif ( ! $enabled ) : ?>
 						<span class="wpcodex-badge wpcodex-badge--disabled"><?php esc_html_e( 'Disabled', 'wpcodex' ); ?></span>
 					<?php endif; ?>
 				</div>
@@ -172,6 +220,7 @@ final class SandboxPage {
 				);
 				?>
 			</p>
+			<?php if ( ! $suspended ) : ?>
 			<div class="wpcodex-card__actions">
 				<form method="post" action="" style="display:inline;">
 					<?php wp_nonce_field( 'wpcodex_sandbox_action', 'wpcodex_sandbox_nonce' ); ?>
@@ -191,6 +240,7 @@ final class SandboxPage {
 					</button>
 				</form>
 			</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

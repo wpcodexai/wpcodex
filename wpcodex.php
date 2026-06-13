@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       WPCodex
- * Plugin URI:        https://github.com/wpcodex/wpcodex
+ * Plugin URI:        https://github.com/wpcodexai/wpcodex
  * Description:       The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.
  * Version:           0.5.0
  * Requires at least: 6.9

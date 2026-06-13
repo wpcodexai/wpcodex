@@ -312,6 +312,28 @@ final class ConfigurationPage {
 					<p class="description" style="margin:0 0 12px;">
 						<?php esc_html_e( 'Select your AI client to copy the JSON snippet for its config file.', 'wpcodex' ); ?>
 					</p>
+
+					<div class="notice notice-warning inline" style="margin:0 0 14px;">
+						<p style="margin:0;">
+							<strong><?php esc_html_e( 'Node.js 20.1 or higher is required.', 'wpcodex' ); ?></strong>
+							<?php esc_html_e( 'These configs use', 'wpcodex' ); ?>
+							<code>npx</code>
+							<?php esc_html_e( 'to run the MCP transport. Run', 'wpcodex' ); ?>
+							<code>node -v</code>
+							<?php esc_html_e( 'in your terminal to check. If your version is below 20.1, download the latest LTS from', 'wpcodex' ); ?>
+							<a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer">nodejs.org</a>.
+							<?php
+							printf(
+								wp_kses(
+									/* translators: %s: button label */
+									__( "Can't install Node.js? Use the <strong>npx-free alternative</strong> below instead.", 'wpcodex' ),
+									[ 'strong' => [] ]
+								)
+							);
+							?>
+						</p>
+					</div>
+
 					<div class="wpcodex-client-tabs" id="wpcodex-manual-tabs">
 						<?php
 						$manual_clients = [

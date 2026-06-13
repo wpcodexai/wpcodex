@@ -65,6 +65,16 @@ final class Plugin {
 	/**
 	 * Initialises the plugin on plugins_loaded.
 	 *
+	 * The MCP server, abilities, and all REST endpoints are only booted when
+	 * the site owner has explicitly added:
+	 *
+	 *   define( 'WP_CODEX_ENABLE_MCP', true );
+	 *
+	 * to their wp-config.php. Without this constant the plugin is inert —
+	 * it runs no MCP transport, registers no abilities, and exposes no
+	 * REST endpoints. The admin UI and Skills system remain available so
+	 * the owner can manage skills and view setup instructions.
+	 *
 	 * @since 1.0.0
 	 */
 	public function init(): void {
@@ -74,21 +84,77 @@ final class Plugin {
 
 		$this->load_textdomain();
 		SkillsSchema::maybe_upgrade();
-		new Mcp();
-		new AbilityPolicy();
-		$this->abilities = new Abilities();
-		new UploadEndpoint();
-		new AdminAccessEndpoint();
-		new GutenbergFinalizerEndpoint();
 		new BuiltIn();
 		new Prompts();
 		new SkillNotices();
-		new GutenbergStorage();
-		( new SandboxLoader() )->load();
+
+		if ( defined( 'WP_CODEX_ENABLE_MCP' ) && WP_CODEX_ENABLE_MCP ) {
+			new Mcp();
+			new AbilityPolicy();
+			$this->abilities = new Abilities();
+			new UploadEndpoint();
+			new AdminAccessEndpoint();
+			new GutenbergFinalizerEndpoint();
+			new GutenbergStorage();
+			( new SandboxLoader() )->load();
+		} else {
+			add_action( 'admin_notices', [ $this, 'add_mcp_disabled_notice' ] );
+		}
 
 		if ( is_admin() ) {
 			AdminMenu::instance();
 		}
+	}
+
+	/**
+	 * Queues an admin notice shown when WP_CODEX_ENABLE_MCP is not defined.
+	 *
+	 * Explains to the site administrator exactly what constant to add to
+	 * wp-config.php in order to activate the MCP server.
+	 *
+	 * @since 1.0.0
+	 */
+	public function add_mcp_disabled_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$screen = get_current_screen();
+		if ( ! $screen || 'toplevel_page_wpcodex' !== $screen->id ) {
+			return;
+		}
+
+		echo '<div class="notice notice-info">';
+		echo '<p><strong>';
+		esc_html_e( 'WPCodex — MCP server is disabled (safe by default).', 'wpcodex' );
+		echo '</strong></p><p>';
+		esc_html_e(
+			'To enable the MCP server and give your AI agent access to this site, add the following line to your wp-config.php:',
+			'wpcodex'
+		);
+		echo '</p>';
+		echo '<pre style="background:#f6f7f7;border:1px solid #dcdcde;padding:8px 14px;display:inline-block;border-radius:3px;font-size:13px;">';
+		echo "define( 'WP_CODEX_ENABLE_MCP', true );";
+		echo '</pre>';
+		echo '<p>';
+		echo wp_kses(
+			sprintf(
+				/* translators: %s: documentation URL */
+				__(
+					'This constant must be set intentionally — it activates PHP execution, filesystem access, database queries, and WP-CLI for authenticated AI clients. Only enable it on development or staging sites. ',
+					'wpcodex'
+				),
+				//<a href="%s" target="_blank" rel="noopener noreferrer">Read the documentation →</a>
+				//esc_url( 'https://wpcodex.ai/docs/getting-started' )
+			),
+			[
+				'a' => [
+					'href'   => [],
+					'target' => [],
+					'rel'    => [],
+				],
+			]
+		);
+		echo '</p></div>';
 	}
 
 	/**

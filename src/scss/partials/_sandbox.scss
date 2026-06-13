@@ -1,0 +1,27 @@
+/**
+ * WPCodex — Sandbox page.
+ *
+ * Scoped to #wpcodex-sandbox.
+ */
+
+#wpcodex-sandbox {
+	.wpcodex-flex {
+		display: unset;
+	}
+
+	.wpcodex-card__meta {
+		font-family: $font-mono;
+		font-size: .75rem;
+	}
+
+	.wpcodex-card.is-suspended {
+		opacity: .6;
+		filter: grayscale(.3);
+	}
+}
+
+// Warn badge (used for Suspended state).
+.wpcodex-badge--warn {
+	background: #fff3cd;
+	color: #7a4f00;
+}

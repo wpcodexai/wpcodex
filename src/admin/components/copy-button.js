@@ -9,8 +9,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	const btn = document.getElementById( 'wpcodex-copy-prompt' );
 	if ( ! btn ) return;
 
-	const targetId    = btn.getAttribute( 'data-target' ) ?? '';
-	const textarea    = document.getElementById( targetId );
+	const targetId = btn.getAttribute( 'data-target' ) ?? '';
+	const textarea = document.getElementById( targetId );
 	const originalText = btn.textContent ?? '';
 
 	btn.addEventListener( 'click', async () => {
@@ -24,14 +24,16 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				document.execCommand( 'copy' );
 			}
 			btn.textContent = window.wpcodexData?.i18n?.saved ?? 'Copied!';
-			btn.disabled    = true;
+			btn.disabled = true;
 			setTimeout( () => {
 				btn.textContent = originalText;
-				btn.disabled    = false;
+				btn.disabled = false;
 			}, 2000 );
 		} catch {
 			btn.textContent = window.wpcodexData?.i18n?.error ?? 'Error';
-			setTimeout( () => { btn.textContent = originalText; }, 2000 );
+			setTimeout( () => {
+				btn.textContent = originalText;
+			}, 2000 );
 		}
 	} );
 } );

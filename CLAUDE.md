@@ -8,6 +8,14 @@ The abilities are intentionally unconstrained building blocks. The plugin turns 
 
 Requires WordPress 6.9+ and PHP 8.0+.
 
+**The MCP server is disabled by default.** It only activates when the site owner has added the following to `wp-config.php`:
+
+```php
+define( 'WPCODEX_ENABLE_MCP', true );
+```
+
+If this constant is absent, the plugin boots no MCP transport, registers no abilities, and exposes no REST endpoints. If you cannot connect, ask the site owner to confirm this constant is set.
+
 ---
 
 ## Session Start Protocol

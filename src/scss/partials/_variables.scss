@@ -1,0 +1,30 @@
+/**
+ * WPCodex — Design tokens & shared variables.
+ *
+ * Imported first so every partial has access to these values.
+ */
+
+$color-primary: #2271b1; // WP admin blue
+$color-primary-dk: #135e96;
+$color-accent: #f5a623; // Get Pro orange
+$color-success: #00a32a;
+$color-danger: #d63638;
+$color-text: #1e2327;
+$color-text-muted: #646970;
+$color-border: #c3c4c7;
+$color-border-lt: #dcdcde;
+$color-bg: #f6f7f7;
+$color-bg-white: #fff;
+$color-disabled-bg: #f0f0f0;
+
+// Radii 
+$radius-sm: 3px;
+$radius-md: 6px;
+$radius-lg: 10px;
+
+// Shadows 
+$shadow-card: 0 1px 3px rgba(0, 0, 0, .08);
+$shadow-card-hover: 0 2px 8px rgba(0, 0, 0, .14);
+
+// Typography
+$font-mono: 'Courier New', Courier, monospace;

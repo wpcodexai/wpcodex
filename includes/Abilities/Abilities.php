@@ -5,7 +5,7 @@
  * Instantiates every built-in ability and registers them all at once.
  * Pro plugins extend the list via the 'wpcodex_abilities' filter:
  *
- *   add_filter( 'wpcodex_abilities', function ( array $abilities ): array {
+ *   add_filter( 'wp_codex_abilities', function ( array $abilities ): array {
  *       $abilities[] = new \MyProPlugin\Abilities\MyProAbility();
  *       return $abilities;
  *   } );
@@ -23,6 +23,7 @@ use WPCodex\Abilities\Files;
 use WPCodex\Abilities\Gutenberg;
 use WPCodex\Abilities\Site;
 use WPCodex\Abilities\Skills;
+use WPCodex\Abilities\Themes;
 
 /**
  * Class Abilities
@@ -53,6 +54,7 @@ class Abilities {
 		// so mcp-adapter/discover-abilities already exists when DiscoverAbilities
 		// unregisters and replaces it.
 		add_action( 'wp_abilities_api_init', [ $this, 'register' ], 20 );
+		add_action( 'init' , [ $this, 'add_theme_and_plugin_abilities' ] );
 	}
 
 	/**
@@ -71,7 +73,7 @@ class Abilities {
 	public static function get_all_ability_data(): array {
 		if ( empty( self::$all_abilities ) ) {
 			/** @var AbstractAbility[] $abilities */
-			$abilities = apply_filters( 'wpcodex_abilities', static::create_abilities() );
+			$abilities = apply_filters( 'wp_codex_abilities', static::create_abilities() );
 			foreach ( $abilities as $ability ) {
 				self::$all_abilities[ $ability->get_name() ] = [
 					'id'          => $ability->get_name(),
@@ -98,7 +100,7 @@ class Abilities {
 	 */
 	public function register(): void {
 		/** @var AbstractAbility[] $abilities */
-		$abilities = apply_filters( 'wpcodex_abilities', static::create_abilities() );
+		$abilities = apply_filters( 'wp_codex_abilities', static::create_abilities() );
 
 		// Rebuild the static index on every invocation so it reflects the
 		// current filter output (e.g. pro-plugin additions).
@@ -189,7 +191,23 @@ class Abilities {
 			new Gutenberg\DeletePaddingChange(),
 			new Gutenberg\GetPadding(),
 			new Gutenberg\ListPadding(),
-			new Gutenberg\GetFinalizerRuntime(),
+			new Gutenberg\GetFinalizerRuntime()
 		];
+	}
+	
+	public function add_theme_and_plugin_abilities(): void {
+		new Themes\Themes();
+		/**
+		 * Fires during the 'init' action after all core abilities have been registered.
+		 *
+		 * Themes and plugins can hook into this to register their own abilities
+		 * after the core ones, ensuring their abilities are available in the same
+		 * request and appear in the settings page without needing a separate DB
+		 * round-trip.
+		 *
+		 * @since 1.1.0
+		 */
+		do_action( 'wp_codex_theme_abilities' );
+		do_action( 'wp_codex_plugin_abilities' );
 	}
 }

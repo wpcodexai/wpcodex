@@ -253,44 +253,44 @@ This matches Novamira's approach exactly:
 
 ### v2.0 — Pro Tier: Builder Specialisations (Target: Q2 2027)
 
-Pro adds maintained skill bundles and specialised MCP abilities on top of the core plugin. The tables below track all supported and researched themes and plugins. "Supported" means the theme/plugin has been documented in §7–§8 and its hooks/APIs are known. "Research" means a skill bundle is planned but not yet documented.
+No skill bundle has been built for any theme or plugin yet — all are at Research stage. The Tier column records the planned distribution: Free = bundled with the core plugin, Pro = requires WPCodex Pro. The Progress column tracks active development for Free-tier items once work begins.
 
 **Themes**
 
-| Theme | Status |
-|---|---|
-| Astra | Supported |
-| Kadence | Supported |
-| Blocksy | Supported |
+| Theme | Tier | Status | Progress |
+|---|---|---|---|
+| Astra | Free | Research | 0% |
+| Kadence | Free | Research | 0% |
+| Blocksy | Free | Research | 0% |
 
 **Plugins**
 
-| Plugin | Status |
-|---|---|
-| Elementor | Supported |
-| Yoast SEO | Supported |
-| Rank Math SEO | Supported |
-| Contact Form 7 | Supported |
-| WooCommerce | Supported |
-| LiteSpeed Cache | Supported |
-| WPForms Lite | Supported |
-| WP Mail SMTP | Supported |
-| WPCode (Insert Headers and Footers) | Supported |
-| All in One SEO (AIOSEO) | Supported |
-| Ultimate Addons for Elementor | Supported |
-| Advanced Custom Fields (ACF) | Supported |
-| Essential Addons for Elementor | Supported |
-| ElementsKit Lite | Supported |
-| Code Snippets | Supported |
-| Spectra (Ultimate Addons for Gutenberg) | Supported |
-| OptinMonster | Supported |
-| GutenKit Blocks Addon | Supported |
-| Bricks Builder | Research |
-| Divi | Research |
-| Kadence Blocks | Research |
-| Meta Box | Research |
-| Gravity Forms | Research |
-| WPML / Polylang | Research |
+| Plugin | Tier | Status | Progress |
+|---|---|---|---|
+| Contact Form 7 | Free | Research | 0% |
+| Elementor | Pro | Research | — |
+| Yoast SEO | Pro | Research | — |
+| Rank Math SEO | Pro | Research | — |
+| WooCommerce | Pro | Research | — |
+| LiteSpeed Cache | Pro | Research | — |
+| WPForms Lite | Pro | Research | — |
+| WP Mail SMTP | Pro | Research | — |
+| WPCode (Insert Headers and Footers) | Pro | Research | — |
+| All in One SEO (AIOSEO) | Pro | Research | — |
+| Ultimate Addons for Elementor | Pro | Research | — |
+| Advanced Custom Fields (ACF) | Pro | Research | — |
+| Essential Addons for Elementor | Pro | Research | — |
+| ElementsKit Lite | Pro | Research | — |
+| Code Snippets | Pro | Research | — |
+| Spectra (Ultimate Addons for Gutenberg) | Pro | Research | — |
+| OptinMonster | Pro | Research | — |
+| GutenKit Blocks Addon | Pro | Research | — |
+| Bricks Builder | Pro | Research | — |
+| Divi | Pro | Research | — |
+| Kadence Blocks | Pro | Research | — |
+| Meta Box | Pro | Research | — |
+| Gravity Forms | Pro | Research | — |
+| WPML / Polylang | Pro | Research | — |
 
 ### v2.1 — Agent Memory Layer
 

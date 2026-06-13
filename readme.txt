@@ -3,31 +3,32 @@ Contributors: wpcodexai
 Tags: ai, mcp, artificial-intelligence, developer-tools, automation
 Requires at least: 6.9
 Tested up to: 7.0
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 Requires PHP: 8.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Connect AI agents to your WordPress site via MCP. Full PHP execution, WP-CLI, filesystem, database, Gutenberg, and skill-based memory — all in one plugin.
+Connect AI agents to your WordPress site via MCP. Read files, inspect site state, manage options, query posts, write Gutenberg content, and build agent Skills — all from your AI client.
 
 == Description ==
 
-WPCodex turns your WordPress installation into a fully programmable environment for AI agents. It exposes a complete set of tools through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) so any compatible AI client — Claude, Cursor, Codex, Windsurf, GitHub Copilot, and more — can build, debug, and manage your site in real time from a chat interface.
+WPCodex connects AI agents to your WordPress site through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Any compatible AI client — Claude, Cursor, Codex, Windsurf, GitHub Copilot, and more — can inspect and interact with your site in real time using WordPress Application Passwords.
 
-No proxy. No hosted service. The AI client connects directly to your server over HTTPS using WordPress Application Passwords.
+No proxy. No hosted service. The AI client connects directly to your server over HTTPS.
 
-= What AI agents can do with WPCodex =
+= What AI agents can do with WPCodex (free) =
 
-* **Execute PHP** inside the live WordPress process — full access to `$wpdb`, all functions, all active plugins
-* **Run WP-CLI commands** — plugin management, post operations, cache flushes, database imports, anything WP-CLI supports
-* **Read, write, edit, and delete files** anywhere on the server, with automatic `.bak` backups before overwrites
-* **Query the database** via parameterised `$wpdb` SQL
+* **Read files** anywhere on the server — let the agent inspect theme files, plugin code, logs, and configuration
+* **List directories** to understand the file structure of your installation
 * **Get a full site snapshot** — WP version, PHP version, active plugins, active theme, site URLs
 * **Query posts** using standard `WP_Query` arguments
-* **Read and write WordPress options** via the Options API
+* **Read WordPress options** via the Options API
+* **Set WordPress options** — update site settings through the native options API
+* **Upload files** via a temporary bearer-token endpoint (non-PHP files; PHP files restricted to the sandbox)
+* **Manage sandbox files** — enable or disable PHP snippets in `wp-content/wpcodex-sandbox/` without touching theme files
+* **Create a temporary admin session link** for browser automation tools (e.g. Claude in Chrome)
 * **Write Gutenberg block content** to any post, page, or template through a browser-based finalizer queue
 * **Create and manage Skills** — Markdown playbooks stored in the database that give agents standing instructions about your site
-* **Manage sandbox files** — persist PHP code across requests without modifying theme files
 
 = AI Skills system =
 
@@ -51,9 +52,9 @@ This works for any block — core blocks, theme blocks, ACF blocks, custom block
 
 = Security =
 
-WPCodex is designed for **development and staging environments**. Authentication uses WordPress Application Passwords — native WordPress, revocable per client, no separate secret key. Every ability requires the `manage_options` capability (or super-admin on multisite). PHP execution is sandboxed with a dedicated directory and crash recovery. You can individually disable any ability from **WPCodex → Ability Settings** without disabling the whole plugin.
+Every ability requires the `manage_options` capability (or super-admin on Multisite). Authentication uses WordPress Application Passwords — native WordPress, revocable per client, no separate secret key. You can individually disable any ability from **WPCodex → Ability Settings** without disabling the whole plugin.
 
-**Do not activate on a live production site without understanding that arbitrary PHP execution is available to authenticated agents.**
+The sandbox directory (`wp-content/wpcodex-sandbox/`) isolates PHP snippets from the rest of the codebase. Files that throw a fatal error are auto-disabled so they do not break the site.
 
 = Supported AI clients =
 
@@ -91,13 +92,17 @@ See the full [Get Started guide](https://wpcodex.ai/docs/get-started/) for detai
 
 == Frequently Asked Questions ==
 
-= Does this work on shared hosting? =
+= What is the difference between WPCodex free and WPCodex Pro? =
 
-WPCodex requires HTTPS and the ability to run `proc_open()` for WP-CLI support. Most managed WordPress hosts (WP Engine, Kinsta, Flywheel, Pressable, etc.) support these. Shared hosts that disable `proc_open` will work for most abilities but WP-CLI commands will not be available.
+The free plugin gives agents read-only and structured-write access: reading files and site state, querying posts, managing options, uploading files, writing Gutenberg blocks, and managing Skills. [WPCodex Pro](https://wpcodex.ai/pro/) adds the most powerful development abilities — arbitrary PHP execution, WP-CLI, direct SQL, and full filesystem write/edit/delete access. Pro is intended for development and staging environments where those capabilities are needed.
 
 = Is WPCodex safe to use on a production site? =
 
-WPCodex gives authenticated agents the ability to execute arbitrary PHP and write files. This is powerful and intentionally unrestricted. Use it on development or staging sites. If you use it on production, disable the abilities you do not need in **WPCodex → Ability Settings**, and understand that any agent with a valid Application Password can modify your site.
+The free plugin does not provide arbitrary code execution or unrestricted filesystem write access, so the risk profile is significantly lower than Pro. That said, any plugin that allows remote agents to set WordPress options or upload files should be used with awareness. Revoke Application Passwords for any agent you no longer use, and review **WPCodex → Ability Settings** to disable abilities you do not need.
+
+= Does this work on shared hosting? =
+
+Yes. The free plugin has no dependency on `proc_open()` or WP-CLI. All free abilities work on standard shared hosting with HTTPS enabled. (WP-CLI execution is a Pro-only ability that requires `proc_open()`.)
 
 = How do I revoke an agent's access? =
 
@@ -105,7 +110,7 @@ Go to **WPCodex → Configuration**, scroll to the password table in Step 2, and
 
 = Can I restrict which tools the agent can use? =
 
-Yes. Go to **WPCodex → Ability Settings** to enable or disable individual abilities. For example, you can allow file reads but block file writes, or disable PHP execution while keeping WP-CLI available.
+Yes. Go to **WPCodex → Ability Settings** to enable or disable individual abilities. For example, you can allow file reads but block option writes, or disable the upload link ability entirely.
 
 = Does this work with Claude Code specifically? =
 
@@ -121,7 +126,7 @@ No. WPCodex only communicates between your server and the AI client connecting t
 
 = Where is the sandbox directory? =
 
-The sandbox directory is `wp-content/wpcodex-sandbox/`. PHP files placed here are loaded automatically on every WordPress request. Files that throw a fatal error are auto-disabled so they do not break the site.
+The sandbox directory is `wp-content/wpcodex-sandbox/`. PHP files placed here are loaded automatically on every WordPress request. Files that throw a fatal error are auto-disabled so they do not break the site. PHP file uploads via `create-upload-link` are restricted to this directory.
 
 = How does Gutenberg content writing work? =
 
@@ -143,14 +148,18 @@ For staging or production, enable an SSL certificate (Let's Encrypt is free on m
 
 1. Configuration page — three-step setup: enable abilities, generate an application password, connect your AI client
 2. Skills admin — create, edit, and manage AI playbooks with revision history
-3. Ability Settings — enable or disable individual abilities
+3. Ability Settings — enable or disable individual abilities, including Pro abilities when WPCodex Pro is active
 4. Block Editor Queue — review and finalize Gutenberg content changes queued by the agent
 5. The admin bar "WPCodex ON" indicator — a persistent reminder that AI abilities are active
 
 == Changelog ==
 
+= 0.6.0 =
+* Moved `php-execute`, `wpcli-run`, `db-query`, `file-write`, `file-edit`, and `file-delete` to [WPCodex Pro](https://wpcodex.ai/pro/)
+* Free plugin now focuses on read, inspect, structured-write, Skills, Gutenberg, and sandbox management abilities
+* Added Pro ability section to Ability Settings page (shows Pro badge when WPCodex Pro is not active)
+
 = 0.5.0 =
-* Initial release
 * Core abilities: `php-execute`, `wpcli-run`, `db-query`, `site-info`, `post-query`, `option-get`, `option-set`
 * File abilities: `file-read`, `file-write`, `file-edit`, `file-list`, `file-delete`, `file-disable`, `file-enable`, `create-upload-link`
 * Skills abilities: `skill-list`, `skill-read`, `skill-create`, `skill-update`, `skill-delete`, `skill-list-revisions`, `skill-restore-revision`
@@ -166,5 +175,5 @@ For staging or production, enable an SSL certificate (Let's Encrypt is free on m
 
 == Upgrade Notice ==
 
-= 0.4.0 =
-Initial release. No upgrade steps required.
+= 0.6.0 =
+The `php-execute`, `wpcli-run`, `db-query`, `file-write`, `file-edit`, and `file-delete` abilities have moved to WPCodex Pro. If you rely on these, install WPCodex Pro before upgrading.

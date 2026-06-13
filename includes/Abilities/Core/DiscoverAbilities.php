@@ -18,7 +18,6 @@ use WPCodex\Abilities\AbstractAbility;
 use WPCodex\Skills\Sources;
 
 class DiscoverAbilities extends AbstractAbility {
-
 	/** {@inheritDoc} */
 	public function get_name(): string {
 		return 'mcp-adapter/discover-abilities';

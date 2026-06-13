@@ -25,6 +25,7 @@ use WPCodex\Abilities\Site;
 use WPCodex\Abilities\Skills;
 use WPCodex\Abilities\Themes;
 
+
 /**
  * Class Abilities
  *
@@ -153,22 +154,16 @@ class Abilities {
 
 			// File abilities.
 			new Files\FileRead(),
-			new Files\FileWrite(),
-			new Files\FileEdit(),
-			new Files\FileDelete(),
 			new Files\FileList(),
 			new Files\FileDisable(),
 			new Files\FileEnable(),
 			new Files\CreateUploadLink(),
 
 			// Site / WordPress abilities.
-			new Site\WpCliRun(),
 			new Site\SiteInfo(),
 			new Site\PostQuery(),
 			new Site\OptionGet(),
 			new Site\OptionSet(),
-			new Site\DbQuery(),
-			new Site\PhpExecute(),
 			new Site\CreateAdminAccessLink(),
 
 			// Skills abilities.
@@ -196,7 +191,7 @@ class Abilities {
 	}
 	
 	public function add_theme_and_plugin_abilities(): void {
-		new Themes\Themes();
+		// new Themes\Themes();
 		/**
 		 * Fires during the 'init' action after all core abilities have been registered.
 		 *

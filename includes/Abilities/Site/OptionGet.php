@@ -18,7 +18,9 @@ use WPCodex\Abilities\AbstractAbility;
  * @since 1.0.0
  */
 class OptionGet extends AbstractAbility {
-
+	public function get_category(): string {
+		return 'wpcodex-site';
+	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
 		return 'wpcodex/option-get';

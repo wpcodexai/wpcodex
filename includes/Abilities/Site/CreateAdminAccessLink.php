@@ -19,7 +19,9 @@ use WPCodex\REST\AdminAccessEndpoint;
  * @since 1.0.0
  */
 class CreateAdminAccessLink extends AbstractAbility {
-
+	public function get_category(): string {
+		return 'wpcodex-site';
+	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
 		return 'wpcodex/create-admin-access-link';

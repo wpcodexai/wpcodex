@@ -126,10 +126,10 @@ class Mcp {
 			'description' => __( 'General-purpose abilities that may be used by WPCodex or other plugins.', 'wpcodex' ),
 		] );
 		
-		// wp_register_ability_category( 'wpcodex-site', [
-		// 	'label'       => __( 'WPCodex Site', 'wpcodex' ),
-		// 	'description' => __( 'Abilities for reading and updating site settings and content.', 'wpcodex' ),
-		// ] );
+		wp_register_ability_category( 'wpcodex-site', [
+			'label'       => __( 'WPCodex Site', 'wpcodex' ),
+			'description' => __( 'Abilities for reading and updating site settings and content.', 'wpcodex' ),
+		] );
 
 		// wp_register_ability_category( 'wpcodex-plugins', [
 		// 	'label'       => __( 'WPCodex Plugins', 'wpcodex' ),

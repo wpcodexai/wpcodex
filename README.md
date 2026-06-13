@@ -41,6 +41,8 @@ WPCodex registers the following abilities via the WordPress Abilities API. Each 
 
 ### Free abilities
 
+### Free abilities
+
 | Ability | Description |
 |---|---|
 | `wpcodex/file-read` | Read any file on the server |

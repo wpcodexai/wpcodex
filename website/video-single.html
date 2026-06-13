@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skills System Masterclass — WPCodex Videos</title>
+<meta name="description" content="An 18-minute deep dive into the WPCodex Skills system — how to create, load, and use Markdown playbooks to give your AI agent long-term memory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+
+/* ── Player area ── */
+.player-wrap {
+  background: #0a0a0a;
+  padding: 40px 0 32px;
+}
+.player-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.player-box {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #0b0b1a 0%, #1a2a6e 50%, #0b0b1a 100%);
+  border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+}
+.player-box::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(56,88,233,.25) 0%, transparent 70%);
+}
+.player-emoji { font-size: 5rem; position: absolute; opacity: .18; }
+.player-btn {
+  width: 88px; height: 88px;
+  background: rgba(255,255,255,.15);
+  border: 2px solid rgba(255,255,255,.4);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+  transition: all .22s;
+}
+.player-btn:hover { background: var(--blue); border-color: var(--blue); transform: scale(1.08); }
+.player-btn svg { color: #fff; margin-left: 6px; }
+
+/* Progress bar under player */
+.player-controls {
+  background: #141414; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 16px;
+  margin-top: -var(--radius-lg);
+}
+.player-progress-track {
+  flex: 1; height: 4px; background: rgba(255,255,255,.15);
+  border-radius: 4px; overflow: hidden; cursor: pointer;
+}
+.player-progress-fill {
+  height: 100%; width: 35%;
+  background: linear-gradient(90deg, var(--blue), var(--light-blue));
+  border-radius: 4px;
+}
+.player-time { font-size: .83rem; color: rgba(255,255,255,.55); white-space: nowrap; }
+.player-vol {
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.5); cursor: pointer; transition: color .2s;
+}
+.player-vol:hover { color: #fff; }
+
+/* ── Page layout ── */
+.video-page {
+  max-width: 1100px; margin: 0 auto; padding: 48px 24px 0;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 56px;
+  align-items: start;
+}
+
+/* ── Video info ── */
+.video-meta {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.video-title-main {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 800; line-height: 1.25;
+  letter-spacing: -.02em; color: var(--dark);
+  margin-bottom: 20px;
+}
+.video-stats {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.stat-item { display: flex; align-items: center; gap: 7px; font-size: .87rem; color: var(--gray); }
+
+/* Description */
+.video-desc { font-size: 1rem; color: #444; line-height: 1.75; margin-bottom: 28px; }
+.video-desc p { margin-bottom: 16px; }
+.video-desc a { color: var(--blue); }
+
+.desc-toggle {
+  background: none; border: none; font-family: inherit;
+  font-size: .9rem; font-weight: 600; color: var(--blue); cursor: pointer; padding: 0;
+}
+.desc-extra { display: none; }
+.desc-extra.open { display: block; margin-top: 12px; }
+
+/* ── Chapters ── */
+.chapters-wrap { margin-top: 36px; }
+.chapters-wrap h3 { margin-bottom: 16px; }
+.chapter-list { display: flex; flex-direction: column; gap: 2px; }
+.chapter-item {
+  display: flex; gap: 16px; align-items: center;
+  padding: 12px 14px; border-radius: 10px;
+  cursor: pointer; transition: background var(--transition);
+}
+.chapter-item:hover { background: var(--gray-light); }
+.chapter-item.active { background: rgba(56,88,233,.08); }
+.chapter-ts {
+  min-width: 46px; font-size: .82rem; font-weight: 700;
+  color: var(--blue); font-variant-numeric: tabular-nums;
+}
+.chapter-title { font-size: .93rem; font-weight: 500; color: var(--dark); }
+.chapter-desc { font-size: .8rem; color: var(--gray); margin-top: 2px; }
+
+/* Tags row */
+.video-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 36px; }
+.video-tag {
+  padding: 5px 14px; border-radius: 20px;
+  background: var(--gray-light); color: var(--gray);
+  font-size: .8rem; font-weight: 600; transition: var(--transition);
+}
+.video-tag:hover { background: rgba(56,88,233,.1); color: var(--blue); }
+
+/* ── Sidebar ── */
+.video-sidebar { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 28px; }
+
+.sidebar-card {
+  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;
+}
+.sidebar-card h5 {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--gray); margin-bottom: 16px; font-weight: 700;
+}
+
+/* Series list */
+.series-item {
+  display: flex; gap: 14px; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.series-item:last-child { border-bottom: none; padding-bottom: 0; }
+.series-item:hover { opacity: .8; }
+.series-thumb {
+  width: 72px; height: 48px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.series-item-info h6 { font-size: .88rem; font-weight: 600; color: var(--dark); margin-bottom: 2px; line-height: 1.3; }
+.series-item-info span { font-size: .77rem; color: var(--gray); }
+.series-item.now-playing .series-item-info h6 { color: var(--blue); }
+.now-playing-badge {
+  font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
+  background: var(--blue); color: #fff; padding: 2px 8px; border-radius: 20px; margin-left: 6px;
+}
+
+/* CTA card */
+.cta-card {
+  background: linear-gradient(135deg, var(--blue), var(--light-blue));
+  border-radius: var(--radius-lg); padding: 28px 24px;
+  color: #fff; text-align: center;
+}
+.cta-card h4 { color: #fff; margin-bottom: 8px; }
+.cta-card p { color: rgba(255,255,255,.8); font-size: .9rem; margin-bottom: 20px; }
+.btn-white { background: #fff; color: var(--blue); font-weight: 700; border: none; }
+.btn-white:hover { background: var(--cream); }
+
+/* ── Related grid ── */
+.related-video-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+
+@media(max-width:1024px) {
+  .video-page { grid-template-columns: 1fr; }
+  .video-sidebar { position: static; }
+  .related-video-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media(max-width:600px) {
+  .related-video-grid { grid-template-columns: 1fr; }
+  .player-controls { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- Dark player zone -->
+<div class="player-wrap">
+  <div class="player-container">
+
+    <!-- Back link -->
+    <a href="video.html" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.5);font-size:.88rem;margin-bottom:20px;transition:color .2s;text-decoration:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All videos
+    </a>
+
+    <!-- Player -->
+    <div class="player-box" id="playerBox">
+      <div class="player-emoji">🧩</div>
+      <div class="player-btn" id="playBtn">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+    </div>
+
+    <!-- Controls bar -->
+    <div class="player-controls">
+      <div class="player-vol">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      </div>
+      <div class="player-progress-track">
+        <div class="player-progress-fill" id="progressFill"></div>
+      </div>
+      <span class="player-time" id="playerTime">6:19 / 18:05</span>
+      <div class="player-vol">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Page content -->
+<section style="padding-bottom:90px;">
+  <div class="video-page">
+
+    <!-- ── Main column ── -->
+    <div>
+
+      <!-- Meta row -->
+      <div class="video-meta" style="margin-top:4px;">
+        <span class="badge badge-blue">Skills</span>
+        <span class="badge" style="background:rgba(56,88,233,.08);color:var(--dark);">Deep Dive</span>
+      </div>
+
+      <h1 class="video-title-main">Skills System Masterclass</h1>
+
+      <div class="video-stats">
+        <span class="stat-item">⏱ 18:05</span>
+        <span class="stat-item">👁 4,812 views</span>
+        <span class="stat-item">📅 June 5, 2026</span>
+        <span class="stat-item">⭐ 98% liked</span>
+        <div style="margin-left:auto;">
+          <a href="#" class="btn btn-outline btn-sm" style="margin-right:8px;">Share</a>
+          <a href="#" class="btn btn-dark btn-sm">Save</a>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="video-desc">
+        <p>The Skills system is what separates a capable AI agent from a great one. Without Skills, your agent rediscovers your site from scratch every session — querying the database, reading config files, re-learning your custom post types. With Skills, that knowledge is encoded once and loaded automatically at session start.</p>
+        <button class="desc-toggle" id="descToggle">Show more ↓</button>
+        <div class="desc-extra" id="descExtra">
+          <p>In this 18-minute masterclass, you'll learn how the Skills system works under the hood, how to write great Skills that your agent actually uses, and how to build a session-start protocol that loads the right Skills automatically.</p>
+          <p>We cover: Skill YAML frontmatter, the <code>enable_agentic</code> and <code>enable_prompt</code> flags, naming conventions, and patterns for team Skills vs. site-specific Skills. We also walk through three real Skills from a production WPCodex installation.</p>
+          <p>Prerequisites: WPCodex installed and connected to Claude Desktop. Familiarity with basic Markdown helps.</p>
+        </div>
+      </div>
+
+      <!-- Chapters -->
+      <div class="chapters-wrap">
+        <h3>Chapters</h3>
+        <div class="chapter-list">
+          <div class="chapter-item">
+            <span class="chapter-ts">0:00</span>
+            <div>
+              <div class="chapter-title">Introduction — what Skills solve</div>
+              <div class="chapter-desc">The problem: agents rediscover your site every session</div>
+            </div>
+          </div>
+          <div class="chapter-item">
+            <span class="chapter-ts">2:14</span>
+            <div>
+              <div class="chapter-title">Skill anatomy — YAML frontmatter</div>
+              <div class="chapter-desc">name, description, enable_agentic, enable_prompt</div>
+            </div>
+          </div>
+          <div class="chapter-item active">
+            <span class="chapter-ts">5:40</span>
+            <div>
+              <div class="chapter-title">Creating your first Skill with skill-create</div>
+              <div class="chapter-desc">Walkthrough: writing a site-structure Skill from scratch</div>
+            </div>
+          </div>
+          <div class="chapter-item">
+            <span class="chapter-ts">9:20</span>
+            <div>
+              <div class="chapter-title">Session-start protocol</div>
+              <div class="chapter-desc">skill-list → skill-read pattern, agentic loading</div>
+            </div>
+          </div>
+          <div class="chapter-item">
+            <span class="chapter-ts">12:05</span>
+            <div>
+              <div class="chapter-title">Three production Skills, live</div>
+              <div class="chapter-desc">Elementor header, WooCommerce tables, custom CPTs</div>
+            </div>
+          </div>
+          <div class="chapter-item">
+            <span class="chapter-ts">16:30</span>
+            <div>
+              <div class="chapter-title">Team Skills vs. site Skills</div>
+              <div class="chapter-desc">Patterns for multi-site and agency setups</div>
+            </div>
+          </div>
+          <div class="chapter-item">
+            <span class="chapter-ts">17:40</span>
+            <div>
+              <div class="chapter-title">Wrap-up &amp; next steps</div>
+              <div class="chapter-desc">Links to docs and the custom abilities tutorial</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="video-tags">
+        <span class="video-tag">Skills</span>
+        <span class="video-tag">Agent Memory</span>
+        <span class="video-tag">Workflow</span>
+        <span class="video-tag">Deep Dive</span>
+        <span class="video-tag">Masterclass</span>
+      </div>
+
+    </div><!-- /main column -->
+
+    <!-- ── Sidebar ── -->
+    <aside class="video-sidebar">
+
+      <!-- Series -->
+      <div class="sidebar-card">
+        <h5>In this series</h5>
+
+        <div class="series-item">
+          <div class="series-thumb" style="background:linear-gradient(135deg,#1a2a6e,#3858e9);">🚀</div>
+          <div class="series-item-info">
+            <h6>WPCodex in 5 minutes</h6>
+            <span>5:02 · Getting Started</span>
+          </div>
+        </div>
+
+        <div class="series-item">
+          <div class="series-thumb" style="background:linear-gradient(135deg,#1a4a2e,#1e1e1e);">⚙️</div>
+          <div class="series-item-info">
+            <h6>Installation &amp; First Connection</h6>
+            <span>8:17 · Setup</span>
+          </div>
+        </div>
+
+        <div class="series-item">
+          <div class="series-thumb" style="background:linear-gradient(135deg,#1a3a4a,#1e1e1e);">💻</div>
+          <div class="series-item-info">
+            <h6>PHP Execute — What's Possible</h6>
+            <span>12:30 · Core Abilities</span>
+          </div>
+        </div>
+
+        <div class="series-item now-playing">
+          <div class="series-thumb" style="background:linear-gradient(135deg,#2a1a4a,#3858e9);">🧩</div>
+          <div class="series-item-info">
+            <h6>Skills System Masterclass <span class="now-playing-badge">Now</span></h6>
+            <span>18:05 · Skills</span>
+          </div>
+        </div>
+
+        <div class="series-item">
+          <div class="series-thumb" style="background:linear-gradient(135deg,#1a4a3a,#1e1e1e);">🔧</div>
+          <div class="series-item-info">
+            <h6>Building Custom Abilities</h6>
+            <span>15:22 · Extensibility</span>
+          </div>
+        </div>
+
+        <div class="series-item">
+          <div class="series-thumb" style="background:linear-gradient(135deg,#4a3a1a,#1e1e1e);">🛒</div>
+          <div class="series-item-info">
+            <h6>WooCommerce Automation with AI</h6>
+            <span>22:10 · Pro</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-card">
+        <h4>Want WooCommerce abilities?</h4>
+        <p>Upgrade to Pro for WooCommerce, Astra, and Elementor abilities — plus priority support.</p>
+        <a href="pro.html" class="btn btn-white btn-sm" style="display:block;text-align:center;">See WPCodex Pro →</a>
+      </div>
+
+    </aside>
+
+  </div><!-- /video-page -->
+
+  <!-- Related videos -->
+  <div style="max-width:1100px;margin:72px auto 0;padding:60px 24px 0;border-top:1px solid var(--border);">
+    <h2 style="margin-bottom:32px;">Up next</h2>
+    <div class="related-video-grid">
+
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="video-thumb-bg" style="background:linear-gradient(135deg,#1a4a3a,#1e1e1e);"></div>
+          <div class="play-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="video-info">
+          <h4>Building Custom Abilities</h4>
+          <span>15:22 · Extensibility</span>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="video-thumb-bg" style="background:linear-gradient(135deg,#4a3a1a,#1e1e1e);"></div>
+          <div class="play-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="video-info">
+          <h4>WooCommerce Automation with AI</h4>
+          <span>22:10 · Pro · WooCommerce</span>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb">
+          <div class="video-thumb-bg" style="background:linear-gradient(135deg,#3a1a3a,#1e1e1e);"></div>
+          <div class="play-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="video-info">
+          <h4>Security Best Practices</h4>
+          <span>10:38 · Security</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<script>
+// Description toggle
+document.getElementById('descToggle').addEventListener('click', function() {
+  const extra = document.getElementById('descExtra');
+  const open = extra.classList.toggle('open');
+  this.textContent = open ? 'Show less ↑' : 'Show more ↓';
+});
+
+// Chapter click → update progress
+document.querySelectorAll('.chapter-item').forEach((item, i, arr) => {
+  item.addEventListener('click', () => {
+    arr.forEach(a => a.classList.remove('active'));
+    item.classList.add('active');
+    const ts = item.querySelector('.chapter-ts').textContent;
+    document.getElementById('playerTime').textContent = ts + ' / 18:05';
+    const [m, s] = ts.split(':').map(Number);
+    const total = 18 * 60 + 5;
+    const secs = m * 60 + s;
+    document.getElementById('progressFill').style.width = (secs / total * 100) + '%';
+  });
+});
+
+// Progress bar scrub
+document.querySelector('.player-progress-track').addEventListener('click', function(e) {
+  const pct = e.offsetX / this.offsetWidth;
+  document.getElementById('progressFill').style.width = (pct * 100) + '%';
+  const total = 18 * 60 + 5;
+  const secs = Math.round(pct * total);
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  document.getElementById('playerTime').textContent = m + ':' + String(s).padStart(2,'0') + ' / 18:05';
+});
+</script>
+<script src="components.js"></script>
+</body>
+</html>

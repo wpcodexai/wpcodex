@@ -40,23 +40,36 @@ Go to **WPCodex → Connect**. Copy the MCP configuration for your client and pa
 
 WPCodex registers the following abilities via the WordPress Abilities API. Each ability is exposed as an MCP tool through the bundled `wordpress/mcp-adapter`.
 
+### Free abilities
+
 | Ability | Description |
 |---|---|
-| `wpcodex/php-execute` | Run arbitrary PHP inside the WordPress process |
-| `wpcodex/wpcli-run` | Execute WP-CLI commands |
-| `wpcodex/db-query` | Run SQL queries via `$wpdb` |
 | `wpcodex/file-read` | Read any file on the server |
-| `wpcodex/file-write` | Write or create files (atomic, with `.bak` backup) |
 | `wpcodex/file-list` | List files in a directory |
+| `wpcodex/file-disable` | Disable a sandbox PHP file (rename to `.disabled`) |
+| `wpcodex/file-enable` | Re-enable a previously disabled sandbox file |
+| `wpcodex/create-upload-link` | Create a temporary upload endpoint and bearer token |
 | `wpcodex/site-info` | Full install snapshot: version, plugins, theme, options |
 | `wpcodex/option-get` | Get a WordPress option |
 | `wpcodex/option-set` | Set a WordPress option |
 | `wpcodex/post-query` | Query posts via `WP_Query` |
+| `wpcodex/create-admin-access-link` | Create a temporary one-time admin session link |
 | `wpcodex/skill-list` | List all skills with their names and trigger descriptions |
 | `wpcodex/skill-read` | Read a skill's full body by name |
 | `wpcodex/skill-create` | Create a new skill (name, description, body) |
 | `wpcodex/skill-update` | Update an existing skill |
 | `wpcodex/skill-delete` | Delete a skill by name |
+
+### Pro abilities ([WPCodex Pro](https://wpcodex.ai/pro/) required)
+
+| Ability | Description |
+|---|---|
+| `wpcodex/php-execute` | Run arbitrary PHP inside the WordPress process |
+| `wpcodex/wpcli-run` | Execute WP-CLI commands |
+| `wpcodex/db-query` | Run SQL queries via `$wpdb` |
+| `wpcodex/file-write` | Write or create files (atomic, with `.bak` backup) |
+| `wpcodex/file-edit` | Find-and-replace in a file |
+| `wpcodex/file-delete` | Delete a file or directory |
 
 All abilities are authenticated via **WordPress Application Passwords** over HTTPS. See [SECURITY.md](./SECURITY.md).
 

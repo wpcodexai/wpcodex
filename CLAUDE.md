@@ -33,20 +33,31 @@ At the start of **every** session, run these steps in order before doing anythin
 
 All abilities are registered via the WordPress Abilities API and exposed as MCP tools through `wordpress/mcp-adapter`. Authentication uses **WordPress Application Passwords**.
 
-### Core WordPress abilities
+### Core WordPress abilities (free)
+
+| Ability | Purpose |
+|---|---|
+| `wpcodex/file-read` | Read a file. Pass absolute `path`. |
+| `wpcodex/file-list` | List a directory. Pass `path` and optional `recursive` (bool). |
+| `wpcodex/file-disable` | Disable a sandbox file. Pass `path` (must be inside `wpcodex-sandbox/`). |
+| `wpcodex/file-enable` | Re-enable a disabled sandbox file. Pass `path`. |
+| `wpcodex/create-upload-link` | Create a temporary upload token. Pass `path` and optional `expires_in`, `max_bytes`, `overwrite`. |
+| `wpcodex/site-info` | Full install snapshot. No arguments. |
+| `wpcodex/option-get` | Get a WordPress option. Pass `option_name`. |
+| `wpcodex/option-set` | Set a WordPress option. Pass `option_name`, `option_value`, optional `autoload` (bool). |
+| `wpcodex/post-query` | Run a `WP_Query`. Pass `query_args` (object). Returns `found_posts` + `posts` array. |
+| `wpcodex/create-admin-access-link` | Create a temporary admin session token. Pass optional `user_id`, `expires_in`, `admin_path`. |
+
+### Pro abilities (WPCodex Pro required)
 
 | Ability | Purpose |
 |---|---|
 | `wpcodex/php-execute` | Run PHP code inside the WordPress process. Pass `code` (no opening tag). |
 | `wpcodex/wpcli-run` | Execute WP-CLI. Pass `command` without the leading `wp`. Optional `timeout` (int, seconds). |
 | `wpcodex/db-query` | Run SQL via `$wpdb`. Pass `sql` and optional `args` array. SELECT returns rows; mutations return affected count. |
-| `wpcodex/file-read` | Read a file. Pass absolute `path`. |
 | `wpcodex/file-write` | Write a file atomically (`.bak` backup created first). Pass `path` and `content`. |
-| `wpcodex/file-list` | List a directory. Pass `path` and optional `recursive` (bool). |
-| `wpcodex/site-info` | Full install snapshot. No arguments. |
-| `wpcodex/option-get` | Get a WordPress option. Pass `option_name`. |
-| `wpcodex/option-set` | Set a WordPress option. Pass `option_name`, `option_value`, optional `autoload` (bool). |
-| `wpcodex/post-query` | Run a `WP_Query`. Pass `query_args` (object). Returns `found_posts` + `posts` array. |
+| `wpcodex/file-edit` | Find-and-replace in a file. Pass `path`, `old_string`, `new_string`. |
+| `wpcodex/file-delete` | Delete a file or directory. Pass `path` and optional `recursive` (bool). |
 
 ### Skills abilities
 

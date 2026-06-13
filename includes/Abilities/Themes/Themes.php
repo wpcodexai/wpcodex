@@ -56,23 +56,23 @@ class Themes {
 	}
 
 	/**
-	 * Return all theme ability instances.
+	 * Append theme ability instances to the filtered abilities list.
 	 *
 	 * Merged into the main Abilities::add_abilities() list.
 	 * Abilities for inactive themes still return a helpful WP_Error when the
 	 * theme is not active, rather than being silently skipped.
 	 *
+	 * @param  AbstractAbility[] $abilities Existing abilities passed by the filter.
 	 * @return AbstractAbility[]
 	 */
-	public function add_abilities(): array {
-		error_log( 'Adding theme abilities' );
-		return [
+	public function add_abilities( array $abilities ): array {
+		return array_merge( $abilities, [
 			// Astra abilities.
 			new GetSettings(),
 			new UpdateSettings(),
 			new GetPageSettings(),
 			new SetPageSettings(),
 			new FlushCache(),
-		];
+		] );
 	}
 }

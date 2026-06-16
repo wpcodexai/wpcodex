@@ -2,24 +2,24 @@
 /**
  * Theme ability aggregator.
  *
- * Registers the wpcodex-astra (and future theme) ability categories and
+ * Registers the wpworker-astra (and future theme) ability categories and
  * returns the full list of theme ability instances for inclusion in the
  * main Abilities::create_abilities() array.
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Themes;
+namespace WPWorker\Abilities\Themes;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Abilities\Themes\Astra\FlushCache;
-use WPCodex\Abilities\Themes\Astra\GetPageSettings;
-use WPCodex\Abilities\Themes\Astra\GetSettings;
-use WPCodex\Abilities\Themes\Astra\SetPageSettings;
-use WPCodex\Abilities\Themes\Astra\UpdateSettings;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Abilities\Themes\Astra\FlushCache;
+use WPWorker\Abilities\Themes\Astra\GetPageSettings;
+use WPWorker\Abilities\Themes\Astra\GetSettings;
+use WPWorker\Abilities\Themes\Astra\SetPageSettings;
+use WPWorker\Abilities\Themes\Astra\UpdateSettings;
 
 /**
  * Class Themes
@@ -37,42 +37,39 @@ class Themes {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'wp_abilities_api_init', [ $this, 'register_categories' ], 5 );
-		add_filter( 'wp_codex_abilities', [ $this, 'add_abilities' ] );
+		add_filter( 'wpworker_abilities', [ $this, 'append' ] );
 	}
 
 	/**
-	 * Register ability categories for every supported theme.
+	 * Appends Theme abilities to the ability list supplied by the free plugin.
 	 *
-	 * @since 1.0.0
+	 * @since  0.1.0
+	 * @param  array<int, mixed> $abilities Ability instances from WPWorker free.
+	 * @return array<int, mixed>            The extended list.
 	 */
-	public function register_categories(): void {
-		if ( function_exists( 'wp_register_ability_category' ) ) {
-			wp_register_ability_category( 'wpcodex-themes', [
-				'label'       => __( 'Themes', 'wpcodex' ),
-				'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'wpcodex' ),
-			] );
-		}	
+	public function append( array $abilities ): array {
+		foreach ( self::create_theme_abilities() as $ability ) {
+			$abilities[] = $ability;
+		}
+		return $abilities;
 	}
-
 	/**
 	 * Append theme ability instances to the filtered abilities list.
 	 *
-	 * Merged into the main Abilities::add_abilities() list.
 	 * Abilities for inactive themes still return a helpful WP_Error when the
 	 * theme is not active, rather than being silently skipped.
 	 *
 	 * @param  AbstractAbility[] $abilities Existing abilities passed by the filter.
 	 * @return AbstractAbility[]
 	 */
-	public function add_abilities( array $abilities ): array {
-		return array_merge( $abilities, [
+	private static function create_theme_abilities(): array {
+		return [
 			// Astra abilities.
 			new GetSettings(),
 			new UpdateSettings(),
 			new GetPageSettings(),
 			new SetPageSettings(),
 			new FlushCache(),
-		] );
+		] ;
 	}
 }

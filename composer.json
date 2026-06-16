@@ -1,5 +1,5 @@
 {
-    "name": "wpcodex/wpcodex",
+    "name": "wpworker/worker-ai",
     "description": "The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later",
@@ -19,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "WPCodex\\": "includes/"
+            "WPWorker\\": "includes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "WPCodex\\Tests\\": "tests/"
+            "WPWorker\\Tests\\": "tests/"
         }
     },
     "scripts": {

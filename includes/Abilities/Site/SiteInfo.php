@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/site-info
+ * Ability: wpworker/site-info
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Site;
+namespace WPWorker\Abilities\Site;
 
-use WPCodex\Abilities\AbstractAbility;
+use WPWorker\Abilities\AbstractAbility;
 
 /**
  * Class SiteInfo
@@ -19,23 +19,23 @@ use WPCodex\Abilities\AbstractAbility;
  */
 class SiteInfo extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpcodex-site';
+		return 'wpworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/site-info';
+		return 'wpworker/site-info';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Site Info', 'wpcodex' );
+		return __( 'Site Info', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
 			'Return a full snapshot of this WordPress installation: WP version, PHP version, active theme, active plugins, site URLs, database table prefix, and key constants.',
-			'wpcodex'
+			'wpworker'
 		);
 	}
 

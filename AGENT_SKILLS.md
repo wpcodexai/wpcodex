@@ -1,4 +1,4 @@
-# WPCodex — Agent Skills
+# Worker AI — Agent Skills
 
 > The Skills system gives your AI agent a persistent, site-specific knowledge base — naming conventions, builder patterns, custom post type schemas, step-by-step workflows. Skills fire automatically when the task matches, or on explicit invocation from the AI client.
 
@@ -6,7 +6,7 @@
 
 ## What Is a Skill?
 
-A skill is a Markdown document stored in the **WordPress database**, managed from **WPCodex → Skills** in the admin. It has a small YAML frontmatter block at the top and a plain Markdown body below.
+A skill is a Markdown document stored in the **WordPress database**, managed from **Worker AI → Skills** in the admin. It has a small YAML frontmatter block at the top and a plain Markdown body below.
 
 The agent reads only each skill's `description` field at the start of a session — the full body stays dormant. When your prompt matches a description, the agent loads that body into context and follows it. This keeps costs low: descriptions are cheap to scan, bodies are loaded only when needed.
 
@@ -128,8 +128,8 @@ enable_prompt: false
 
 ## WordPress identifiers
 - Custom post type names: singular, lowercase, prefixed. Example: `wpx_service`.
-- Option names: prefixed with `wpcodex_`. Example: `wpcodex_footer_disclaimer`.
-- Transient keys: prefixed with `wpcodex_transient_`.
+- Option names: prefixed with `wpworker_`. Example: `wpworker_footer_disclaimer`.
+- Transient keys: prefixed with `wpworker_transient_`.
 ```
 
 ---
@@ -210,10 +210,10 @@ update_post_meta( $id, '_wp_page_template', '[template]' );
 
 ### At session start
 
-The agent calls `wpcodex/skill-list` to retrieve all skill names and descriptions. Bodies stay in the database — not loaded yet.
+The agent calls `wpworker/skill-list` to retrieve all skill names and descriptions. Bodies stay in the database — not loaded yet.
 
 ```
-wpcodex/skill-list
+wpworker/skill-list
 → [
     { "name": "naming-conventions",      "description": "Slug, CSS class...",     "enable_agentic": true  },
     { "name": "woocommerce-conventions", "description": "WooCommerce product...", "enable_agentic": true  },
@@ -223,16 +223,16 @@ wpcodex/skill-list
 
 ### When a task matches
 
-When your prompt matches a description, the agent calls `wpcodex/skill-read` to load the full body:
+When your prompt matches a description, the agent calls `wpworker/skill-read` to load the full body:
 
 ```
 User:  "Create a new page for our services"
-Agent: wpcodex/skill-read  name: "naming-conventions"
-       wpcodex/skill-read  name: "new-page-workflow"
+Agent: wpworker/skill-read  name: "naming-conventions"
+       wpworker/skill-read  name: "new-page-workflow"
        → follows both skill bodies
 
 User:  "Add a WooCommerce product"
-Agent: wpcodex/skill-read  name: "woocommerce-conventions"
+Agent: wpworker/skill-read  name: "woocommerce-conventions"
        → follows the product conventions
 ```
 
@@ -242,7 +242,7 @@ Agent: wpcodex/skill-read  name: "woocommerce-conventions"
 
 ### From the admin UI
 
-Go to **WPCodex → Skills** to create, edit, enable/disable, and delete skills through a built-in editor. Upload a `.md` file with frontmatter or write inline.
+Go to **Worker AI → Skills** to create, edit, enable/disable, and delete skills through a built-in editor. Upload a `.md` file with frontmatter or write inline.
 
 Disable a skill (toggle off) to hide it from the agent without deleting the body. Useful when iterating on a skill that is misbehaving.
 
@@ -252,17 +252,17 @@ The agent can create and manage skills directly using the dedicated skill abilit
 
 | Ability | What it does |
 |---|---|
-| `wpcodex/skill-list` | Returns all skill names and descriptions |
-| `wpcodex/skill-read` | Returns the full body of a skill by name |
-| `wpcodex/skill-create` | Creates a new skill (name, description, body, flags) |
-| `wpcodex/skill-update` | Updates an existing skill's body or frontmatter |
-| `wpcodex/skill-delete` | Deletes a skill by name |
+| `wpworker/skill-list` | Returns all skill names and descriptions |
+| `wpworker/skill-read` | Returns the full body of a skill by name |
+| `wpworker/skill-create` | Creates a new skill (name, description, body, flags) |
+| `wpworker/skill-update` | Updates an existing skill's body or frontmatter |
+| `wpworker/skill-delete` | Deletes a skill by name |
 
 **To have the agent write a new skill from what it just learned:**
 
 > "You've rebuilt our Elementor header template. Write a skill that captures the template IDs, container patterns, and global token names you used."
 
-The agent calls `wpcodex/skill-create` with a properly formatted frontmatter + body and the skill is immediately available to all connected clients.
+The agent calls `wpworker/skill-create` with a properly formatted frontmatter + body and the skill is immediately available to all connected clients.
 
 ---
 
@@ -284,7 +284,7 @@ The agent calls `wpcodex/skill-create` with a properly formatted frontmatter + b
 
 8. **Skills are flat.** Everything the agent needs lives in the single body. No companion files, no references directory, no bundled scripts.
 
-9. **Let the agent write them.** After a complex task, ask the agent to document what it learned. It calls `wpcodex/skill-create` and the skill is live immediately.
+9. **Let the agent write them.** After a complex task, ask the agent to document what it learned. It calls `wpworker/skill-create` and the skill is live immediately.
 
 10. **Keep them current.** Skills go stale. After a major rebuild or plugin upgrade, review and update the relevant skills.
 
@@ -292,7 +292,7 @@ The agent calls `wpcodex/skill-create` with a properly formatted frontmatter + b
 
 ## Pro Skill Bundles
 
-WPCodex Pro ships pre-built, maintained skill bundles for major builders and plugins. Pro bundles combine specialised MCP abilities (real PHP tools that act on those integrations directly) with expert-authored skill bodies — updated with each plugin release.
+Worker AI Pro ships pre-built, maintained skill bundles for major builders and plugins. Pro bundles combine specialised MCP abilities (real PHP tools that act on those integrations directly) with expert-authored skill bodies — updated with each plugin release.
 
 | Bundle | What the agent gets |
 |---|---|

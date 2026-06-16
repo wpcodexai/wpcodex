@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/skill-delete
+ * Ability: wpworker/skill-delete
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace WPWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Repository;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Skills\Repository;
 
 /**
  * Class SkillDelete
@@ -22,22 +22,22 @@ class SkillDelete extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'wpworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-delete';
+		return 'wpworker/skill-delete';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Delete Skill', 'wpcodex' );
+		return __( 'Delete Skill', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Permanently delete a skill by name. Idempotent — returns success when the skill does not exist.', 'wpcodex' );
+		return __( 'Permanently delete a skill by name. Idempotent — returns success when the skill does not exist.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -71,7 +71,7 @@ class SkillDelete extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['name'] ) || ! is_string( $input['name'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'name must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'name must be a non-empty string.', 'worker-ai' ) );
 		}
 
 		$name    = $input['name'];

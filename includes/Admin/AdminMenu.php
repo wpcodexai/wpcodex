@@ -1,9 +1,9 @@
 <?php
 /**
- * Admin Menu — registers the WPCodex top-level menu and all sub-pages.
+ * Admin Menu — registers the WPWorker top-level menu and all sub-pages.
  *
- * Menu structure (mirrors WPCodex's layout):
- *   WPCodex
+ * Menu structure (mirrors WPWorker's layout):
+ *   WPWorker
  *   ├── Configuration   ← default landing page (abilities on/off + connect)
  *   ├── Abilities Settings
  *   ├── Skills
@@ -11,12 +11,12 @@
  *   ├── Block Editor
  *   └── Get Pro  (styled accent link)
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Admin;
+namespace WPWorker\Admin;
 
 /**
  * Class AdminMenu
@@ -31,7 +31,7 @@ final class AdminMenu {
 	 * @since 1.0.0
 	 * @var   string
 	 */
-	public const MENU_SLUG = 'wpcodex';
+	public const MENU_SLUG = 'wpworker';
 
 	/**
 	 * Option that gates whether AI abilities are active.
@@ -39,7 +39,7 @@ final class AdminMenu {
 	 * @since 1.0.0
 	 * @var   string
 	 */
-	public const ABILITIES_ENABLED_OPTION = 'wpcodex_abilities_enabled';
+	public const ABILITIES_ENABLED_OPTION = 'wpworker_abilities_enabled';
 
 	/**
 	 * Singleton instance.
@@ -82,8 +82,8 @@ final class AdminMenu {
 	 */
 	public function register_menus(): void {
 		add_menu_page(
-			__( 'WPCodex', 'wpcodex' ),
-			__( 'WPCodex', 'wpcodex' ),
+			__( 'Worker AI', 'worker-ai' ),
+			__( 'Worker AI', 'worker-ai' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ ConfigurationPage::class, 'render' ],
@@ -94,8 +94,8 @@ final class AdminMenu {
 		// First submenu replaces the auto-generated duplicate parent entry.
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Configuration — WPCodex', 'wpcodex' ),
-			__( 'Configuration', 'wpcodex' ),
+			__( 'Configuration — Worker AI', 'worker-ai' ),
+			__( 'Configuration', 'worker-ai' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ ConfigurationPage::class, 'render' ]
@@ -103,52 +103,52 @@ final class AdminMenu {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Abilities Settings — WPCodex', 'wpcodex' ),
-			__( 'Abilities Settings', 'wpcodex' ),
+			__( 'Abilities Settings — Worker AI', 'worker-ai' ),
+			__( 'Abilities Settings', 'worker-ai' ),
 			'manage_options',
-			'wpcodex-abilities',
+			'wpworker-abilities',
 			[ AbilitiesSettingsPage::class, 'render' ]
 		);
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Skills — WPCodex', 'wpcodex' ),
-			__( 'Skills', 'wpcodex' ),
+			__( 'Skills — Worker AI', 'worker-ai' ),
+			__( 'Skills', 'worker-ai' ),
 			'manage_options',
-			'wpcodex-skills',
+			'wpworker-skills',
 			[ SkillsPage::class, 'render' ]
 		);
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Sandbox — WPCodex', 'wpcodex' ),
-			__( 'Sandbox', 'wpcodex' ),
+			__( 'Sandbox — Worker AI', 'worker-ai' ),
+			__( 'Sandbox', 'worker-ai' ),
 			'manage_options',
-			'wpcodex-sandbox',
+			'wpworker-sandbox',
 			[ SandboxPage::class, 'render' ]
 		);
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Block Editor — WPCodex', 'wpcodex' ),
-			__( 'Block Editor', 'wpcodex' ),
+			__( 'Block Editor — Worker AI', 'worker-ai' ),
+			__( 'Block Editor', 'worker-ai' ),
 			'manage_options',
-			'wpcodex-block-editor-queue',
+			'wpworker-block-editor-queue',
 			[ BlockEditorPage::class, 'render' ]
 		);
 
 		// add_submenu_page(
 		// 	self::MENU_SLUG,
-		// 	__( 'Get Pro — WPCodex', 'wpcodex' ),
-		// 	__( 'Get Pro', 'wpcodex' ),
+		// 	__( 'Get Pro — Worker AI', 'worker-ai' ),
+		// 	__( 'Get Pro', 'worker-ai' ),
 		// 	'manage_options',
-		// 	'wpcodex-get-pro',
+		// 	'wpworker-get-pro',
 		// 	[ $this, 'render_get_pro_redirect' ]
 		// );
 	}
 
 	/**
-	 * Shows a red "WPCodex ON" indicator in the admin bar when abilities are enabled.
+	 * Shows a red "Worker AI ON" indicator in the admin bar when abilities are enabled.
 	 *
 	 * @since 1.0.0
 	 * @param \WP_Admin_Bar $wp_admin_bar The WP_Admin_Bar instance.
@@ -163,21 +163,21 @@ final class AdminMenu {
 		}
 
 		$wp_admin_bar->add_node( [
-			'id'    => 'wpcodex-indicator',
-			'title' => '<span class="wpcodex-ab-dot"></span>'
-				. esc_html__( 'WPCodex ON', 'wpcodex' ),
-			'href'  => admin_url( 'admin.php?page=wpcodex' ),
-			'meta'  => [ 'title' => __( 'AI Abilities are active — click to configure', 'wpcodex' ) ],
+			'id'    => 'wpworker-indicator',
+			'title' => '<span class="wpworker-ab-dot"></span>'
+				. esc_html__( 'Worker AI ON', 'worker-ai' ),
+			'href'  => admin_url( 'admin.php?page=wpworker' ),
+			'meta'  => [ 'title' => __( 'AI Abilities are active — click to configure', 'worker-ai' ) ],
 		] );
 
 		// Toggle off child node.
 		$wp_admin_bar->add_node( [
-			'parent' => 'wpcodex-indicator',
-			'id'     => 'wpcodex-indicator-off',
-			'title'  => esc_html__( 'Turn off AI Abilities', 'wpcodex' ),
+			'parent' => 'wpworker-indicator',
+			'id'     => 'wpworker-indicator-off',
+			'title'  => esc_html__( 'Turn off AI Abilities', 'worker-ai' ),
 			'href'   => wp_nonce_url(
-				admin_url( 'admin.php?page=wpcodex&wpcodex_toggle=off' ),
-				'wpcodex_toggle_abilities'
+				admin_url( 'admin.php?page=wpworker&wpworker_toggle=off' ),
+				'wpworker_toggle_abilities'
 			),
 		] );
 	}
@@ -190,49 +190,49 @@ final class AdminMenu {
 	 */
 	public function render_get_pro_redirect(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'worker-ai' ) );
 		}
 		?>
-		<script>window.location.href = 'https://wpcodex.ai/pro/';</script>
-		<div class="wrap"><p><?php esc_html_e( 'Redirecting to WPCodex Pro…', 'wpcodex' ); ?></p></div>
+		<script>window.location.href = 'https://wpworker.ai/pro/';</script>
+		<div class="wrap"><p><?php esc_html_e( 'Redirecting to Worker AI Pro…', 'worker-ai' ); ?></p></div>
 		<?php
 	}
 
 	// Assets
 	/**
-	 * Enqueues admin scripts and styles for WPCodex pages.
+	 * Enqueues admin scripts and styles for WPWorker pages.
 	 *
 	 * @since 1.0.0
 	 * @param string $hook_suffix The current admin page hook suffix.
 	 */
 	public function enqueue_assets( string $hook_suffix ): void {
-		if ( ! $this->is_wpcodex_page( $hook_suffix ) ) {
-			return;
-		}
+		// if ( ! $this->is_wpworker_page( $hook_suffix ) ) {
+		// 	return;
+		// }
 
-		$asset_file = WPCODEX_DIR . 'assets/admin/admin.asset.php';
+		$asset_file = WPWORKER_DIR . 'assets/admin/admin.asset.php';
 		$asset      = file_exists( $asset_file )
 			? (array) require $asset_file
-			: [ 'dependencies' => [], 'version' => WPCODEX_VERSION ];
+			: [ 'dependencies' => [], 'version' => WPWORKER_VERSION ];
 
 		wp_enqueue_style(
-			'wpcodex-admin',
-			WPCODEX_URL . 'assets/admin/admin.css',
+			'wpworker-admin',
+			WPWORKER_URL . 'assets/admin/admin.css',
 			[],
-			$asset['version'] ?? WPCODEX_VERSION
+			$asset['version'] ?? WPWORKER_VERSION
 		);
 
 		wp_enqueue_script(
-			'wpcodex-admin',
-			WPCODEX_URL . 'assets/admin/admin.js',
+			'wpworker-admin',
+			WPWORKER_URL . 'assets/admin/admin.js',
 			$asset['dependencies'] ?? [],
-			$asset['version'] ?? WPCODEX_VERSION,
+			$asset['version'] ?? WPWORKER_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'wpcodex-admin',
-			'wpcodexData',
+			'wpworker-admin',
+			'wpworkerData',
 			[
 				'restUrl'          => esc_url_raw( rest_url() ),
 				'nonce'            => wp_create_nonce( 'wp_rest' ),
@@ -244,23 +244,23 @@ final class AdminMenu {
 				// singleton too early, triggering other plugins' category hooks before
 				// their categories are registered.
 				'i18n' => [
-					'saved'    => __( 'Saved.', 'wpcodex' ),
-					'deleted'  => __( 'Deleted.', 'wpcodex' ),
-					'error'    => __( 'Something went wrong. Please try again.', 'wpcodex' ),
-					'confirm'  => __( 'Are you sure?', 'wpcodex' ),
-					'enabled'  => __( 'Enabled', 'wpcodex' ),
-					'disabled' => __( 'Disabled', 'wpcodex' ),
-					'enable'   => __( 'Enable', 'wpcodex' ),
-					'disable'  => __( 'Disable', 'wpcodex' ),
-					'edit'     => __( 'Edit', 'wpcodex' ),
-					'delete'   => __( 'Delete', 'wpcodex' ),
-					'cancel'   => __( 'Cancel', 'wpcodex' ),
-					'save'     => __( 'Save', 'wpcodex' ),
+					'saved'    => __( 'Saved.', 'worker-ai' ),
+					'deleted'  => __( 'Deleted.', 'worker-ai' ),
+					'error'    => __( 'Something went wrong. Please try again.', 'worker-ai' ),
+					'confirm'  => __( 'Are you sure?', 'worker-ai' ),
+					'enabled'  => __( 'Enabled', 'worker-ai' ),
+					'disabled' => __( 'Disabled', 'worker-ai' ),
+					'enable'   => __( 'Enable', 'worker-ai' ),
+					'disable'  => __( 'Disable', 'worker-ai' ),
+					'edit'     => __( 'Edit', 'worker-ai' ),
+					'delete'   => __( 'Delete', 'worker-ai' ),
+					'cancel'   => __( 'Cancel', 'worker-ai' ),
+					'save'     => __( 'Save', 'worker-ai' ),
 				],
 			]
 		);
 
-		wp_set_script_translations( 'wpcodex-admin', 'wpcodex' );
+		wp_set_script_translations( 'wpworker-admin', 'worker-ai' );
 	}
 
 	/**
@@ -275,18 +275,18 @@ final class AdminMenu {
 
 	// Private helpers
 	/**
-	 * Checks whether the given hook suffix belongs to a WPCodex admin page.
+	 * Checks whether the given hook suffix belongs to a WPWorker admin page.
 	 *
 	 * @since  1.0.0
 	 * @param  string $hook_suffix The current admin page hook suffix.
-	 * @return bool True when on a WPCodex admin page; false otherwise.
+	 * @return bool True when on a WPWorker admin page; false otherwise.
 	 */
-	private function is_wpcodex_page( string $hook_suffix ): bool {
-		return str_contains( $hook_suffix, 'wpcodex' );
+	private function is_wpworker_page( string $hook_suffix ): bool {
+		return str_contains( $hook_suffix, 'worker-ai' );
 	}
 
 	/**
-	 * Returns the WPCodex page ID for the given hook suffix.
+	 * Returns the WPWorker page ID for the given hook suffix.
 	 *
 	 * @since  1.0.0
 	 * @param  string $hook_suffix The current admin page hook suffix.
@@ -294,12 +294,12 @@ final class AdminMenu {
 	 */
 	private function current_page_id( string $hook_suffix ): string {
 		$map = [
-			'toplevel_page_wpcodex'                    => 'configuration',
-			'wpcodex_page_wpcodex-abilities'           => 'abilities-settings',
-			'wpcodex_page_wpcodex-skills'              => 'skills',
-			'wpcodex_page_wpcodex-sandbox'             => 'sandbox',
-			'wpcodex_page_wpcodex-block-editor-queue'  => 'block-editor',
-			'wpcodex_page_wpcodex-get-pro'             => 'get-pro',
+			'toplevel_page_wpworker'                    => 'configuration',
+			'wpworker_page_wpworker-abilities'           => 'abilities-settings',
+			'wpworker_page_wpworker-skills'              => 'skills',
+			'wpworker_page_wpworker-sandbox'             => 'sandbox',
+			'wpworker_page_wpworker-block-editor-queue'  => 'block-editor',
+			'wpworker_page_wpworker-get-pro'             => 'get-pro',
 		];
 		return $map[ $hook_suffix ] ?? 'configuration';
 	}
@@ -340,25 +340,25 @@ final class AdminMenu {
 		?>
 		<style>
 			/* ── Get Pro accent colour ── */
-			#adminmenu a[href$="wpcodex-get-pro"] {
+			#adminmenu a[href$="wpworker-get-pro"] {
 				color: #f5a623 !important;
 				font-weight: 600;
 			}
-			#adminmenu a[href$="wpcodex-get-pro"]:hover {
+			#adminmenu a[href$="wpworker-get-pro"]:hover {
 				color: #f5a623 !important;
 				text-decoration: underline;
 			}
 
-			/* ── Admin bar "WPCodex ON" indicator ── */
-			#wpadminbar #wp-admin-bar-wpcodex-indicator > .ab-item {
+			/* ── Admin bar "Worker AI ON" indicator ── */
+			#wpadminbar #wp-admin-bar-wpworker-indicator > .ab-item {
 				background: #d63638 !important;
 				color: #fff !important;
 				font-weight: 600;
 			}
-			#wpadminbar #wp-admin-bar-wpcodex-indicator > .ab-item:hover {
+			#wpadminbar #wp-admin-bar-wpworker-indicator > .ab-item:hover {
 				background: #b32d2e !important;
 			}
-			.wpcodex-ab-dot {
+			.wpworker-ab-dot {
 				display: inline-block;
 				width: 8px;
 				height: 8px;
@@ -366,9 +366,9 @@ final class AdminMenu {
 				border-radius: 50%;
 				margin-right: 6px;
 				vertical-align: middle;
-				animation: wpcodex-pulse 2s infinite;
+				animation: wpworker-pulse 2s infinite;
 			}
-			@keyframes wpcodex-pulse {
+			@keyframes wpworker-pulse {
 				0%, 100% { opacity: 1; }
 				50%       { opacity: .4; }
 			}

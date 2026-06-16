@@ -2,17 +2,17 @@
 /**
  * Unit tests for DbRunner.
  *
- * @package WPCodex\Tests\Unit\Runner
+ * @package WPWorker\Tests\Unit\Runner
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Runner;
+namespace WPWorker\Tests\Unit\Runner;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Runner\DbRunner;
+use WPWorker\Runner\DbRunner;
 
 /**
  * Class DbRunnerTest

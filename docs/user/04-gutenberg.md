@@ -1,6 +1,6 @@
 # Gutenberg / Block Editor
 
-WPCodex lets AI agents write Gutenberg block content to posts, pages, and templates through a browser-based finalizer. Because block serialization requires the JavaScript block registry, content changes go through a queue and are finalized in an open Block Editor tab rather than written directly by the server.
+WPWorker lets AI agents write Gutenberg block content to posts, pages, and templates through a browser-based finalizer. Because block serialization requires the JavaScript block registry, content changes go through a queue and are finalized in an open Block Editor tab rather than written directly by the server.
 
 ---
 
@@ -15,7 +15,7 @@ WPCodex lets AI agents write Gutenberg block content to posts, pages, and templa
 
 ## Single-post workflow (`gutenberg-write-content`)
 
-For a single post change, the agent uses the convenience ability `wpcodex/gutenberg-write-content`, which creates the batch, adds the item, and enables finalization in one call.
+For a single post change, the agent uses the convenience ability `wpworker/gutenberg-write-content`, which creates the batch, adds the item, and enables finalization in one call.
 
 **What the agent returns:**
 
@@ -26,7 +26,7 @@ For a single post change, the agent uses the convenience ability `wpcodex/gutenb
   "post_id": 123,
   "post_title": "My Page",
   "batch_status": "ready",
-  "finalization_url": "https://example.com/wp-admin/admin.php?page=wpcodex-block-editor-queue&batch=42",
+  "finalization_url": "https://example.com/wp-admin/admin.php?page=wpworker-block-editor-queue&batch=42",
   "finalizer_runtime": { "online": false, ... },
   "user_instruction": "Open the Block Editor Queue to apply this change."
 }
@@ -42,13 +42,13 @@ For changing multiple posts in one atomic batch:
 
 1. **Create the batch:**
    ```
-   wpcodex/gutenberg-create-pending-batch
+   wpworker/gutenberg-create-pending-batch
      label: "Homepage redesign"
    ```
 
 2. **Add one item per post:**
    ```
-   wpcodex/gutenberg-add-pending-change
+   wpworker/gutenberg-add-pending-change
      batch_id:   42
      post_id:    123
      block_spec: [{ "name": "core/paragraph", "attributes": { "content": "Hello world." } }]
@@ -57,11 +57,11 @@ For changing multiple posts in one atomic batch:
 
 3. **Enable finalization:**
    ```
-   wpcodex/gutenberg-enable-batch-finalization
+   wpworker/gutenberg-enable-batch-finalization
      batch_id: 42
    ```
 
-4. Open the **Block Editor Queue** (`wpcodex-block-editor-queue`) to apply all changes.
+4. Open the **Block Editor Queue** (`wpworker-block-editor-queue`) to apply all changes.
 
 ---
 
@@ -100,7 +100,7 @@ Use registered block names (e.g. `core/paragraph`, `core/image`, `core/group`, `
 
 ## Block Editor Queue page
 
-Navigate to **WPCodex → Block Editor** to manage pending batches.
+Navigate to **WPWorker → Block Editor** to manage pending batches.
 
 The page shows:
 - All **ready** batches waiting for finalization
@@ -108,7 +108,7 @@ The page shows:
 - **Finalized** batches (success)
 - **Failed** or **conflicted** batches
 
-When you have the page open, batches in "ready" state are picked up automatically. The agent monitors finalization via `wpcodex/gutenberg-get-finalizer-runtime` or by polling a REST endpoint — it will notify you once the change is applied.
+When you have the page open, batches in "ready" state are picked up automatically. The agent monitors finalization via `wpworker/gutenberg-get-finalizer-runtime` or by polling a REST endpoint — it will notify you once the change is applied.
 
 **Keep the page open** while changes are being finalized. Navigating away mid-finalization marks the batch as interrupted and it will retry on the next page load.
 
@@ -119,7 +119,7 @@ When you have the page open, batches in "ready" state are picked up automaticall
 Before writing, the agent typically reads the current block content:
 
 ```
-wpcodex/gutenberg-get-content
+wpworker/gutenberg-get-content
   post_id: 123
 ```
 
@@ -129,7 +129,7 @@ Returns the parsed block tree so the agent can inspect the current structure bef
 
 ## Raw HTML blocks
 
-By default, `wpcodex/gutenberg-write-content` rejects a `block_spec` that contains only `core/html` (raw HTML) blocks. This prevents agents from bypassing the block system. To allow raw HTML intentionally:
+By default, `wpworker/gutenberg-write-content` rejects a `block_spec` that contains only `core/html` (raw HTML) blocks. This prevents agents from bypassing the block system. To allow raw HTML intentionally:
 
 ```json
 {

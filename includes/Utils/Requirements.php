@@ -2,12 +2,12 @@
 /**
  * Requirements checker.
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Utils;
+namespace WPWorker\Utils;
 
 /**
  * Class Requirements
@@ -30,7 +30,7 @@ class Requirements {
 		if ( version_compare( PHP_VERSION, self::MIN_PHP, '<' ) ) {
 			$errors[] = sprintf(
 				/* translators: 1: required version 2: current version */
-				__( 'WPCodex requires PHP %1$s or higher. You are running %2$s.', 'wpcodex' ),
+				__( 'Worker AI requires PHP %1$s or higher. You are running %2$s.', 'worker-ai' ),
 				self::MIN_PHP,
 				PHP_VERSION
 			);
@@ -39,7 +39,7 @@ class Requirements {
 		if ( version_compare( get_bloginfo( 'version' ), self::MIN_WP, '<' ) ) {
 			$errors[] = sprintf(
 				/* translators: 1: required version 2: current version */
-				__( 'WPCodex requires WordPress %1$s or higher (Abilities API). You are running %2$s.', 'wpcodex' ),
+				__( 'Worker AI requires WordPress %1$s or higher (Abilities API). You are running %2$s.', 'worker-ai' ),
 				self::MIN_WP,
 				get_bloginfo( 'version' )
 			);

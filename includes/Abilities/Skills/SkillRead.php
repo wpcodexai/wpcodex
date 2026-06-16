@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/skill-read
+ * Ability: wpworker/skill-read
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace WPWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Sources;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Skills\Sources;
 
 /**
  * Class SkillRead
@@ -22,22 +22,22 @@ class SkillRead extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'wpworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-read';
+		return 'wpworker/skill-read';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Read Skill', 'wpcodex' );
+		return __( 'Read Skill', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Read the full body of a skill by name. Searches all registered skill sources (user DB and external plugins).', 'wpcodex' );
+		return __( 'Read the full body of a skill by name. Searches all registered skill sources (user DB and external plugins).', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -76,15 +76,15 @@ class SkillRead extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['name'] ) || ! is_string( $input['name'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'name must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'name must be a non-empty string.', 'worker-ai' ) );
 		}
 
 		$skill = Sources::find( $input['name'] );
 		if ( null === $skill ) {
 			return new \WP_Error(
-				'wpcodex_not_found',
+				'wpworker_not_found',
 				/* translators: %s skill name */
-				sprintf( __( 'Skill "%s" not found.', 'wpcodex' ), esc_html( $input['name'] ) )
+				sprintf( __( 'Skill "%s" not found.', 'worker-ai' ), esc_html( $input['name'] ) )
 			);
 		}
 

@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-add-pending-change
+ * Ability: wpworker/gutenberg-add-pending-change
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace WPWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Utils\GutenbergStorage;
 
 /**
  * Class AddPaddingChange
@@ -24,22 +24,22 @@ class AddPaddingChange extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'wpworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-add-pending-change';
+		return 'wpworker/gutenberg-add-pending-change';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Add Gutenberg Pending Change', 'wpcodex' );
+		return __( 'Add Gutenberg Pending Change', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Adds one Gutenberg block change to a pending batch. If batch_id is omitted a new draft batch is created automatically. The operation is queued — changes are not live until the batch is finalized through the Block Editor Queue.', 'wpcodex' );
+		return __( 'Adds one Gutenberg block change to a pending batch. If batch_id is omitted a new draft batch is created automatically. The operation is queued — changes are not live until the batch is finalized through the Block Editor Queue.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -118,7 +118,7 @@ class AddPaddingChange extends AbstractAbility {
 	public function get_instructions(): string {
 		return implode( "\n", [
 			'Queues one Gutenberg block change. Omit batch_id to auto-create a batch.',
-			'After adding all changes, call wpcodex/gutenberg-enable-batch-finalization to transition the batch from draft to ready and unlock the Block Editor Queue.',
+			'After adding all changes, call wpworker/gutenberg-enable-batch-finalization to transition the batch from draft to ready and unlock the Block Editor Queue.',
 			'The changes are not live until finalization completes.',
 			'If finalizer_runtime.online is false, ask the user to open finalizer_runtime.dashboard_url before enabling finalization.',
 		] );
@@ -129,14 +129,14 @@ class AddPaddingChange extends AbstractAbility {
 		// Resolve target.
 		$target_id = GutenbergStorage::input_target_id( $input );
 		if ( $target_id <= 0 ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'target_id (or post_id) must be a positive integer.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'target_id (or post_id) must be a positive integer.', 'worker-ai' ) );
 		}
 		$target = GutenbergStorage::get_target( $target_id );
 		if ( ! $target instanceof \WP_Post ) {
 			return new \WP_Error(
-				'wpcodex_not_found',
+				'wpworker_not_found',
 				/* translators: %d: post ID */
-				sprintf( __( 'Target post %d was not found.', 'wpcodex' ), $target_id )
+				sprintf( __( 'Target post %d was not found.', 'worker-ai' ), $target_id )
 			);
 		}
 		$target_type = GutenbergStorage::input_target_type( $input, $target );
@@ -182,7 +182,7 @@ class AddPaddingChange extends AbstractAbility {
 				return new \WP_Error(
 					'gutenberg_batch_not_found',
 					/* translators: %d: batch ID */
-					sprintf( __( 'Gutenberg batch %d was not found.', 'wpcodex' ), $batch_id_input )
+					sprintf( __( 'Gutenberg batch %d was not found.', 'worker-ai' ), $batch_id_input )
 				);
 			}
 			if ( GutenbergStorage::gb_status( $batch->ID ) !== GutenbergStorage::STATUS_DRAFT ) {

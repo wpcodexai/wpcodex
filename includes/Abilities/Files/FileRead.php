@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/file-read
+ * Ability: wpworker/file-read
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Files;
+namespace WPWorker\Abilities\Files;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Runner\FileManager;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Runner\FileManager;
 
 /**
  * Class FileRead
@@ -22,22 +22,22 @@ class FileRead extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-general';
+		return 'wpworker-general';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/file-read';
+		return 'wpworker/file-read';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Read File', 'wpcodex' );
+		return __( 'Read File', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Read the contents of a file from the WordPress filesystem. Returns base64-encoded content for binary files.', 'wpcodex' );
+		return __( 'Read the contents of a file from the WordPress filesystem. Returns base64-encoded content for binary files.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -93,7 +93,7 @@ class FileRead extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['path'] ) || ! is_string( $input['path'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'path must be a non-empty string.', 'worker-ai' ) );
 		}
 
 		$offset = max( 0, (int) ( $input['offset'] ?? 0 ) );
@@ -102,9 +102,9 @@ class FileRead extends AbstractAbility {
 		try {
 			return FileManager::instance()->read_file( $input['path'], $offset, $limit );
 		} catch ( \InvalidArgumentException $e ) {
-			return new \WP_Error( 'wpcodex_path_error', $e->getMessage() );
+			return new \WP_Error( 'wpworker_path_error', $e->getMessage() );
 		} catch ( \RuntimeException $e ) {
-			return new \WP_Error( 'wpcodex_file_error', $e->getMessage() );
+			return new \WP_Error( 'wpworker_file_error', $e->getMessage() );
 		}
 	}
 }

@@ -1,6 +1,6 @@
-= WPCodex Pro =
+= WPWorker Pro =
 
-[WPCodex Pro](https://wpcodex.ai/pro/) extends the free plugin with the most powerful abilities for development and staging environments:
+[WPWorker Pro](https://wpworker.ai/pro/) extends the free plugin with the most powerful abilities for development and staging environments:
 
 * **Execute PHP** inside the live WordPress process — full access to `$wpdb`, all functions, all active plugins
 * **Run WP-CLI commands** — plugin management, post operations, cache flushes, database imports, anything WP-CLI supports
@@ -9,4 +9,4 @@
 * **Edit files** with targeted find-and-replace (safer than a full overwrite)
 * **Delete files and directories**, with protection for core WordPress paths
 
-Pro abilities appear in **WPCodex → Ability Settings** alongside free abilities and can be enabled or disabled individually.
+Pro abilities appear in **WPWorker → Ability Settings** alongside free abilities and can be enabled or disabled individually.

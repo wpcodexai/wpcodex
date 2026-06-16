@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/post-query
+ * Ability: wpworker/post-query
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Site;
+namespace WPWorker\Abilities\Site;
 
-use WPCodex\Abilities\AbstractAbility;
+use WPWorker\Abilities\AbstractAbility;
 
 /**
  * Class PostQuery
@@ -19,23 +19,23 @@ use WPCodex\Abilities\AbstractAbility;
  */
 class PostQuery extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpcodex-site';
+		return 'wpworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/post-query';
+		return 'wpworker/post-query';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Query Posts', 'wpcodex' );
+		return __( 'Query Posts', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
 			'Query posts using WP_Query. Pass a query_args object following the WP_Query parameter reference. Returns found_posts count and an array of post summaries.',
-			'wpcodex'
+			'worker-ai'
 		);
 	}
 
@@ -69,7 +69,7 @@ class PostQuery extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): string|\WP_Error {
 		if ( ! isset( $input['query_args'] ) || ! is_array( $input['query_args'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'query_args must be an object.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'query_args must be an object.', 'worker-ai' ) );
 		}
 
 		$query_args                          = $input['query_args'];

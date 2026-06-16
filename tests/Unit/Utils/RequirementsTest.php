@@ -1,21 +1,21 @@
 <?php
 /**
- * Unit tests for WPCodex\Utils\Requirements.
+ * Unit tests for WPWorker\Utils\Requirements.
  *
- * @package WPCodex\Tests\Unit\Utils
+ * @package WPWorker\Tests\Unit\Utils
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Utils;
+namespace WPWorker\Tests\Unit\Utils;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Utils\Requirements;
+use WPWorker\Utils\Requirements;
 
 /**
- * @covers \WPCodex\Utils\Requirements
+ * @covers \WPWorker\Utils\Requirements
  */
 class RequirementsTest extends TestCase {
 

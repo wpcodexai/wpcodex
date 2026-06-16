@@ -1,19 +1,19 @@
 <?php
 /**
- * Unit tests for WPCodex\Skills\Parser.
+ * Unit tests for WPWorker\Skills\Parser.
  *
- * @package WPCodex\Tests\Unit\Skills
+ * @package WPWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Skills;
+namespace WPWorker\Tests\Unit\Skills;
 
 use PHPUnit\Framework\TestCase;
-use WPCodex\Skills\Parser;
+use WPWorker\Skills\Parser;
 
 /**
- * @covers \WPCodex\Skills\Parser
+ * @covers \WPWorker\Skills\Parser
  */
 class ParserTest extends TestCase {
 

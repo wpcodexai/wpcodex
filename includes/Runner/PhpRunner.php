@@ -2,18 +2,18 @@
 /**
  * PHP Runner — temp-file sandbox execution engine.
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Runner;
+namespace WPWorker\Runner;
 
 /**
  * Class PhpRunner
  *
  * Executes PHP code by writing it to a uniquely named temp file inside
- * WPCODEX_SANDBOX_DIR, including it in the current WordPress process with
+ * WPWORKER_SANDBOX_DIR, including it in the current WordPress process with
  * output buffering, then always deleting the file — even on exception.
  *
  * Returns a structured result array so callers can expose typed output
@@ -44,7 +44,7 @@ class PhpRunner {
 	 * @throws \RuntimeException When the sandbox directory is not writable.
 	 */
 	public function run( string $code ): array {
-		$sandbox = WPCODEX_SANDBOX_DIR;
+		$sandbox = WPWORKER_SANDBOX_DIR;
 
 		if ( ! is_dir( $sandbox ) ) {
 			wp_mkdir_p( $sandbox );
@@ -52,7 +52,7 @@ class PhpRunner {
 
 		if ( ! wp_is_writable( $sandbox ) ) {
 			throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
-				__( 'WPCodex sandbox directory is not writable. Check plugin activation.', 'wpcodex' )
+				__( 'WPWorker sandbox directory is not writable. Check plugin activation.', 'worker-ai' )
 			);
 		}
 
@@ -62,7 +62,7 @@ class PhpRunner {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		if ( false === file_put_contents( $filename, $wrapped ) ) {
-			throw new \RuntimeException( __( 'WPCodex: Failed to write PHP sandbox file.', 'wpcodex' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
+			throw new \RuntimeException( __( 'WPWorker: Failed to write PHP sandbox file.', 'worker-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 		}
 
 		/** @var list<array{type: string, message: string, file: string, line: int}> $errors */

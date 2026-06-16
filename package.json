@@ -1,8 +1,8 @@
 {
-    "name": "wpcodex",
+    "name": "worker-ai",
     "version": "1.0.0",
-    "description": "Build tooling for WPCodex admin assets",
-    "author": "WPCodex Team",
+    "description": "Build tooling for Worker AI admin assets",
+    "author": "Worker AI Team",
     "license": "GPL-3.0-or-later",
     "private": true,
     "scripts": {
@@ -16,7 +16,7 @@
         "lint:pkg-json":   "wp-scripts lint-pkg-json",
         "packages-update": "wp-scripts packages-update",
         "plugin-zip":      "wp-scripts plugin-zip",
-        "make-pot":        "wp i18n make-pot . languages/wpcodex.pot --domain=wpcodex --exclude=node_modules,vendor,tests"
+        "make-pot":        "wp i18n make-pot . languages/worker-ai.pot --domain=worker-ai --exclude=node_modules,vendor,tests"
     },
     "devDependencies": {
         "@wordpress/scripts": "^30.23.0",

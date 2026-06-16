@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/skill-update
+ * Ability: wpworker/skill-update
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace WPWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Repository;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Skills\Repository;
 
 /**
  * Class SkillUpdate
@@ -22,22 +22,22 @@ class SkillUpdate extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'wpworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-update';
+		return 'wpworker/skill-update';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Update Skill', 'wpcodex' );
+		return __( 'Update Skill', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Update an existing skill by name. Pass only the fields you want to change.', 'wpcodex' );
+		return __( 'Update an existing skill by name. Pass only the fields you want to change.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -79,7 +79,7 @@ class SkillUpdate extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['name'] ) || ! is_string( $input['name'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'name must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'name must be a non-empty string.', 'worker-ai' ) );
 		}
 		$data = [];
 		if ( isset( $input['description'] ) ) {
@@ -95,7 +95,7 @@ class SkillUpdate extends AbstractAbility {
 			$data['enable_prompt'] = (bool) $input['enable_prompt'];
 		}
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'No fields to update were provided.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'No fields to update were provided.', 'worker-ai' ) );
 		}
 		return Repository::instance()->update( $input['name'], $data );
 	}

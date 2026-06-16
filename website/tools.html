@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tools — WPCodex</title>
-<meta name="description" content="Explore all MCP abilities available in WPCodex — PHP execution, WP-CLI, database queries, file access, and more.">
+<title>Tools — WPWorker</title>
+<meta name="description" content="Explore all MCP abilities available in WPWorker — PHP execution, WP-CLI, database queries, file access, and more.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -31,8 +31,8 @@
 <div class="page-hero">
   <div class="container">
     <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;margin-bottom:16px;">MCP Abilities</span>
-    <h1>All WPCodex Tools</h1>
-    <p>Every ability registered by WPCodex, ready to be called by your AI agent via the Model Context Protocol.</p>
+    <h1>All WPWorker Tools</h1>
+    <p>Every ability registered by WPWorker, ready to be called by your AI agent via the Model Context Protocol.</p>
   </div>
 </div>
 
@@ -45,7 +45,7 @@
       <div class="tool-card">
         <div class="tool-icon">⚡</div>
         <div>
-          <div class="tool-name">wpcodex/php-execute</div>
+          <div class="tool-name">wpworker/php-execute</div>
           <h3>PHP Execute</h3>
           <p>Run arbitrary PHP code inside the live WordPress process. Access all globals, hooks, functions, and <code>$wpdb</code> exactly as WordPress itself does. No opening <code>&lt;?php</code> tag needed.</p>
           <div class="tool-params">
@@ -57,7 +57,7 @@
       <div class="tool-card">
         <div class="tool-icon">🖥️</div>
         <div>
-          <div class="tool-name">wpcodex/wpcli-run</div>
+          <div class="tool-name">wpworker/wpcli-run</div>
           <h3>WP-CLI Run</h3>
           <p>Execute any WP-CLI command on the server without leading <code>wp</code>. Supports an optional timeout. Returns combined stdout/stderr output from the command.</p>
           <div class="tool-params">
@@ -70,7 +70,7 @@
       <div class="tool-card">
         <div class="tool-icon">🗄️</div>
         <div>
-          <div class="tool-name">wpcodex/db-query</div>
+          <div class="tool-name">wpworker/db-query</div>
           <h3>Database Query</h3>
           <p>Run SQL via <code>$wpdb</code> with optional prepared statement args. SELECT queries return an array of row objects; INSERT/UPDATE/DELETE return the affected row count.</p>
           <div class="tool-params">
@@ -87,7 +87,7 @@
       <div class="tool-card">
         <div class="tool-icon">📖</div>
         <div>
-          <div class="tool-name">wpcodex/file-read</div>
+          <div class="tool-name">wpworker/file-read</div>
           <h3>File Read</h3>
           <p>Read the contents of any file on the server by absolute path. Returns the raw file content as a string. Useful for inspecting theme files, plugin source, and config.</p>
           <div class="tool-params"><span class="param req">path* (string)</span></div>
@@ -97,7 +97,7 @@
       <div class="tool-card">
         <div class="tool-icon">✏️</div>
         <div>
-          <div class="tool-name">wpcodex/file-write</div>
+          <div class="tool-name">wpworker/file-write</div>
           <h3>File Write</h3>
           <p>Atomically write content to any file path. A <code>.bak</code> backup of the original is created automatically before every write. Directories are created if they don't exist.</p>
           <div class="tool-params">
@@ -110,7 +110,7 @@
       <div class="tool-card">
         <div class="tool-icon">📂</div>
         <div>
-          <div class="tool-name">wpcodex/file-list</div>
+          <div class="tool-name">wpworker/file-list</div>
           <h3>File List</h3>
           <p>List the contents of a directory. Optionally recurse into subdirectories. Returns an array of file and directory paths with metadata.</p>
           <div class="tool-params">
@@ -127,7 +127,7 @@
       <div class="tool-card">
         <div class="tool-icon">🌐</div>
         <div>
-          <div class="tool-name">wpcodex/site-info</div>
+          <div class="tool-name">wpworker/site-info</div>
           <h3>Site Info</h3>
           <p>Returns a full snapshot of the WordPress installation: WP version, PHP version, active plugins (with versions), active theme, site URLs, and server environment details.</p>
           <div class="tool-params"><span class="param">No arguments required</span></div>
@@ -137,7 +137,7 @@
       <div class="tool-card">
         <div class="tool-icon">🔧</div>
         <div>
-          <div class="tool-name">wpcodex/option-get</div>
+          <div class="tool-name">wpworker/option-get</div>
           <h3>Option Get</h3>
           <p>Retrieve any WordPress option by name using <code>get_option()</code>. Returns the deserialized value — arrays, objects, and scalar types all work correctly.</p>
           <div class="tool-params"><span class="param req">option_name* (string)</span></div>
@@ -147,7 +147,7 @@
       <div class="tool-card">
         <div class="tool-icon">⚙️</div>
         <div>
-          <div class="tool-name">wpcodex/option-set</div>
+          <div class="tool-name">wpworker/option-set</div>
           <h3>Option Set</h3>
           <p>Set any WordPress option by name using <code>update_option()</code>. Accepts complex values (arrays, objects). Optional autoload flag controls whether the option loads on every request.</p>
           <div class="tool-params">
@@ -161,7 +161,7 @@
       <div class="tool-card">
         <div class="tool-icon">📝</div>
         <div>
-          <div class="tool-name">wpcodex/post-query</div>
+          <div class="tool-name">wpworker/post-query</div>
           <h3>Post Query</h3>
           <p>Run a <code>WP_Query</code> with any query args object. Returns <code>found_posts</code> (total matching) plus a <code>posts</code> array with full post objects and meta.</p>
           <div class="tool-params"><span class="param req">query_args* (object)</span></div>
@@ -174,7 +174,7 @@
       <div class="tool-card">
         <div class="tool-icon">📚</div>
         <div>
-          <div class="tool-name">wpcodex/skill-list</div>
+          <div class="tool-name">wpworker/skill-list</div>
           <h3>Skill List</h3>
           <p>Returns all stored skills with their name, description, and flags. Agents call this at session start to discover available playbooks and standing instructions.</p>
           <div class="tool-params"><span class="param">No arguments required</span></div>
@@ -183,7 +183,7 @@
       <div class="tool-card">
         <div class="tool-icon">📖</div>
         <div>
-          <div class="tool-name">wpcodex/skill-read</div>
+          <div class="tool-name">wpworker/skill-read</div>
           <h3>Skill Read</h3>
           <p>Load the full Markdown body of a skill by name. Agents call this for agentic skills at session start, and for task-specific skills once the task is clear.</p>
           <div class="tool-params"><span class="param req">name* (string)</span></div>
@@ -192,7 +192,7 @@
       <div class="tool-card">
         <div class="tool-icon">✍️</div>
         <div>
-          <div class="tool-name">wpcodex/skill-create</div>
+          <div class="tool-name">wpworker/skill-create</div>
           <h3>Skill Create</h3>
           <p>Create a new skill in the database. Supply a name, description, YAML+Markdown body, and optional flags for agentic loading and prompt display.</p>
           <div class="tool-params">
@@ -207,7 +207,7 @@
       <div class="tool-card">
         <div class="tool-icon">🔄</div>
         <div>
-          <div class="tool-name">wpcodex/skill-update</div>
+          <div class="tool-name">wpworker/skill-update</div>
           <h3>Skill Update</h3>
           <p>Update an existing skill. Pass the skill name and any fields to change — description, body, or flags. Partial updates are supported.</p>
           <div class="tool-params">
@@ -219,7 +219,7 @@
       <div class="tool-card">
         <div class="tool-icon">🗑️</div>
         <div>
-          <div class="tool-name">wpcodex/skill-delete</div>
+          <div class="tool-name">wpworker/skill-delete</div>
           <h3>Skill Delete</h3>
           <p>Permanently delete a skill from the database by name. This action is irreversible — export the skill body first if you need a backup.</p>
           <div class="tool-params"><span class="param req">name* (string)</span></div>
@@ -230,7 +230,7 @@
     <div style="margin-top:60px;">
       <div class="cta-band">
         <h2>Ready to use these tools?</h2>
-        <p>Install WPCodex, enable MCP in wp-config.php, and connect your AI agent in minutes.</p>
+        <p>Install WPWorker, enable MCP in wp-config.php, and connect your AI agent in minutes.</p>
         <a href="quickstart.html" class="btn btn-white btn-lg">Quick Start Guide</a>
       </div>
     </div>

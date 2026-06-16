@@ -1,27 +1,27 @@
 /**
- * WPCodex — Sandbox page.
+ * Worker AI — Sandbox page.
  *
- * Scoped to #wpcodex-sandbox.
+ * Scoped to #wpworker-sandbox.
  */
 
-#wpcodex-sandbox {
-	.wpcodex-flex {
+#wpworker-sandbox {
+	.wpworker-flex {
 		display: unset;
 	}
 
-	.wpcodex-card__meta {
+	.wpworker-card__meta {
 		font-family: $font-mono;
 		font-size: .75rem;
 	}
 
-	.wpcodex-card.is-suspended {
+	.wpworker-card.is-suspended {
 		opacity: .6;
 		filter: grayscale(.3);
 	}
 }
 
 // Warn badge (used for Suspended state).
-.wpcodex-badge--warn {
+.wpworker-badge--warn {
 	background: #fff3cd;
 	color: #7a4f00;
 }

@@ -1,20 +1,20 @@
 /**
- * WPCodex — Block Editor Queue page.
+ * Worker AI — Block Editor Queue page.
  *
- * Scoped to #wpcodex-block-editor.
+ * Scoped to #wpworker-block-editor.
  */
 
-#wpcodex-block-editor {
-	.wpcodex-flex {
+#wpworker-block-editor {
+	.wpworker-flex {
 		display: unset;
 	}
 
-	.wpcodex-queue-table-wrap {
+	.wpworker-queue-table-wrap {
 		margin-top: 16px;
 		overflow-x: auto;
 	}
 
-	.wpcodex-queue-table {
+	.wpworker-queue-table {
 		min-width: 700px;
 
 		code {
@@ -25,7 +25,7 @@
 		}
 	}
 
-	.wpcodex-status {
+	.wpworker-status {
 		display: inline-block;
 		padding: 2px 8px;
 		border-radius: $radius-lg;
@@ -85,7 +85,7 @@
 		}
 	}
 
-	.wpcodex-info-box {
+	.wpworker-info-box {
 		background: $color-bg-white;
 		border: 1px solid $color-border-lt;
 		border-left: 4px solid $color-primary;

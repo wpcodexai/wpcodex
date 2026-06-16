@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quick Start — WPCodex</title>
-<meta name="description" content="Get WPCodex running and connect your AI agent to WordPress in under 5 minutes.">
+<title>Quick Start — WPWorker</title>
+<meta name="description" content="Get WPWorker running and connect your AI agent to WordPress in under 5 minutes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -43,7 +43,7 @@
       <div class="qs-body">
         <h3>Download &amp; install the plugin</h3>
         <p>Upload the ZIP in <strong>WordPress Admin → Plugins → Add New → Upload Plugin</strong>, then activate. Or use WP-CLI:</p>
-        <div class="code-block">wp plugin install wpcodex --activate</div>
+        <div class="code-block">wp plugin install wpworker --activate</div>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
       <div class="qs-body">
         <h3>Note your MCP endpoint URL</h3>
         <p>Your endpoint is:</p>
-        <div class="code-block">https://yoursite.com/wp-json/wpcodex/v1/mcp</div>
+        <div class="code-block">https://yoursite.com/wp-json/wpworker/v1/mcp</div>
         <p style="margin-top:10px;font-size:.9rem;color:var(--gray);">Replace <code>yoursite.com</code> with your actual domain. The site must be accessible over HTTPS from your agent's network.</p>
       </div>
     </div>
@@ -83,8 +83,8 @@
         <div class="code-block">
 {<br>
 &nbsp;&nbsp;<span class="str">"mcpServers"</span>: {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"wpcodex"</span>: {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"url"</span>: <span class="str">"https://yoursite.com/wp-json/wpcodex/v1/mcp"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"wpworker"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"url"</span>: <span class="str">"https://yoursite.com/wp-json/wpworker/v1/mcp"</span>,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"headers"</span>: {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"Authorization"</span>: <span class="str">"Basic &lt;base64(admin:app-password)&gt;"</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
@@ -100,7 +100,7 @@
       <div class="qs-num">6</div>
       <div class="qs-body">
         <h3>Test the connection</h3>
-        <p>Restart Claude Desktop. In a new conversation, ask Claude: <em>"Call wpcodex/site-info and tell me what WordPress version I'm running."</em></p>
+        <p>Restart Claude Desktop. In a new conversation, ask Claude: <em>"Call wpworker/site-info and tell me what WordPress version I'm running."</em></p>
         <p>If Claude returns your site's WP version, you're connected! 🎉</p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 ---
-applyTo: 'wp-content\plugins\wpcodex',
+applyTo: 'wp-content\plugins\wpworker',
 title: 'Copilot / Agent Instructions Template',
 scope: 'repository',
 created: 2026-06-05

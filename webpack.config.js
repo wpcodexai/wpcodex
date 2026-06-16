@@ -10,7 +10,7 @@ const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const path = require( 'path' );
 
 /**
- * WPCodex webpack configuration.
+ * WPWorker webpack configuration.
  *
  * Extends the default @wordpress/scripts webpack config with:
  *  - Admin UI entry point    (src/admin/index.js    → assets/admin/admin.js)

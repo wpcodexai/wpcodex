@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/skill-list
+ * Ability: wpworker/skill-list
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace WPWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Repository;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Skills\Repository;
 
 /**
  * Class SkillList
@@ -22,24 +22,24 @@ class SkillList extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'wpworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-list';
+		return 'wpworker/skill-list';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'List Skills', 'wpcodex' );
+		return __( 'List Skills', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'List all available WPCodex skills with their names, descriptions, and enabled flags. Load this at session start to discover standing instructions for this site.',
-			'wpcodex'
+			'List all available WPWorker skills with their names, descriptions, and enabled flags. Load this at session start to discover standing instructions for this site.',
+			'worker-ai'
 		);
 	}
 

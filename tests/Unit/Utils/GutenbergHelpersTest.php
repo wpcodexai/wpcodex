@@ -1,19 +1,19 @@
 <?php
 /**
- * Unit tests for WPCodex\Utils\GutenbergHelpers.
+ * Unit tests for WPWorker\Utils\GutenbergHelpers.
  *
- * @package WPCodex\Tests\Unit\Utils
+ * @package WPWorker\Tests\Unit\Utils
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Utils;
+namespace WPWorker\Tests\Unit\Utils;
 
 use PHPUnit\Framework\TestCase;
-use WPCodex\Utils\GutenbergHelpers;
+use WPWorker\Utils\GutenbergHelpers;
 
 /**
- * @covers \WPCodex\Utils\GutenbergHelpers
+ * @covers \WPWorker\Utils\GutenbergHelpers
  */
 class GutenbergHelpersTest extends TestCase {
 

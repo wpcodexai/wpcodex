@@ -2,17 +2,17 @@
 /**
  * Unit tests for Helpers::ability_permission().
  *
- * @package WPCodex\Tests\Unit\Utils
+ * @package WPWorker\Tests\Unit\Utils
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Utils;
+namespace WPWorker\Tests\Unit\Utils;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Utils\Helpers;
+use WPWorker\Utils\Helpers;
 
 /**
  * Class HelpersTest
@@ -49,7 +49,7 @@ class HelpersTest extends TestCase {
 		$result = Helpers::ability_permission();
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpcodex_not_authenticated', $result->get_error_code() );
+		$this->assertSame( 'wpworker_not_authenticated', $result->get_error_code() );
 		$this->assertSame( 401, $result->get_error_data()['status'] );
 	}
 
@@ -61,7 +61,7 @@ class HelpersTest extends TestCase {
 		$result = Helpers::ability_permission();
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpcodex_insufficient_capability', $result->get_error_code() );
+		$this->assertSame( 'wpworker_insufficient_capability', $result->get_error_code() );
 		$this->assertSame( 403, $result->get_error_data()['status'] );
 	}
 

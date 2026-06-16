@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building Your First Custom WPCodex Ability — WPCodex</title>
+<title>Building Your First Custom WPWorker Ability — WPWorker</title>
 <meta name="description" content="Learn how to register a custom ability that your AI agent can call — including input validation, error handling, and the permission check.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -207,7 +207,7 @@
       <span style="color:rgba(255,255,255,.3);">·</span>
       <span class="badge badge-blue" style="background:rgba(56,88,233,.35);color:#a8bfff;">Tutorial</span>
     </div>
-    <h1 style="color:#fff;font-size:clamp(1.8rem,4vw,2.6rem);max-width:780px;margin-bottom:0;">Building your first custom WPCodex ability</h1>
+    <h1 style="color:#fff;font-size:clamp(1.8rem,4vw,2.6rem);max-width:780px;margin-bottom:0;">Building your first custom WPWorker ability</h1>
   </div>
 </div>
 
@@ -223,7 +223,7 @@
           <div class="meta-author">
             <div class="meta-avatar">A</div>
             <div class="meta-author-info">
-              <span class="meta-author-name">WPCodex Team</span>
+              <span class="meta-author-name">WPWorker Team</span>
               <span class="meta-author-role">Core Developer</span>
             </div>
           </div>
@@ -241,9 +241,9 @@
         <!-- Body -->
         <div class="article-body" id="articleBody">
 
-          <p>WPCodex ships with 10 core abilities out of the box — but the real power comes from extending it. The <code>wp_codex_abilities</code> filter lets any plugin or theme register its own abilities, exposing entirely new tools to your AI agent without touching the WPCodex core.</p>
+          <p>WPWorker ships with 10 core abilities out of the box — but the real power comes from extending it. The <code>wp_codex_abilities</code> filter lets any plugin or theme register its own abilities, exposing entirely new tools to your AI agent without touching the WPWorker core.</p>
 
-          <p>In this tutorial we'll build a <code>myplugin/send-slack</code> ability from scratch. By the end your agent will be able to call it directly, passing a channel and message string, and WPCodex will deliver it to Slack via the API.</p>
+          <p>In this tutorial we'll build a <code>myplugin/send-slack</code> ability from scratch. By the end your agent will be able to call it directly, passing a channel and message string, and WPWorker will deliver it to Slack via the API.</p>
 
           <blockquote>
             <p>Abilities are just PHP callables registered with the WordPress Abilities API. They live in your plugin, they have full access to WordPress, and they're automatically exposed over MCP the moment they're registered.</p>
@@ -252,7 +252,7 @@
           <h2 id="prerequisites">Prerequisites</h2>
           <p>Before you start, make sure you have:</p>
           <ul>
-            <li>WPCodex installed and MCP enabled via <code>WPCODEX_ENABLE_MCP</code></li>
+            <li>WPWorker installed and MCP enabled via <code>WPCODEX_ENABLE_MCP</code></li>
             <li>A Slack incoming webhook URL (create one in your Slack app settings)</li>
             <li>PHP 8.0+ and WordPress 6.9+</li>
             <li>A plugin or <code>functions.php</code> to register your ability in</li>
@@ -321,15 +321,15 @@
           <h2 id="testing">Testing with Claude</h2>
           <p>Restart Claude Desktop after registering the ability. In a new conversation, ask:</p>
           <blockquote>
-            <p>"Call myplugin/send-slack with channel #general and message 'Hello from WPCodex!'"</p>
+            <p>"Call myplugin/send-slack with channel #general and message 'Hello from WPWorker!'"</p>
           </blockquote>
           <p>If everything is wired up correctly, Claude will call the ability and report back the result string. Check your Slack channel to confirm the message arrived.</p>
 
           <h2 id="skills">Documenting your ability with a Skill</h2>
-          <p>Once the ability is working, document it with a WPCodex Skill so your agent always knows the webhook is configured and what the ability is for:</p>
+          <p>Once the ability is working, document it with a WPWorker Skill so your agent always knows the webhook is configured and what the ability is for:</p>
 
           <div class="code-block">
-<span class="cm">// wpcodex/skill-create</span><br>
+<span class="cm">// wpworker/skill-create</span><br>
 {<br>
 &nbsp;&nbsp;<span class="str">"name"</span>: <span class="str">"slack-ability"</span>,<br>
 &nbsp;&nbsp;<span class="str">"description"</span>: <span class="str">"Slack webhook is configured. Use myplugin/send-slack to post messages."</span>,<br>
@@ -354,9 +354,9 @@
         <div class="author-bio">
           <div class="author-bio-avatar">W</div>
           <div class="author-bio-info">
-            <h4>WPCodex Team</h4>
+            <h4>WPWorker Team</h4>
             <p class="role">Core Developer</p>
-            <p>The WPCodex core team builds and maintains the plugin, the abilities API, and the MCP adapter. We write tutorials based on the questions we see most in GitHub issues and the community forum.</p>
+            <p>The WPWorker core team builds and maintains the plugin, the abilities API, and the MCP adapter. We write tutorials based on the questions we see most in GitHub issues and the community forum.</p>
           </div>
         </div>
 
@@ -411,7 +411,7 @@
           <div class="sidebar-related-item">
             <div class="sidebar-related-thumb" style="background:linear-gradient(135deg,#1a2a4a,#7b90ff);">🧩</div>
             <div>
-              <h6>Connecting Cursor to WPCodex</h6>
+              <h6>Connecting Cursor to WPWorker</h6>
               <span>4 min read</span>
             </div>
           </div>
@@ -439,7 +439,7 @@
           <div class="news-body">
             <span class="badge" style="background:rgba(220,38,38,.1);color:#dc2626;margin-bottom:8px;">Security</span>
             <h3>How to safely expose WordPress to an AI agent</h3>
-            <p>A practical guide to locking down your WPCodex installation — dedicated accounts, application passwords, IP restrictions, and audit logging.</p>
+            <p>A practical guide to locking down your WPWorker installation — dedicated accounts, application passwords, IP restrictions, and audit logging.</p>
             <div class="news-meta">May 28, 2026 · 10 min read</div>
           </div>
         </div>
@@ -448,7 +448,7 @@
           <div class="news-body">
             <span class="badge badge-blue" style="margin-bottom:8px;">Pro</span>
             <h3>WooCommerce abilities: managing your shop with AI</h3>
-            <p>WPCodex Pro's WooCommerce abilities let your agent process orders, update prices, and manage coupons without touching the admin.</p>
+            <p>WPWorker Pro's WooCommerce abilities let your agent process orders, update prices, and manage coupons without touching the admin.</p>
             <div class="news-meta">May 20, 2026 · 7 min read</div>
           </div>
         </div>

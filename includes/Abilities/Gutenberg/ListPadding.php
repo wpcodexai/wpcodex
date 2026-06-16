@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-list-pending-batches
+ * Ability: wpworker/gutenberg-list-pending-batches
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace WPWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Utils\GutenbergStorage;
 
 /**
  * Class ListPadding
@@ -24,22 +24,22 @@ class ListPadding extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'wpworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-list-pending-batches';
+		return 'wpworker/gutenberg-list-pending-batches';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'List Gutenberg Pending Batches', 'wpcodex' );
+		return __( 'List Gutenberg Pending Batches', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Lists compact queue state grouped by Gutenberg batch for agent recovery, plus the current Block Editor Queue runtime status and curl SSE/poll URLs. Full block specs are not returned.', 'wpcodex' );
+		return __( 'Lists compact queue state grouped by Gutenberg batch for agent recovery, plus the current Block Editor Queue runtime status and curl SSE/poll URLs. Full block specs are not returned.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -85,7 +85,7 @@ class ListPadding extends AbstractAbility {
 			'Use this for compact recovery/discovery.',
 			'The top-level finalizer_runtime tells you whether the Block Editor Queue page is currently open and includes sse_url/poll_url for curl loops.',
 			'If it is offline during Gutenberg work, ask the user to reopen dashboard_url and keep it open.',
-			'For one batch, call wpcodex/gutenberg-get-pending-batch, then watch the returned sse_url with curl -N or poll_url with curl.',
+			'For one batch, call wpworker/gutenberg-get-pending-batch, then watch the returned sse_url with curl -N or poll_url with curl.',
 		] );
 	}
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WPCodex — AI Agents for WordPress</title>
+<title>WPWorker — AI Agents for WordPress</title>
 <meta name="description" content="Give AI agents unrestricted control over your WordPress site via MCP. Execute PHP, run WP-CLI, query the database, and automate anything WordPress can do.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -62,7 +62,7 @@
           <span>Full Control</span> of WordPress
         </h1>
         <p class="hero-desc">
-          WPCodex is a WordPress plugin that exposes your entire site to AI agents via the Model Context Protocol — PHP execution, WP-CLI, database queries, file access, and more.
+          WPWorker is a WordPress plugin that exposes your entire site to AI agents via the Model Context Protocol — PHP execution, WP-CLI, database queries, file access, and more.
         </p>
         <div class="hero-actions">
           <a href="download.html" class="btn btn-primary btn-lg">Get Started Free</a>
@@ -90,7 +90,7 @@
           <div class="dot dot-g"></div>
         </div>
         <pre><span class="cm">// AI agent executes PHP in WordPress</span>
-<span class="kw">wpcodex</span>/<span class="fn">php-execute</span> {
+<span class="kw">wpworker</span>/<span class="fn">php-execute</span> {
   <span class="str">"code"</span>: <span class="str">"$posts = get_posts([
     'post_type' =&gt; 'product',
     'numberposts' =&gt; -1
@@ -102,7 +102,7 @@
 { <span class="str">"result"</span>: <span class="kw">142</span>, <span class="str">"time"</span>: <span class="str">"12ms"</span> }
 
 <span class="cm">// Install &amp; activate a plugin</span>
-<span class="kw">wpcodex</span>/<span class="fn">wpcli-run</span> {
+<span class="kw">wpworker</span>/<span class="fn">wpcli-run</span> {
   <span class="str">"command"</span>: <span class="str">"plugin install
     woocommerce --activate"</span>
 }</pre>
@@ -195,7 +195,7 @@
       <div>
         <span class="badge badge-blue">Automation</span>
         <h2 style="margin-top:14px;">Automate WordPress with natural language</h2>
-        <p style="margin-top:14px;">Tell your AI agent what you want in plain English. WPCodex translates that intent into real WordPress actions — no custom scripts, no manual clicks.</p>
+        <p style="margin-top:14px;">Tell your AI agent what you want in plain English. WPWorker translates that intent into real WordPress actions — no custom scripts, no manual clicks.</p>
         <ul class="feature-list">
           <li>
             <span class="icon">🚀</span>
@@ -255,7 +255,7 @@
         </div>
       </div>
       <div class="feature-img">
-        <div style="color:var(--light-blue);font-weight:700;margin-bottom:12px;">wpcodex/skill-create</div>
+        <div style="color:var(--light-blue);font-weight:700;margin-bottom:12px;">wpworker/skill-create</div>
         <pre style="color:#a0b0c0;"><span class="kw">name:</span> <span class="str">"elementor-header"</span>
 <span class="kw">description:</span> <span class="str">"Header template IDs
   and container patterns"</span>
@@ -281,10 +281,10 @@ to fetch the header template.</pre>
   <div class="container">
     <div class="cta-band">
       <h2>Ready to give your AI agent superpowers?</h2>
-      <p>WPCodex is free and open source. Install it, flip one switch, and your AI agent can do anything WordPress can do.</p>
+      <p>WPWorker is free and open source. Install it, flip one switch, and your AI agent can do anything WordPress can do.</p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
         <a href="download.html" class="btn btn-white btn-lg">Download Free</a>
-        <a href="https://github.com/wpcodexai/wpcodex" target="_blank" class="btn btn-lg" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);">View on GitHub</a>
+        <a href="https://github.com/wpworkerai/wpworker" target="_blank" class="btn btn-lg" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);">View on GitHub</a>
       </div>
     </div>
   </div>

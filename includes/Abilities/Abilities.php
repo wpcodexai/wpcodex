@@ -3,27 +3,27 @@
  * Ability registration aggregator.
  *
  * Instantiates every built-in ability and registers them all at once.
- * Pro plugins extend the list via the 'wpcodex_abilities' filter:
+ * Pro plugins extend the list via the 'wpworker_abilities' filter:
  *
- *   add_filter( 'wp_codex_abilities', function ( array $abilities ): array {
+ *   add_filter( 'wpworker_abilities', function ( array $abilities ): array {
  *       $abilities[] = new \MyProPlugin\Abilities\MyProAbility();
  *       return $abilities;
  *   } );
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace WPWorker\Abilities;
 
-use WPCodex\Admin\AbilityPolicy;
-use WPCodex\Abilities\Core;
-use WPCodex\Abilities\Files;
-use WPCodex\Abilities\Gutenberg;
-use WPCodex\Abilities\Site;
-use WPCodex\Abilities\Skills;
-use WPCodex\Abilities\Themes;
+use WPWorker\Admin\AbilityPolicy;
+use WPWorker\Abilities\Core;
+use WPWorker\Abilities\Files;
+use WPWorker\Abilities\Gutenberg;
+use WPWorker\Abilities\Site;
+use WPWorker\Abilities\Skills;
+use WPWorker\Abilities\Themes;
 
 
 /**
@@ -55,7 +55,7 @@ class Abilities {
 		// so mcp-adapter/discover-abilities already exists when DiscoverAbilities
 		// unregisters and replaces it.
 		add_action( 'wp_abilities_api_init', [ $this, 'register' ], 20 );
-		add_action( 'init' , [ $this, 'add_theme_and_plugin_abilities' ] );
+		add_action( 'init', [ $this, 'add_theme_and_plugin_abilities' ] );
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Abilities {
 	public static function get_all_ability_data(): array {
 		if ( empty( self::$all_abilities ) ) {
 			/** @var AbstractAbility[] $abilities */
-			$abilities = apply_filters( 'wp_codex_abilities', static::create_abilities() );
+			$abilities = apply_filters( 'wpworker_abilities', static::create_abilities() );
 			foreach ( $abilities as $ability ) {
 				self::$all_abilities[ $ability->get_name() ] = [
 					'id'          => $ability->get_name(),
@@ -94,14 +94,14 @@ class Abilities {
 	 * ability (enabled and disabled) so the settings page can display them all
 	 * regardless of their enabled/disabled state.
 	 *
-	 * The 'wpcodex_abilities' filter lets pro plugins append their own ability
+	 * The 'wpworker_abilities' filter lets pro plugins append their own ability
 	 * instances without touching this file.
 	 *
 	 * @since 1.1.0
 	 */
 	public function register(): void {
 		/** @var AbstractAbility[] $abilities */
-		$abilities = apply_filters( 'wp_codex_abilities', static::create_abilities() );
+		$abilities = apply_filters( 'wpworker_abilities', static::create_abilities() );
 
 		// Rebuild the static index on every invocation so it reflects the
 		// current filter output (e.g. pro-plugin additions).
@@ -125,7 +125,7 @@ class Abilities {
 	/**
 	 * Determines whether an ability should be registered.
 	 *
-	 * Reads the wpcodex_ability_* option set in AbilityPolicy (the admin
+	 * Reads the wpworker_ability_* option set in AbilityPolicy (the admin
 	 * Enable/Disable toggle). Abilities are enabled by default.
 	 *
 	 * @since  1.1.0
@@ -141,7 +141,7 @@ class Abilities {
 	 *
 	 * Static so get_all_ability_data() can build the index on admin page
 	 * loads without constructing a registering Abilities instance. The
-	 * wpcodex_abilities filter is still applied by every caller, so
+	 * wpworker_abilities filter is still applied by every caller, so
 	 * third-party abilities added via the filter are always included.
 	 *
 	 * @since  1.1.0
@@ -191,7 +191,7 @@ class Abilities {
 	}
 	
 	public function add_theme_and_plugin_abilities(): void {
-		// new Themes\Themes();
+		new Themes\Themes();
 		/**
 		 * Fires during the 'init' action after all core abilities have been registered.
 		 *
@@ -202,7 +202,7 @@ class Abilities {
 		 *
 		 * @since 1.1.0
 		 */
-		do_action( 'wp_codex_theme_abilities' );
-		do_action( 'wp_codex_plugin_abilities' );
+		do_action( 'wpworker_theme_abilities' );
+		do_action( 'wpworker_plugin_abilities' );
 	}
 }

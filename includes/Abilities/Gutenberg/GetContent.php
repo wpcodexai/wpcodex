@@ -1,18 +1,18 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-get-content
+ * Ability: wpworker/gutenberg-get-content
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace WPWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergHelpers;
-use WPCodex\Utils\GutenbergStorage;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Utils\GutenbergHelpers;
+use WPWorker\Utils\GutenbergStorage;
 
 /**
  * Class GetContent
@@ -25,22 +25,22 @@ class GetContent extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'wpworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-get-content';
+		return 'wpworker/gutenberg-get-content';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Get Gutenberg Content', 'wpcodex' );
+		return __( 'Get Gutenberg Content', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Reads the live saved Gutenberg post_content for a target post and returns a compact parsed block tree. Use before queuing or writing block changes.', 'wpcodex' );
+		return __( 'Reads the live saved Gutenberg post_content for a target post and returns a compact parsed block tree. Use before queuing or writing block changes.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -102,15 +102,15 @@ class GetContent extends AbstractAbility {
 	public function execute( array $input ): array|\WP_Error {
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 		if ( $post_id <= 0 ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'post_id must be a positive integer.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'post_id must be a positive integer.', 'worker-ai' ) );
 		}
 
 		$post = get_post( $post_id );
 		if ( ! $post instanceof \WP_Post ) {
 			return new \WP_Error(
-				'wpcodex_not_found',
+				'wpworker_not_found',
 				/* translators: %d post ID */
-				sprintf( __( 'Post %d was not found.', 'wpcodex' ), $post_id )
+				sprintf( __( 'Post %d was not found.', 'worker-ai' ), $post_id )
 			);
 		}
 

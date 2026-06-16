@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-get-finalization-url
+ * Ability: wpworker/gutenberg-get-finalization-url
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace WPWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Utils\GutenbergStorage;
 
 /**
  * Class GetFinalizationUrl
@@ -22,22 +22,22 @@ class GetFinalizationUrl extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'wpworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-get-finalization-url';
+		return 'wpworker/gutenberg-get-finalization-url';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Get Gutenberg Finalization URL', 'wpcodex' );
+		return __( 'Get Gutenberg Finalization URL', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Returns the Block Editor Queue URL and current batch shape for a pending Gutenberg batch. The user opens the queue page and the browser JS finalizer processes the queued block changes automatically.', 'wpcodex' );
+		return __( 'Returns the Block Editor Queue URL and current batch shape for a pending Gutenberg batch. The user opens the queue page and the browser JS finalizer processes the queued block changes automatically.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -47,7 +47,7 @@ class GetFinalizationUrl extends AbstractAbility {
 			'properties' => [
 				'batch_id' => [
 					'type'        => 'integer',
-					'description' => 'Gutenberg batch id returned by wpcodex/gutenberg-write-content or wpcodex/gutenberg-enable-batch-finalization.',
+					'description' => 'Gutenberg batch id returned by wpworker/gutenberg-write-content or wpworker/gutenberg-enable-batch-finalization.',
 				],
 			],
 			'required' => [ 'batch_id' ],
@@ -76,7 +76,7 @@ class GetFinalizationUrl extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function get_instructions(): string {
 		return implode( "\n", [
-			'Call after wpcodex/gutenberg-write-content or wpcodex/gutenberg-enable-batch-finalization to get the finalization link.',
+			'Call after wpworker/gutenberg-write-content or wpworker/gutenberg-enable-batch-finalization to get the finalization link.',
 			'Share finalization_url with the user — they open the Block Editor Queue page which processes the blocks automatically.',
 			'Stream finalizer_runtime.sse_url with curl -N or poll poll_url until the batch is finalized, failed, or conflicted.',
 			'Do not treat the changes as live until finalization completes.',
@@ -87,15 +87,15 @@ class GetFinalizationUrl extends AbstractAbility {
 	public function execute( array $input ): array|\WP_Error {
 		$batch_id = is_scalar( $input['batch_id'] ?? null ) ? (int) $input['batch_id'] : 0;
 		if ( $batch_id <= 0 ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'batch_id must be a positive integer.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'batch_id must be a positive integer.', 'worker-ai' ) );
 		}
 
 		$batch = GutenbergStorage::find_batch( $batch_id );
 		if ( ! $batch instanceof \WP_Post ) {
 			return new \WP_Error(
-				'wpcodex_not_found',
+				'wpworker_not_found',
 				/* translators: %d batch ID */
-				sprintf( __( 'Gutenberg batch %d was not found.', 'wpcodex' ), $batch_id )
+				sprintf( __( 'Gutenberg batch %d was not found.', 'worker-ai' ), $batch_id )
 			);
 		}
 

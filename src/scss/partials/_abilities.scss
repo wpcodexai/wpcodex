@@ -1,16 +1,16 @@
 /**
- * WPCodex — Abilities Hub page.
+ * Worker AI — Abilities Hub page.
  *
- * Scoped to #wpcodex-abilities-settings.
+ * Scoped to #wpworker-abilities-settings.
  */
 
-#wpcodex-abilities-settings {
+#wpworker-abilities-settings {
 
-	.wpcodex-ability-group {
+	.wpworker-ability-group {
 		margin-bottom: 32px;
 	}
 
-	.wpcodex-group-title {
+	.wpworker-group-title {
 		font-size: 1rem;
 		font-weight: 600;
 		color: $color-text-muted;
@@ -21,13 +21,13 @@
 		border-bottom: 1px solid $color-border-lt;
 	}
 
-	.wpcodex-ability-cards {
+	.wpworker-ability-cards {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: 14px;
 	}
 
-	.wpcodex-ability-card {
+	.wpworker-ability-card {
 		background: $color-bg-white;
 		border: 1px solid $color-border-lt;
 		border-radius: $radius-md;

@@ -6,13 +6,13 @@
  * exposes them via the protocol's prompts/list and prompts/get endpoints so AI
  * clients with native prompt support can invoke skills from their prompt menu.
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Skills;
+namespace WPWorker\Skills;
 
 /**
  * Class Prompts

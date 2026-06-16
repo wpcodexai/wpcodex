@@ -1,21 +1,21 @@
 <?php
 /**
- * Unit tests for WPCodex\Skills\Schema.
+ * Unit tests for WPWorker\Skills\Schema.
  *
- * @package WPCodex\Tests\Unit\Skills
+ * @package WPWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Skills;
+namespace WPWorker\Tests\Unit\Skills;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Skills\Schema;
+use WPWorker\Skills\Schema;
 
 /**
- * @covers \WPCodex\Skills\Schema
+ * @covers \WPWorker\Skills\Schema
  */
 class SchemaTest extends TestCase {
 
@@ -46,26 +46,26 @@ class SchemaTest extends TestCase {
 	}
 
 	public function test_table_version_option_key_is_prefixed(): void {
-		$this->assertStringStartsWith( 'wpcodex_', Schema::TABLE_VERSION_OPTION );
+		$this->assertStringStartsWith( 'wpworker_', Schema::TABLE_VERSION_OPTION );
 	}
 
 	// ── table_name ────────────────────────────────────────────────────────────
 
 	public function test_table_name_includes_skills(): void {
-		$this->assertSame( 'wp_wpcodex_skills', Schema::table_name() );
+		$this->assertSame( 'wp_wpworker_skills', Schema::table_name() );
 	}
 
 	public function test_table_name_respects_wpdb_prefix(): void {
 		global $wpdb;
 		$wpdb->prefix = 'custom_';
-		$this->assertSame( 'custom_wpcodex_skills', Schema::table_name() );
+		$this->assertSame( 'custom_wpworker_skills', Schema::table_name() );
 		$wpdb->prefix = 'wp_'; // reset
 	}
 
 	// ── revisions_table_name ──────────────────────────────────────────────────
 
 	public function test_revisions_table_name_includes_skill_revisions(): void {
-		$this->assertSame( 'wp_wpcodex_skill_revisions', Schema::revisions_table_name() );
+		$this->assertSame( 'wp_wpworker_skill_revisions', Schema::revisions_table_name() );
 	}
 
 	public function test_revisions_table_name_is_different_from_skills_table(): void {

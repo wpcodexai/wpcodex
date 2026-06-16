@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/option-get
+ * Ability: wpworker/option-get
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Site;
+namespace WPWorker\Abilities\Site;
 
-use WPCodex\Abilities\AbstractAbility;
+use WPWorker\Abilities\AbstractAbility;
 
 /**
  * Class OptionGet
@@ -19,21 +19,21 @@ use WPCodex\Abilities\AbstractAbility;
  */
 class OptionGet extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpcodex-site';
+		return 'wpworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/option-get';
+		return 'wpworker/option-get';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Get Option', 'wpcodex' );
+		return __( 'Get Option', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Get a WordPress option value by name. Returns the value as JSON.', 'wpcodex' );
+		return __( 'Get a WordPress option value by name. Returns the value as JSON.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -71,7 +71,7 @@ class OptionGet extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): string|\WP_Error {
 		if ( empty( $input['option_name'] ) || ! is_string( $input['option_name'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'option_name must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'option_name must be a non-empty string.', 'worker-ai' ) );
 		}
 		$default = $input['default'] ?? '';
 		$value   = get_option( sanitize_key( $input['option_name'] ), $default );

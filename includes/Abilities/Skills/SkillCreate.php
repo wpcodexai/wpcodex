@@ -1,19 +1,19 @@
 <?php
 /**
- * Ability: wpcodex/skill-create
+ * Ability: wpworker/skill-create
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace WPWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Repository;
-use WPCodex\Skills\Sources;
-use WPCodex\Skills\Parser;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Skills\Repository;
+use WPWorker\Skills\Sources;
+use WPWorker\Skills\Parser;
 
 /**
  * Class SkillCreate
@@ -24,24 +24,24 @@ class SkillCreate extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'wpworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-create';
+		return 'wpworker/skill-create';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Create Skill', 'wpcodex' );
+		return __( 'Create Skill', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'Create a new WPCodex skill. The description is the trigger — write it so the agent knows when to fire this skill automatically.',
-			'wpcodex'
+			'Create a new WPWorker skill. The description is the trigger — write it so the agent knows when to fire this skill automatically.',
+			'worker-ai'
 		);
 	}
 
@@ -89,9 +89,9 @@ class SkillCreate extends AbstractAbility {
 		foreach ( [ 'name', 'description', 'body' ] as $key ) {
 			if ( empty( $input[ $key ] ) || ! is_string( $input[ $key ] ) ) {
 				return new \WP_Error(
-					'wpcodex_invalid_input',
+					'wpworker_invalid_input',
 					/* translators: %s argument name */
-					sprintf( __( '%s must be a non-empty string.', 'wpcodex' ), $key )
+					sprintf( __( '%s must be a non-empty string.', 'worker-ai' ), $key )
 				);
 			}
 		}
@@ -106,10 +106,10 @@ class SkillCreate extends AbstractAbility {
 		$external_label = Sources::exists_in_external_source( $slug );
 		if ( null !== $external_label ) {
 			return new \WP_Error(
-				'wpcodex_external_source',
+				'wpworker_external_source',
 				sprintf(
 					/* translators: 1: slug 2: source label */
-					__( 'Skill "%1$s" belongs to the "%2$s" source and cannot be modified here.', 'wpcodex' ),
+					__( 'Skill "%1$s" belongs to the "%2$s" source and cannot be modified here.', 'worker-ai' ),
 					esc_html( $slug ),
 					esc_html( $external_label )
 				)

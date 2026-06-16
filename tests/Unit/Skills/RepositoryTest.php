@@ -2,21 +2,21 @@
 /**
  * Unit tests for Skills\Repository.
  *
- * @package WPCodex\Tests\Unit\Skills
+ * @package WPWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Skills;
+namespace WPWorker\Tests\Unit\Skills;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Skills\Repository;
-use WPCodex\Skills\Schema;
+use WPWorker\Skills\Repository;
+use WPWorker\Skills\Schema;
 
 /**
- * @covers \WPCodex\Skills\Repository
+ * @covers \WPWorker\Skills\Repository
  */
 class RepositoryTest extends TestCase {
 
@@ -181,7 +181,7 @@ class RepositoryTest extends TestCase {
 		] );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpcodex_duplicate', $result->get_error_code() );
+		$this->assertSame( 'wpworker_duplicate', $result->get_error_code() );
 	}
 
 	// ── update() ─────────────────────────────────────────────────────────────
@@ -206,7 +206,7 @@ class RepositoryTest extends TestCase {
 		$result = Repository::instance()->update( 'missing', [ 'description' => 'x' ] );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpcodex_not_found', $result->get_error_code() );
+		$this->assertSame( 'wpworker_not_found', $result->get_error_code() );
 	}
 
 	// ── delete() ─────────────────────────────────────────────────────────────

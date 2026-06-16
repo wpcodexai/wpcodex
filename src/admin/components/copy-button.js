@@ -6,7 +6,7 @@
  */
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	const btn = document.getElementById( 'wpcodex-copy-prompt' );
+	const btn = document.getElementById( 'wpworker-copy-prompt' );
 	if ( ! btn ) return;
 
 	const targetId = btn.getAttribute( 'data-target' ) ?? '';
@@ -23,14 +23,14 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				textarea.select();
 				document.execCommand( 'copy' );
 			}
-			btn.textContent = window.wpcodexData?.i18n?.saved ?? 'Copied!';
+			btn.textContent = window.wpworkerData?.i18n?.saved ?? 'Copied!';
 			btn.disabled = true;
 			setTimeout( () => {
 				btn.textContent = originalText;
 				btn.disabled = false;
 			}, 2000 );
 		} catch {
-			btn.textContent = window.wpcodexData?.i18n?.error ?? 'Error';
+			btn.textContent = window.wpworkerData?.i18n?.error ?? 'Error';
 			setTimeout( () => {
 				btn.textContent = originalText;
 			}, 2000 );

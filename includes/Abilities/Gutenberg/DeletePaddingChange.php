@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-delete-pending-change
+ * Ability: wpworker/gutenberg-delete-pending-change
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace WPWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Utils\GutenbergStorage;
 
 /**
  * Class DeletePaddingChange
@@ -24,22 +24,22 @@ class DeletePaddingChange extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'wpworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-delete-pending-change';
+		return 'wpworker/gutenberg-delete-pending-change';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Delete Gutenberg Pending Change', 'wpcodex' );
+		return __( 'Delete Gutenberg Pending Change', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Cancels one Gutenberg pending item without touching target post_content. Use for per-item recovery when you need to remove one change from a batch.', 'wpcodex' );
+		return __( 'Cancels one Gutenberg pending item without touching target post_content. Use for per-item recovery when you need to remove one change from a batch.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */

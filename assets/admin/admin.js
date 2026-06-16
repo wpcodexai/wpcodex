@@ -18,20 +18,20 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const hub = document.getElementById('wpcodex-abilities-settings');
+  const hub = document.getElementById('wpworker-abilities-settings');
   if (!hub) return;
-  hub.querySelectorAll('.wpcodex-toggle input[type="checkbox"]').forEach(checkbox => {
+  hub.querySelectorAll('.wpworker-toggle input[type="checkbox"]').forEach(checkbox => {
     checkbox.addEventListener('change', () => {
-      const card = checkbox.closest('.wpcodex-ability-card');
+      const card = checkbox.closest('.wpworker-ability-card');
       if (!card) return;
       const isNowEnabled = checkbox.checked;
 
       // Optimistic UI — swap class immediately before form submits.
       card.classList.toggle('is-enabled', isNowEnabled);
       card.classList.toggle('is-disabled', !isNowEnabled);
-      const label = card.querySelector('.wpcodex-toggle__label');
+      const label = card.querySelector('.wpworker-toggle__label');
       if (label) {
-        label.textContent = isNowEnabled ? window.wpcodexData?.i18n?.enabled ?? 'Enabled' : window.wpcodexData?.i18n?.disabled ?? 'Disabled';
+        label.textContent = isNowEnabled ? window.wpworkerData?.i18n?.enabled ?? 'Enabled' : window.wpworkerData?.i18n?.disabled ?? 'Disabled';
       }
     });
   });
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @file  src/admin/components/configuration.js
  * @since 1.0.0
  *
- * Server-side data is passed via window.wpcodexConfig (set by wp_add_inline_script
+ * Server-side data is passed via window.wpworkerConfig (set by wp_add_inline_script
  * in ConfigurationPage::render() before this script loads).
  *
  * Source : src/admin/components/configuration.js
@@ -59,17 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const page = document.getElementById('wpcodex-configuration');
+  const page = document.getElementById('wpworker-configuration');
   if (!page) return;
 
   // Server-side config
-  const cfg = window.wpcodexConfig || {};
+  const cfg = window.wpworkerConfig || {};
   const MCP_URL = cfg.mcpUrl || '';
   const USERNAME = cfg.username || '';
   const AJAX_URL = cfg.ajaxUrl || '';
   const AJAX_NONCE = cfg.ajaxNonce || '';
   const REVOKE_NONCE = cfg.revokeNonce || '';
-  const DEFAULT_NAME = cfg.defaultName || 'wpcodex';
+  const DEFAULT_NAME = cfg.defaultName || 'wpworker';
   const PASTE_TPL = cfg.pasteTemplate || '';
   const AJAX_GENERATE = cfg.ajaxGenerate || '';
   const AJAX_REVOKE = cfg.ajaxRevoke || '';
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let passwordPlaceholder = true;
   let manualClient = 'claude-code';
   let npxlessClient = 'claude';
-  const NAME_PH = '__WPCODEX_MCP_NAME__';
-  const PW_PH = '__WPCODEX_PW_SLOT__';
+  const NAME_PH = '__WPWORKER_MCP_NAME__';
+  const PW_PH = '__WPWORKER_PW_SLOT__';
 
   //  Per-client configs
 
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Windows: '%APPDATA%\\Claude\\claude_desktop_config.json'
       }
     },
-    'codex': {
+    codex: {
       getCode: () => `[mcp_servers.${mcpName}]\ncommand = "npx"\nargs = ["-y", "@automattic/mcp-wordpress-remote@latest"]\n\n` + `[mcp_servers.${mcpName}.env]\nWP_API_URL = "${MCP_URL}"\nWP_API_USERNAME = "${USERNAME}"\nWP_API_PASSWORD = "${pw()}"`,
       hint: 'Add to <code>config.toml</code>.',
       paths: {
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Windows: '%USERPROFILE%\\.codex\\config.toml'
       }
     },
-    'antigravity': {
+    antigravity: {
       getCode: () => buildServerObj('mcpServers'),
       hint: 'Add to <code>mcp_config.json</code>.',
       paths: {
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Windows: '%USERPROFILE%\\.gemini\\antigravity\\mcp_config.json'
       }
     },
-    'cursor': {
+    cursor: {
       getCode: () => buildServerObj('mcpServers'),
       hint: 'Add to <code>mcp.json</code>.',
       paths: {
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Project: '.cursor/mcp.json'
       }
     },
-    'vscode': {
+    vscode: {
       getCode: () => buildServerObj('servers'),
       hint: 'Add to <code>mcp.json</code>.',
       paths: {
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Project: '.github/copilot/mcp.json'
       }
     },
-    'windsurf': {
+    windsurf: {
       getCode: () => buildServerObj('mcpServers'),
       hint: 'Add to <code>mcp_config.json</code>.',
       paths: {
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Windows: '%USERPROFILE%\\.codeium\\windsurf\\mcp_config.json'
       }
     },
-    'cline': {
+    cline: {
       getCode: () => buildServerObj('mcpServers'),
       hint: 'Add to <code>cline_mcp_settings.json</code>.',
       paths: {
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Project: '.amazonq/mcp.json'
       }
     },
-    'zed': {
+    zed: {
       getCode: () => JSON.stringify({
         context_servers: {
           [mcpName]: {
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Via UI': 'Kilo Code sidebar → MCP Servers → Configure MCP Servers'
       }
     },
-    'opencode': {
+    opencode: {
       getCode: () => JSON.stringify({
         mcp: {
           [mcpName]: {
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since 1.0.0
    */
   function renderPaste() {
-    const el = document.getElementById('wpcodex-paste-text');
+    const el = document.getElementById('wpworker-paste-text');
     if (!el) return;
     el.textContent = PASTE_TPL.split(NAME_PH).join(mcpName).split(PW_PH).join(passwordPlaceholder ? 'YOUR-APP-PASSWORD' : passwordValue);
   }
@@ -293,11 +293,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderManualConfig() {
     const c = CONFIGS[manualClient];
     if (!c) return;
-    const codeEl = document.getElementById('wpcodex-config-code');
+    const codeEl = document.getElementById('wpworker-config-code');
     if (codeEl) codeEl.textContent = c.getCode();
-    const hintEl = document.getElementById('wpcodex-config-hint');
+    const hintEl = document.getElementById('wpworker-config-hint');
     if (hintEl) hintEl.innerHTML = c.hint;
-    const pathsEl = document.getElementById('wpcodex-config-paths');
+    const pathsEl = document.getElementById('wpworker-config-paths');
     if (!pathsEl) return;
     const keys = Object.keys(c.paths || {});
     if (keys.length) {
@@ -315,9 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since 1.0.0
    */
   function renderNpxless() {
-    const codeEl = document.getElementById('wpcodex-npxless-code');
-    const hintEl = document.getElementById('wpcodex-npxless-hint');
-    const pathEl = document.getElementById('wpcodex-npxless-paths');
+    const codeEl = document.getElementById('wpworker-npxless-code');
+    const hintEl = document.getElementById('wpworker-npxless-hint');
+    const pathEl = document.getElementById('wpworker-npxless-paths');
     if (!codeEl) return;
     const rawPw = passwordPlaceholder ? 'YOUR-APP-PASSWORD' : passwordValue.replace(/\s+/g, '');
     const encoded = passwordPlaceholder ? 'BASE64_ENCODED_CREDENTIALS' : btoa(USERNAME + ':' + rawPw);
@@ -374,17 +374,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Client tab switching
-  page.querySelectorAll('#wpcodex-manual-tabs .wpcodex-client-tab').forEach(tab => {
+  page.querySelectorAll('#wpworker-manual-tabs .wpworker-client-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       manualClient = tab.dataset.client;
-      page.querySelectorAll('#wpcodex-manual-tabs .wpcodex-client-tab').forEach(t => t.classList.toggle('is-active', t === tab));
+      page.querySelectorAll('#wpworker-manual-tabs .wpworker-client-tab').forEach(t => t.classList.toggle('is-active', t === tab));
       renderManualConfig();
     });
   });
-  page.querySelectorAll('.wpcodex-npxless-tab').forEach(tab => {
+  page.querySelectorAll('.wpworker-npxless-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       npxlessClient = tab.dataset.client;
-      tab.closest('.wpcodex-client-tabs')?.querySelectorAll('.wpcodex-client-tab').forEach(t => t.classList.toggle('is-active', t === tab));
+      tab.closest('.wpworker-client-tabs')?.querySelectorAll('.wpworker-client-tab').forEach(t => t.classList.toggle('is-active', t === tab));
       renderNpxless();
     });
   });
@@ -398,12 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {string} value The new server name entered by the user.
    */
-  window.wpcodexUpdateName = value => {
+  window.wpworkerUpdateName = value => {
     mcpName = value.trim() || DEFAULT_NAME;
-    const warning = document.getElementById('wpcodex-name-warning');
-    const suggestion = document.getElementById('wpcodex-name-suggestion');
+    const warning = document.getElementById('wpworker-name-warning');
+    const suggestion = document.getElementById('wpworker-name-suggestion');
     if (warning) warning.style.display = value.length >= 25 ? '' : 'none';
-    if (suggestion) suggestion.style.display = value.trim().length > 0 && !value.toLowerCase().includes('wpcodex') ? '' : 'none';
+    if (suggestion) suggestion.style.display = value.trim().length > 0 && !value.toLowerCase().includes('wpworker') ? '' : 'none';
     renderAll();
   };
 
@@ -414,12 +414,12 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The toggle button element.
    */
-  window.wpcodexToggleServerName = btn => {
-    const field = document.getElementById('wpcodex-name-field');
+  window.wpworkerToggleServerName = btn => {
+    const field = document.getElementById('wpworker-name-field');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
     field.style.display = expanded ? 'none' : 'block';
     btn.setAttribute('aria-expanded', String(!expanded));
-    if (!expanded) document.getElementById('wpcodex-mcp-name')?.focus();
+    if (!expanded) document.getElementById('wpworker-mcp-name')?.focus();
   };
 
   //  Manual config collapsible
@@ -431,8 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The toggle button element.
    */
-  window.wpcodexToggleManualConfig = btn => {
-    const panel = document.getElementById('wpcodex-manual-config');
+  window.wpworkerToggleManualConfig = btn => {
+    const panel = document.getElementById('wpworker-manual-config');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
     panel.style.display = expanded ? 'none' : '';
     btn.setAttribute('aria-expanded', String(!expanded));
@@ -445,9 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
    * @global
    * @since 1.0.0
    */
-  window.wpcodexOpenManualConfig = () => {
-    const panel = document.getElementById('wpcodex-manual-config');
-    const toggle = document.getElementById('wpcodex-manual-toggle');
+  window.wpworkerOpenManualConfig = () => {
+    const panel = document.getElementById('wpworker-manual-config');
+    const toggle = document.getElementById('wpworker-manual-toggle');
     panel.style.display = '';
     if (toggle) toggle.setAttribute('aria-expanded', 'true');
     renderManualConfig();
@@ -466,8 +466,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The toggle button element.
    */
-  window.wpcodexToggleNpxless = btn => {
-    const panel = document.getElementById('wpcodex-npxless-config');
+  window.wpworkerToggleNpxless = btn => {
+    const panel = document.getElementById('wpworker-npxless-config');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
     panel.style.display = expanded ? 'none' : '';
     btn.setAttribute('aria-expanded', String(!expanded));
@@ -483,8 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The expand/collapse button element.
    */
-  window.wpcodexToggleExpandPaste = btn => {
-    const content = document.getElementById('wpcodex-paste-content');
+  window.wpworkerToggleExpandPaste = btn => {
+    const content = document.getElementById('wpworker-paste-content');
     const expanded = btn.getAttribute('aria-expanded') === 'true';
     content.classList.toggle('is-expanded', !expanded);
     btn.setAttribute('aria-expanded', String(!expanded));
@@ -498,9 +498,9 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The copy button element.
    */
-  window.wpcodexCopyPaste = btn => {
-    const text = document.getElementById('wpcodex-paste-text')?.textContent || '';
-    const warning = document.getElementById('wpcodex-paste-warning');
+  window.wpworkerCopyPaste = btn => {
+    const text = document.getElementById('wpworker-paste-text')?.textContent || '';
+    const warning = document.getElementById('wpworker-paste-warning');
     navigator.clipboard.writeText(text).then(() => {
       const orig = btn.textContent;
       btn.textContent = L10N.copied || 'Copied!';
@@ -521,7 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The copy button element.
    */
-  window.wpcodexCopyConfig = btn => copyEl('wpcodex-config-code', btn);
+  window.wpworkerCopyConfig = btn => copyEl('wpworker-config-code', btn);
 
   /**
    * Copies the npx-free config code block to the clipboard.
@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The copy button element.
    */
-  window.wpcodexCopyNpxless = btn => copyEl('wpcodex-npxless-code', btn);
+  window.wpworkerCopyNpxless = btn => copyEl('wpworker-npxless-code', btn);
 
   /**
    * Copies the text content of a DOM element to the clipboard.
@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The copy button element.
    */
-  window.wpcodexCopyPassword = btn => {
+  window.wpworkerCopyPassword = btn => {
     navigator.clipboard.writeText(passwordValue).then(() => {
       const orig = btn.textContent;
       btn.textContent = L10N.copied || 'Copied!';
@@ -578,12 +578,12 @@ document.addEventListener('DOMContentLoaded', () => {
    * @since  1.0.0
    * @param  {HTMLElement} btn The "Generate" button element.
    */
-  window.wpcodexGeneratePassword = btn => {
-    const nameWrap = document.getElementById('wpcodex-pw-name-wrap');
-    const nameInput = document.getElementById('wpcodex-pw-name');
+  window.wpworkerGeneratePassword = btn => {
+    const nameWrap = document.getElementById('wpworker-pw-name-wrap');
+    const nameInput = document.getElementById('wpworker-pw-name');
     const isSecond = nameWrap && nameWrap.style.display !== 'none';
     const name = nameInput?.value.trim() || '';
-    const spinner = document.getElementById('wpcodex-pw-spinner');
+    const spinner = document.getElementById('wpworker-pw-spinner');
 
     // Second+ time: name is required.
     if (isSecond && name === '') {
@@ -610,42 +610,42 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       passwordValue = data.data.password;
       passwordPlaceholder = false;
-      const reveal = document.getElementById('wpcodex-pw-reveal');
-      const pwEl = document.getElementById('wpcodex-pw-value');
+      const reveal = document.getElementById('wpworker-pw-reveal');
+      const pwEl = document.getElementById('wpworker-pw-value');
       if (reveal) reveal.style.display = '';
       if (pwEl) pwEl.textContent = passwordValue;
       btn.textContent = L10N.generateAnother || 'Generate another application password';
 
       // Reveal the name field for subsequent passwords and clear it.
-      const nameWrap2 = document.getElementById('wpcodex-pw-name-wrap');
-      const nameInput2 = document.getElementById('wpcodex-pw-name');
+      const nameWrap2 = document.getElementById('wpworker-pw-name-wrap');
+      const nameInput2 = document.getElementById('wpworker-pw-name');
       if (nameWrap2) nameWrap2.style.display = '';
       if (nameInput2) nameInput2.value = '';
 
       // Append row to existing table and show it.
-      const tbody = document.getElementById('wpcodex-pw-tbody');
-      const existing = document.getElementById('wpcodex-pw-existing');
+      const tbody = document.getElementById('wpworker-pw-tbody');
+      const existing = document.getElementById('wpworker-pw-existing');
       if (tbody) {
         // Show full name (prefix visible in the table).
         const displayName = data.data.name;
         const tr = document.createElement('tr');
         tr.dataset.uuid = data.data.uuid;
-        tr.innerHTML = `<td class="wpcodex-pw-table__name">${displayName}</td>` + `<td class="wpcodex-pw-table__meta">${data.data.created}</td>` + `<td class="wpcodex-pw-table__meta">${L10N.never || 'Never'}</td>` + `<td class="wpcodex-pw-table__actions"><button type="button" class="button button-small wpcodex-pw-revoke-btn" onclick="wpcodexRevokePassword('${data.data.uuid}', this)">${L10N.revoke || 'Revoke'}</button></td>`;
+        tr.innerHTML = `<td class="wpworker-pw-table__name">${displayName}</td>` + `<td class="wpworker-pw-table__meta">${data.data.created}</td>` + `<td class="wpworker-pw-table__meta">${L10N.never || 'Never'}</td>` + `<td class="wpworker-pw-table__actions"><button type="button" class="button button-small wpworker-pw-revoke-btn" onclick="wpworkerRevokePassword('${data.data.uuid}', this)">${L10N.revoke || 'Revoke'}</button></td>`;
         tbody.appendChild(tr);
       }
 
       // Show the table section and update count badge.
       if (existing) {
         existing.style.display = '';
-        const countEl = document.getElementById('wpcodex-pw-count');
+        const countEl = document.getElementById('wpworker-pw-count');
         if (countEl) {
-          const tbody2 = document.getElementById('wpcodex-pw-tbody');
+          const tbody2 = document.getElementById('wpworker-pw-tbody');
           countEl.textContent = `(${tbody2 ? tbody2.rows.length : 1})`;
         }
       }
 
       // Unlock Step 3 — password exists now.
-      unlockStep('wpcodex-step-3');
+      unlockStep('wpworker-step-3');
       renderAll();
     }).catch(() => {
       btn.disabled = false;
@@ -664,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param  {string}      uuid The UUID of the application password to revoke.
    * @param  {HTMLElement} btn  The "Revoke" button element.
    */
-  window.wpcodexRevokePassword = (uuid, btn) => {
+  window.wpworkerRevokePassword = (uuid, btn) => {
     if (!confirm(L10N.revokeConfirm)) return;
     const fd = new FormData();
     fd.append('action', AJAX_REVOKE);
@@ -681,10 +681,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       document.querySelector(`[data-uuid="${uuid}"]`)?.remove();
       // Update count badge; hide section if no rows remain.
-      const tbody = document.getElementById('wpcodex-pw-tbody');
-      const existing = document.getElementById('wpcodex-pw-existing');
+      const tbody = document.getElementById('wpworker-pw-tbody');
+      const existing = document.getElementById('wpworker-pw-existing');
       if (tbody) {
-        const countEl = document.getElementById('wpcodex-pw-count');
+        const countEl = document.getElementById('wpworker-pw-count');
         if (countEl) countEl.textContent = `(${tbody.rows.length})`;
         if (existing && tbody.rows.length === 0) {
           existing.style.display = 'none';
@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('wpcodex-copy-prompt');
+  const btn = document.getElementById('wpworker-copy-prompt');
   if (!btn) return;
   const targetId = btn.getAttribute('data-target') ?? '';
   const textarea = document.getElementById(targetId);
@@ -727,14 +727,14 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.select();
         document.execCommand('copy');
       }
-      btn.textContent = window.wpcodexData?.i18n?.saved ?? 'Copied!';
+      btn.textContent = window.wpworkerData?.i18n?.saved ?? 'Copied!';
       btn.disabled = true;
       setTimeout(() => {
         btn.textContent = originalText;
         btn.disabled = false;
       }, 2000);
     } catch {
-      btn.textContent = window.wpcodexData?.i18n?.error ?? 'Error';
+      btn.textContent = window.wpworkerData?.i18n?.error ?? 'Error';
       setTimeout(() => {
         btn.textContent = originalText;
       }, 2000);
@@ -757,13 +757,13 @@ document.addEventListener('DOMContentLoaded', () => {
  * @since 1.0.0
  *
  * Delegates to WordPress's built-in notice dismissal; this just handles
- * any custom .wpcodex-notice elements that aren't standard .notice divs.
+ * any custom .wpworker-notice elements that aren't standard .notice divs.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.wpcodex-notice .notice-dismiss').forEach(btn => {
+  document.querySelectorAll('.wpworker-notice .notice-dismiss').forEach(btn => {
     btn.addEventListener('click', () => {
-      const notice = btn.closest('.wpcodex-notice');
+      const notice = btn.closest('.wpworker-notice');
       if (notice) {
         notice.style.transition = 'opacity .2s';
         notice.style.opacity = '0';
@@ -793,8 +793,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Auto-grow textarea 
-  const textarea = document.querySelector('.wpcodex-skill-editor');
+  // Auto-grow textarea
+  const textarea = document.querySelector('.wpworker-skill-editor');
   if (textarea) {
     const autoGrow = () => {
       textarea.style.height = 'auto';
@@ -804,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
     autoGrow(); // Run once on load.
   }
 
-  // Slug validation 
+  // Slug validation
   const nameInput = document.getElementById('skill_name');
   const form = nameInput?.closest('form');
   if (nameInput && form && !nameInput.readOnly) {
@@ -935,7 +935,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_configuration_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/configuration.js */ "./src/admin/components/configuration.js");
 /* harmony import */ var _components_configuration_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_components_configuration_js__WEBPACK_IMPORTED_MODULE_5__);
 /**
- * WPCodex Admin — entry point.
+ * Worker AI Admin — entry point.
  *
  * @file   src/admin/index.js
  * @since  1.0.0

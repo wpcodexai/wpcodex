@@ -2,27 +2,27 @@
 /**
  * Plugin bootstrap — singleton that wires everything together.
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex;
+namespace WPWorker;
 
-use WPCodex\Abilities\Abilities;
-use WPCodex\Admin\AbilityPolicy;
-use WPCodex\Admin\AdminMenu;
-use WPCodex\REST\AdminAccessEndpoint;
-use WPCodex\REST\GutenbergFinalizerEndpoint;
-use WPCodex\REST\UploadEndpoint;
-use WPCodex\Runner\SandboxLoader;
-use WPCodex\Skills\BuiltIn;
-use WPCodex\Skills\Notices as SkillNotices;
-use WPCodex\Skills\Prompts;
-use WPCodex\Skills\Schema as SkillsSchema;
-use WPCodex\Tools\Mcp;
-use WPCodex\Utils\GutenbergStorage;
-use WPCodex\Utils\Requirements;
+use WPWorker\Abilities\Abilities;
+use WPWorker\Admin\AbilityPolicy;
+use WPWorker\Admin\AdminMenu;
+use WPWorker\REST\AdminAccessEndpoint;
+use WPWorker\REST\GutenbergFinalizerEndpoint;
+use WPWorker\REST\UploadEndpoint;
+use WPWorker\Runner\SandboxLoader;
+use WPWorker\Skills\BuiltIn;
+use WPWorker\Skills\Notices as SkillNotices;
+use WPWorker\Skills\Prompts;
+use WPWorker\Skills\Schema as SkillsSchema;
+use WPWorker\Tools\Mcp;
+use WPWorker\Utils\GutenbergStorage;
+use WPWorker\Utils\Requirements;
 
 /**
  * Class Plugin
@@ -68,7 +68,7 @@ final class Plugin {
 	 * The MCP server, abilities, and all REST endpoints are only booted when
 	 * the site owner has explicitly added:
 	 *
-	 *   define( 'WP_CODEX_ENABLE_MCP', true );
+	 *   define( 'WP_WORKER_ENABLE_MCP', true );
 	 *
 	 * to their wp-config.php. Without this constant the plugin is inert —
 	 * it runs no MCP transport, registers no abilities, and exposes no
@@ -88,7 +88,7 @@ final class Plugin {
 		new Prompts();
 		new SkillNotices();
 
-		if ( defined( 'WP_CODEX_ENABLE_MCP' ) && WP_CODEX_ENABLE_MCP ) {
+		if ( defined( 'WP_WORKER_ENABLE_MCP' ) && WP_WORKER_ENABLE_MCP ) {
 			new Mcp();
 			new AbilityPolicy();
 			$this->abilities = new Abilities();
@@ -107,7 +107,7 @@ final class Plugin {
 	}
 
 	/**
-	 * Queues an admin notice shown when WP_CODEX_ENABLE_MCP is not defined.
+	 * Queues an admin notice shown when WP_WORKER_ENABLE_MCP is not defined.
 	 *
 	 * Explains to the site administrator exactly what constant to add to
 	 * wp-config.php in order to activate the MCP server.
@@ -119,21 +119,21 @@ final class Plugin {
 			return;
 		}
 		$screen = get_current_screen();
-		if ( ! $screen || 'toplevel_page_wpcodex' !== $screen->id ) {
+		if ( ! $screen || 'toplevel_page_wpworker' !== $screen->id ) {
 			return;
 		}
 
 		echo '<div class="notice notice-info">';
 		echo '<p><strong>';
-		esc_html_e( 'WPCodex — MCP server is disabled (safe by default).', 'wpcodex' );
+		esc_html_e( 'Worker AI — MCP server is disabled (safe by default).', 'worker-ai' );
 		echo '</strong></p><p>';
 		esc_html_e(
 			'To enable the MCP server and give your AI agent access to this site, add the following line to your wp-config.php:',
-			'wpcodex'
+			'worker-ai'
 		);
 		echo '</p>';
 		echo '<pre style="background:#f6f7f7;border:1px solid #dcdcde;padding:8px 14px;display:inline-block;border-radius:3px;font-size:13px;">';
-		echo "define( 'WP_CODEX_ENABLE_MCP', true );";
+		echo "define( 'WP_WORKER_ENABLE_MCP', true );";
 		echo '</pre>';
 		echo '<p>';
 		echo wp_kses(
@@ -141,10 +141,10 @@ final class Plugin {
 				/* translators: %s: documentation URL */
 				__(
 					'This constant must be set intentionally — it activates PHP execution, filesystem access, database queries, and WP-CLI for authenticated AI clients. Only enable it on development or staging sites. ',
-					'wpcodex'
+					'worker-ai'
 				),
 				//<a href="%s" target="_blank" rel="noopener noreferrer">Read the documentation →</a>
-				//esc_url( 'https://wpcodex.ai/docs/getting-started' )
+				//esc_url( 'https://wpworker.ai/docs/getting-started' )
 			),
 			[
 				'a' => [
@@ -185,9 +185,9 @@ final class Plugin {
 	private function load_textdomain(): void {
 		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- load_plugin_textdomain is correct for manually bundled/GlotPress translations
 		load_plugin_textdomain(
-			'wpcodex',
+			'worker-ai',
 			false,
-			dirname( WPCODEX_BASENAME ) . '/languages'
+			dirname( WPWORKER_BASENAME ) . '/languages'
 		);
 	}
 
@@ -197,17 +197,17 @@ final class Plugin {
 	 * @since 1.0.0
 	 */
 	private static function create_sandbox_directory(): void {
-		if ( ! is_dir( WPCODEX_SANDBOX_DIR ) ) {
-			wp_mkdir_p( WPCODEX_SANDBOX_DIR );
+		if ( ! is_dir( WPWORKER_SANDBOX_DIR ) ) {
+			wp_mkdir_p( WPWORKER_SANDBOX_DIR );
 		}
 
-		$htaccess = WPCODEX_SANDBOX_DIR . '.htaccess';
+		$htaccess = WPWORKER_SANDBOX_DIR . '.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $htaccess, "Deny from all\n" );
 		}
 
-		$index = WPCODEX_SANDBOX_DIR . 'index.php';
+		$index = WPWORKER_SANDBOX_DIR . 'index.php';
 		if ( ! file_exists( $index ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $index, "<?php\n// Silence is golden.\n" );

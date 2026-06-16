@@ -5,18 +5,18 @@
  *
  * Instantiated once from Plugin::init().
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tools;
+namespace WPWorker\Tools;
 
 /**
  * Class Mcp
  *
- * Boots the MCP Adapter, registers wpcodex ability categories,
+ * Boots the MCP Adapter, registers wpworker ability categories,
  * and wires the MCP response filters.
  *
  * @since 1.0.0
@@ -53,8 +53,8 @@ class Mcp {
 			add_action( 'admin_notices', static function (): void {
 				echo '<div class="notice notice-error"><p>';
 				esc_html_e(
-					'WPCodex: The bundled MCP Adapter could not be loaded. Re-install the plugin release ZIP.',
-					'wpcodex'
+					'WPWorker: The bundled MCP Adapter could not be loaded. Re-install the plugin release ZIP.',
+					'worker-ai'
 				);
 				echo '</p></div>';
 			} );
@@ -69,7 +69,7 @@ class Mcp {
 				echo '<div class="notice notice-error"><p>';
 				printf(
 					/* translators: %s error message */
-					esc_html__( 'WPCodex: MCP Adapter failed to initialise. Error: %s', 'wpcodex' ),
+					esc_html__( 'WPWorker: MCP Adapter failed to initialise. Error: %s', 'worker-ai' ),
 					esc_html( $e->getMessage() )
 				);
 				echo '</p></div>';
@@ -91,14 +91,14 @@ class Mcp {
 		if ( ! is_array( $config ) ) {
 			return $config;
 		}
-		$config['server_id']    = 'wpcodex';
-		$config['server_route'] = 'wpcodex';
-		$config['server_name']  = 'WPCodex';
+		$config['server_id']    = 'wpworker';
+		$config['server_route'] = 'wpworker';
+		$config['server_name']  = 'Worker AI';
 		return $config;
 	}
 
 	/**
-	 * Register wpcodex ability categories with the WordPress Abilities API.
+	 * Register wpworker ability categories with the WordPress Abilities API.
 	 *
 	 * Callback for the wp_abilities_api_categories_init action.
 	 *
@@ -106,40 +106,45 @@ class Mcp {
 	 * @return void
 	 */
 	public function register_ability_categories(): void {
-		wp_register_ability_category( 'wpcodex', [
-			'label'       => __( 'WPCodex', 'wpcodex' ),
-			'description' => __( 'Core WPCodex abilities for AI agent access to WordPress.', 'wpcodex' ),
+		wp_register_ability_category( 'wpworker', [
+			'label'       => __( 'Worker AI', 'worker-ai' ),
+			'description' => __( 'Core Worker AI abilities for AI agent access to WordPress.', 'worker-ai' ),
 		] );
 
-		wp_register_ability_category( 'wpcodex-skills', [
-			'label'       => __( 'WPCodex Skills', 'wpcodex' ),
-			'description' => __( 'Abilities for managing WPCodex skill playbooks.', 'wpcodex' ),
+		wp_register_ability_category( 'wpworker-skills', [
+			'label'       => __( 'Worker AI Skills', 'worker-ai' ),
+			'description' => __( 'Abilities for managing Worker AI skill playbooks.', 'worker-ai' ),
 		] );
 
-		wp_register_ability_category( 'wpcodex-gutenberg', [
-			'label'       => __( 'WPCodex Gutenberg', 'wpcodex' ),
-			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'wpcodex' ),
+		wp_register_ability_category( 'wpworker-gutenberg', [
+			'label'       => __( 'Worker AI Gutenberg', 'worker-ai' ),
+			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'worker-ai' ),
 		] );
 
-		wp_register_ability_category( 'wpcodex-general', [
-			'label'       => __( 'WPCodex General', 'wpcodex' ),
-			'description' => __( 'General-purpose abilities that may be used by WPCodex or other plugins.', 'wpcodex' ),
-		] );
-		
-		wp_register_ability_category( 'wpcodex-site', [
-			'label'       => __( 'WPCodex Site', 'wpcodex' ),
-			'description' => __( 'Abilities for reading and updating site settings and content.', 'wpcodex' ),
+		wp_register_ability_category( 'wpworker-general', [
+			'label'       => __( 'Worker AI General', 'worker-ai' ),
+			'description' => __( 'General-purpose abilities that may be used by Worker AI or other plugins.', 'worker-ai' ),
 		] );
 
-		// wp_register_ability_category( 'wpcodex-plugins', [
-		// 	'label'       => __( 'WPCodex Plugins', 'wpcodex' ),
-		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'wpcodex' ),
+		wp_register_ability_category( 'wpworker-site', [
+			'label'       => __( 'Worker AI Site', 'worker-ai' ),
+			'description' => __( 'Abilities for reading and updating site settings and content.', 'worker-ai' ),
+		] );
+
+		// wp_register_ability_category( 'wpworker-plugins', [
+		// 	'label'       => __( 'Worker AI Plugins', 'worker-ai' ),
+		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'worker-ai' ),
 		// ] );
 
-		// wp_register_ability_category( 'wpcodex-themes', [
-		// 	'label'       => __( 'WPCodex Themes', 'wpcodex' ),
-		// 	'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'wpcodex' ),
-		// ] );
+		wp_register_ability_category( 'wpworker-themes', [
+			'label'       => __( 'Worker AI Themes', 'worker-ai' ),
+			'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'worker-ai' ),
+		] );
+
+		wp_register_ability_category( 'wpworker-astra', [
+			'label'       => __( 'Astra', 'worker-ai' ),
+			'description' => __( 'Abilities for reading and updating Astra theme settings globally and per page.', 'worker-ai' ),
+		] );
 	}
 
 	/**

@@ -1,26 +1,26 @@
 <?php
 /**
- * Unit tests for WPCodex\Skills\Notices.
+ * Unit tests for WPWorker\Skills\Notices.
  *
- * @package WPCodex\Tests\Unit\Skills
+ * @package WPWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Skills;
+namespace WPWorker\Tests\Unit\Skills;
 
 use PHPUnit\Framework\TestCase;
-use WPCodex\Skills\Notices;
+use WPWorker\Skills\Notices;
 
 /**
- * @covers \WPCodex\Skills\Notices
+ * @covers \WPWorker\Skills\Notices
  */
 class NoticesTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
 		// Reset transient store before each test.
-		$GLOBALS['_wpcodex_transients'] = [];
+		$GLOBALS['_wpworker_transients'] = [];
 	}
 
 	public function test_pending_reload_notice_returns_null_when_no_transient(): void {
@@ -29,7 +29,7 @@ class NoticesTest extends TestCase {
 
 	public function test_set_pending_reload_notice_stores_transient(): void {
 		Notices::set_pending_reload_notice();
-		$this->assertNotFalse( get_transient( 'wpcodex_transient_skill_reload_notice' ) );
+		$this->assertNotFalse( get_transient( 'wpworker_transient_skill_reload_notice' ) );
 	}
 
 	public function test_pending_reload_notice_returns_array_when_transient_set(): void {

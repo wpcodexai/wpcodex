@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/astra-flush-cache
+ * Ability: wpworker/astra-flush-cache
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Themes\Astra;
+namespace WPWorker\Abilities\Themes\Astra;
 
-use WPCodex\Abilities\AbstractAbility;
+use WPWorker\Abilities\AbstractAbility;
 
 /**
  * Class FlushCache
@@ -24,12 +24,12 @@ class FlushCache extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/astra-flush-cache';
+		return 'wpworker/astra-flush-cache';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Astra: Flush Cache', 'wpcodex' );
+		return __( 'Astra: Flush Cache', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -38,13 +38,13 @@ class FlushCache extends AbstractAbility {
 			'Clear Astra\'s dynamic CSS cache (transients, option-based cache, and file cache) '
 			. 'so that any changes made to astra-settings or page meta take effect immediately. '
 			. 'Always call this after updating Astra settings if flush_cache was set to false.',
-			'wpcodex'
+			'worker-ai'
 		);
 	}
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-astra';
+		return 'wpworker-themes';
 	}
 
 	/** {@inheritDoc} */
@@ -76,7 +76,7 @@ class FlushCache extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( ! GetSettings::astra_is_active() ) {
-			return new \WP_Error( 'wpcodex_astra_inactive', __( 'The Astra theme is not currently active.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_astra_inactive', __( 'The Astra theme is not currently active.', 'worker-ai' ) );
 		}
 
 		$cleared  = 0;

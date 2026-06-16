@@ -6,7 +6,7 @@ Skills are Markdown playbooks stored in the WordPress database. They give AI age
 
 ## How skills work
 
-When an agent calls `wpcodex/discover-abilities`, the response includes a **skill catalog**: the names and descriptions of all skills with `enable_agentic` set to true. The agent then calls `wpcodex/skill-read` for any skill relevant to the current task.
+When an agent calls `wpworker/discover-abilities`, the response includes a **skill catalog**: the names and descriptions of all skills with `enable_agentic` set to true. The agent then calls `wpworker/skill-read` for any skill relevant to the current task.
 
 Skills can also be exposed as **MCP prompt resources** (for agents that support them) when `enable_prompt` is true.
 
@@ -14,7 +14,7 @@ Skills can also be exposed as **MCP prompt resources** (for agents that support 
 
 ## Managing skills in the admin
 
-Go to **WPCodex → Skills**.
+Go to **WPWorker → Skills**.
 
 ### Create a skill
 
@@ -51,7 +51,7 @@ Agents can create, update, and delete skills directly using the skills abilities
 ### Create
 
 ```
-wpcodex/skill-create
+wpworker/skill-create
   name:           "elementor-header-patterns"
   description:    "Elementor header template IDs and container conventions. Load when modifying the header."
   body:           "# Elementor header patterns\n\nHeader template ID: 42\n..."
@@ -62,14 +62,14 @@ wpcodex/skill-create
 ### Read
 
 ```
-wpcodex/skill-read
+wpworker/skill-read
   name: "elementor-header-patterns"
 ```
 
 ### Update
 
 ```
-wpcodex/skill-update
+wpworker/skill-update
   name:        "elementor-header-patterns"
   description: "Updated description."
 ```
@@ -77,17 +77,17 @@ wpcodex/skill-update
 ### Delete
 
 ```
-wpcodex/skill-delete
+wpworker/skill-delete
   name: "elementor-header-patterns"
 ```
 
 ### List revisions / restore
 
 ```
-wpcodex/skill-list-revisions
+wpworker/skill-list-revisions
   name: "elementor-header-patterns"
 
-wpcodex/skill-restore-revision
+wpworker/skill-restore-revision
   name:        "elementor-header-patterns"
   revision_id: 7
 ```
@@ -131,4 +131,4 @@ Create a skill after completing any complex task where you want the agent to rem
 
 ## External skills (plugin-provided)
 
-Other WordPress plugins can register their own skill sources via the `wpcodex_skill_sources` filter. These appear in the skill catalog with a source badge (e.g. `[My Plugin]`). External skills can be read by the agent but cannot be overwritten via `wpcodex/skill-create` — they are managed by the plugin that provides them.
+Other WordPress plugins can register their own skill sources via the `wpworker_skill_sources` filter. These appear in the skill catalog with a source badge (e.g. `[My Plugin]`). External skills can be read by the agent but cannot be overwritten via `wpworker/skill-create` — they are managed by the plugin that provides them.

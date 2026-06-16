@@ -1,20 +1,20 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-write-content
+ * Ability: wpworker/gutenberg-write-content
  *
  * Convenience wrapper: creates a batch, adds one item, and enables finalization
  * in a single call.
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace WPWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Utils\GutenbergStorage;
 
 /**
  * Class WriteContent
@@ -25,22 +25,22 @@ class WriteContent extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'wpworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-write-content';
+		return 'wpworker/gutenberg-write-content';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Write Gutenberg Content', 'wpcodex' );
+		return __( 'Write Gutenberg Content', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Convenience: creates a batch, adds one block change, and enables finalization in one step. For multiple targets in a single batch use the individual wpcodex/gutenberg-create-pending-batch → wpcodex/gutenberg-add-pending-change → wpcodex/gutenberg-enable-batch-finalization flow.', 'wpcodex' );
+		return __( 'Convenience: creates a batch, adds one block change, and enables finalization in one step. For multiple targets in a single batch use the individual wpworker/gutenberg-create-pending-batch → wpworker/gutenberg-add-pending-change → wpworker/gutenberg-enable-batch-finalization flow.', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
@@ -114,15 +114,15 @@ class WriteContent extends AbstractAbility {
 	public function execute( array $input ): array|\WP_Error {
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 		if ( $post_id <= 0 ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'post_id must be a positive integer.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'post_id must be a positive integer.', 'worker-ai' ) );
 		}
 
 		$target = GutenbergStorage::get_target( $post_id );
 		if ( ! $target instanceof \WP_Post ) {
 			return new \WP_Error(
-				'wpcodex_not_found',
+				'wpworker_not_found',
 				/* translators: %d post ID */
-				sprintf( __( 'Post %d was not found.', 'wpcodex' ), $post_id )
+				sprintf( __( 'Post %d was not found.', 'worker-ai' ), $post_id )
 			);
 		}
 
@@ -146,7 +146,7 @@ class WriteContent extends AbstractAbility {
 		if ( $label === '' ) {
 			$label = sprintf(
 				/* translators: %1$s post type, %2$d post ID */
-				__( 'Gutenberg change for %1$s #%2$d', 'wpcodex' ),
+				__( 'Gutenberg change for %1$s #%2$d', 'worker-ai' ),
 				$target->post_type,
 				$target->ID
 			);

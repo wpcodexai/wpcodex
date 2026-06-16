@@ -1,17 +1,17 @@
 ---
 name: skill-creator
-description: Guidance for creating and refining WPCodex skills — Markdown playbooks stored in WordPress that give the agent specialist knowledge for recurring tasks. Use when the user asks to "create a skill", "make a skill", "add a skill for X", or wants to extend the agent with reusable WordPress-specific knowledge.
+description: Guidance for creating and refining Worker AI skills — Markdown playbooks stored in WordPress that give the agent specialist knowledge for recurring tasks. Use when the user asks to "create a skill", "make a skill", "add a skill for X", or wants to extend the agent with reusable WordPress-specific knowledge.
 enable_prompt: true
 enable_agentic: true
 ---
 
 # Skill Creator
 
-Guidance for creating effective WPCodex skills.
+Guidance for creating effective Worker AI skills.
 
-## What a WPCodex Skill Is
+## What a Worker AI Skill Is
 
-A WPCodex skill is a single Markdown document — YAML frontmatter plus a body — stored in the WordPress database. When its `description` matches the user's request, the agent loads the body and gains specialised procedural knowledge for the task.
+A Worker AI skill is a single Markdown document — YAML frontmatter plus a body — stored in the WordPress database. When its `description` matches the user's request, the agent loads the body and gains specialised procedural knowledge for the task.
 
 Skills are flat: no bundled scripts, references, or asset directories. Everything must live in the single body. Hard limit: 1 MB; aim for under 5 000 words.
 
@@ -49,15 +49,15 @@ Write it so a stranger can tell both *what the skill does* and *when to invoke i
 
 ## Creating a Skill
 
-Use `wpcodex/skill-create` to create and `wpcodex/skill-update` to patch fields.
+Use `wpworker/skill-create` to create and `wpworker/skill-update` to patch fields.
 
 ### Workflow
 
 1. Ask the user for 1–3 concrete examples of requests this skill should handle.
-2. Identify what belongs in the body: business rules, naming conventions, content style, schema quirks, preferred ordering of fragile operations, specific `wpcodex/*` abilities to call.
-3. Call `wpcodex/skill-create` with `name`, `description`, and `body`.
-4. Verify with `wpcodex/skill-read`.
-5. After the user tries the skill, patch only the changed fields with `wpcodex/skill-update`.
+2. Identify what belongs in the body: business rules, naming conventions, content style, schema quirks, preferred ordering of fragile operations, specific `wpworker/*` abilities to call.
+3. Call `wpworker/skill-create` with `name`, `description`, and `body`.
+4. Verify with `wpworker/skill-read`.
+5. After the user tries the skill, patch only the changed fields with `wpworker/skill-update`.
 
 ## What to Put in the Body
 
@@ -66,7 +66,7 @@ Use `wpcodex/skill-create` to create and `wpcodex/skill-update` to patch fields.
 - Step-by-step procedures for fragile or multi-step operations.
 - Concrete input → expected output examples.
 - Templates to reuse verbatim.
-- Specific `wpcodex/*` abilities to call for this task.
+- Specific `wpworker/*` abilities to call for this task.
 
 **Exclude:**
 - Generic WordPress tutorials — the agent already knows these.

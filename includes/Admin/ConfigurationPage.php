@@ -1,17 +1,17 @@
 <?php
 /**
- * Configuration page — main landing page of the WPCodex admin.
+ * Configuration page — main landing page of the WPWorker admin.
  *
  * Step 1 — Enable AI Abilities (on/off toggle + security warning)
  * Step 2 — Application Password (generate inline, list existing, revoke)
  * Step 3 — Connect Your AI Client (paste prompt + per-client JSON snippets)
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Admin;
+namespace WPWorker\Admin;
 
 /**
  * Class ConfigurationPage
@@ -19,11 +19,11 @@ namespace WPCodex\Admin;
 final class ConfigurationPage {
 
 	/** AJAX action names. */
-	private const AJAX_GENERATE  = 'wpcodex_generate_app_password';
-	private const AJAX_REVOKE    = 'wpcodex_revoke_app_password';
+	private const AJAX_GENERATE  = 'wpworker_generate_app_password';
+	private const AJAX_REVOKE    = 'wpworker_revoke_app_password';
 
 	/** Application name used when auto-creating passwords. */
-	private const APP_NAME_DEFAULT = 'WPCodex';
+	private const APP_NAME_DEFAULT = 'Worker AI';
 
 	/**
 	 * Register AJAX handlers for the Configuration page.
@@ -37,54 +37,54 @@ final class ConfigurationPage {
 
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'worker-ai' ) );
 		}
 
 		self::handle_toggle();
 
 		$enabled   = AdminMenu::are_abilities_enabled();
-		$mcp_url   = rest_url( 'mcp/wpcodex' );
+		$mcp_url   = rest_url( 'mcp/wpworker' );
 		$user      = wp_get_current_user();
 		$username  = $user->user_login;
 		$app_pw_ok = self::application_passwords_available();
 		$site_slug = sanitize_title( wp_parse_url( home_url(), PHP_URL_HOST ) ?? 'site' );
-		$default_name = 'wpcodex-' . $site_slug;
+		$default_name = 'wpworker-' . $site_slug;
 
-		// Existing application passwords for this user (WPCodex-generated ones).
+		// Existing application passwords for this user (WPWorker-generated ones).
 		$existing_passwords = self::get_existing_passwords( $user->ID );
 		?>
-		<div class="wrap wpcodex-wrap wpcodex-config" id="wpcodex-configuration">
-			<h1 class="wpcodex-page-title"><?php esc_html_e( 'Configuration', 'wpcodex' ); ?></h1>
+		<div class="wrap wpworker-wrap wpworker-config" id="wpworker-configuration">
+			<h1 class="wpworker-page-title"><?php esc_html_e( 'Configuration', 'worker-ai' ); ?></h1>
 
 			<!-- ══════════════════════════════════════════════════════════════
 			     STEP 1 — Enable AI Abilities
 			     ══════════════════════════════════════════════════════════════ -->
-			<div class="wpcodex-config__card <?php echo $enabled ? 'is-active' : ''; ?>">
-				<div class="wpcodex-config__card-header">
-					<span class="wpcodex-config__step">1</span>
-					<h2 class="wpcodex-config__card-title"><?php esc_html_e( 'Enable AI Abilities', 'wpcodex' ); ?></h2>
-					<span class="wpcodex-config__status <?php echo $enabled ? 'is-on' : 'is-off'; ?>">
-						<?php echo $enabled ? esc_html__( 'ON', 'wpcodex' ) : esc_html__( 'OFF', 'wpcodex' ); ?>
+			<div class="wpworker-config__card <?php echo $enabled ? 'is-active' : ''; ?>">
+				<div class="wpworker-config__card-header">
+					<span class="wpworker-config__step">1</span>
+					<h2 class="wpworker-config__card-title"><?php esc_html_e( 'Enable AI Abilities', 'worker-ai' ); ?></h2>
+					<span class="wpworker-config__status <?php echo $enabled ? 'is-on' : 'is-off'; ?>">
+						<?php echo $enabled ? esc_html__( 'ON', 'worker-ai' ) : esc_html__( 'OFF', 'worker-ai' ); ?>
 					</span>
 				</div>
 
-				<p class="wpcodex-config__card-desc">
-					<?php esc_html_e( 'Activates the MCP server and registers all WPCodex abilities so AI agents can connect to this site.', 'wpcodex' ); ?>
+				<p class="wpworker-config__card-desc">
+					<?php esc_html_e( 'Activates the MCP server and registers all Worker AI abilities so AI agents can connect to this site.', 'worker-ai' ); ?>
 				</p>
 
-				<div class="wpcodex-config__security-note">
-					<strong><?php esc_html_e( 'Security note:', 'wpcodex' ); ?></strong>
-					<?php esc_html_e( 'When enabled, AI agents can execute PHP code and perform filesystem operations on this site. For development and staging environments only. Always keep backups.', 'wpcodex' ); ?>
+				<div class="wpworker-config__security-note">
+					<strong><?php esc_html_e( 'Security note:', 'worker-ai' ); ?></strong>
+					<?php esc_html_e( 'When enabled, AI agents can execute PHP code and perform filesystem operations on this site. For development and staging environments only. Always keep backups.', 'worker-ai' ); ?>
 				</div>
 
 				<form method="post" action="" style="margin-top:16px;">
-					<?php wp_nonce_field( 'wpcodex_toggle_abilities', 'wpcodex_toggle_nonce' ); ?>
-					<input type="hidden" name="wpcodex_abilities_toggle" value="1">
-					<input type="hidden" name="wpcodex_abilities_value" value="<?php echo $enabled ? '0' : '1'; ?>">
-					<button type="submit" class="button <?php echo $enabled ? 'button-secondary wpcodex-config__btn-disable' : 'button-primary'; ?>">
+					<?php wp_nonce_field( 'wpworker_toggle_abilities', 'wpworker_toggle_nonce' ); ?>
+					<input type="hidden" name="wpworker_abilities_toggle" value="1">
+					<input type="hidden" name="wpworker_abilities_value" value="<?php echo $enabled ? '0' : '1'; ?>">
+					<button type="submit" class="button <?php echo $enabled ? 'button-secondary wpworker-config__btn-disable' : 'button-primary'; ?>">
 						<?php echo $enabled
-							? esc_html__( 'Disable AI Abilities', 'wpcodex' )
-							: esc_html__( 'Enable AI Abilities', 'wpcodex' ); ?>
+							? esc_html__( 'Disable AI Abilities', 'worker-ai' )
+							: esc_html__( 'Enable AI Abilities', 'worker-ai' ); ?>
 					</button>
 				</form>
 			</div>
@@ -92,69 +92,69 @@ final class ConfigurationPage {
 			<!-- ══════════════════════════════════════════════════════════════
 			     STEP 2 — Application Password
 			     ══════════════════════════════════════════════════════════════ -->
-			<div class="wpcodex-config__card"
-			     id="wpcodex-step-2"
+			<div class="wpworker-config__card"
+			     id="wpworker-step-2"
 			     data-step="2"
 			     <?php echo ! $enabled ? 'style="display:none;"' : ''; ?>>
-				<div class="wpcodex-config__card-header">
-					<span class="wpcodex-config__step">2</span>
-					<h2 class="wpcodex-config__card-title"><?php esc_html_e( 'Create an Application Password', 'wpcodex' ); ?></h2>
+				<div class="wpworker-config__card-header">
+					<span class="wpworker-config__step">2</span>
+					<h2 class="wpworker-config__card-title"><?php esc_html_e( 'Create an Application Password', 'worker-ai' ); ?></h2>
 				</div>
 
-				<p class="wpcodex-config__card-desc">
-					<?php esc_html_e( 'Generate an application password that your AI client will use to authenticate with WordPress. The password is embedded into the connection text in step 3.', 'wpcodex' ); ?>
+				<p class="wpworker-config__card-desc">
+					<?php esc_html_e( 'Generate an application password that your AI client will use to authenticate with WordPress. The password is embedded into the connection text in step 3.', 'worker-ai' ); ?>
 				</p>
 
 				<?php if ( ! $app_pw_ok ) : ?>
 					<div class="notice notice-error inline" style="margin:0 0 16px;">
 					<p>
-						<strong><?php esc_html_e( 'HTTPS required.', 'wpcodex' ); ?></strong>
-						<?php esc_html_e( 'Application Passwords transmit credentials over the network. Enable SSL before connecting an AI client.', 'wpcodex' ); ?>
-						<?php esc_html_e( 'For local development, add to wp-config.php:', 'wpcodex' ); ?>
+						<strong><?php esc_html_e( 'HTTPS required.', 'worker-ai' ); ?></strong>
+						<?php esc_html_e( 'Application Passwords transmit credentials over the network. Enable SSL before connecting an AI client.', 'worker-ai' ); ?>
+						<?php esc_html_e( 'For local development, add to wp-config.php:', 'worker-ai' ); ?>
 						<code>define( 'WP_ENVIRONMENT_TYPE', 'local' );</code>
 					</p>
 				</div>
 				<?php else : ?>
 
 					<!-- Generated password reveal (hidden until AJAX response) -->
-					<div id="wpcodex-pw-reveal" style="display:none; margin-bottom:16px;">
+					<div id="wpworker-pw-reveal" style="display:none; margin-bottom:16px;">
 						<div class="notice notice-success inline" style="margin:0 0 10px;">
 							<p style="margin:0;">
-								<?php esc_html_e( 'Application password generated. It is now embedded in the connection text in step 3. Save it somewhere safe: it will not be shown in full again.', 'wpcodex' ); ?>
+								<?php esc_html_e( 'Application password generated. It is now embedded in the connection text in step 3. Save it somewhere safe: it will not be shown in full again.', 'worker-ai' ); ?>
 							</p>
 						</div>
 						<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-							<code id="wpcodex-pw-value" style="font-size:.875rem; padding:5px 10px; background:#f0f0f0; border-radius:3px;"></code>
-							<button type="button" class="button" onclick="wpcodexCopyPassword(this)">
-								<?php esc_html_e( 'Copy password only', 'wpcodex' ); ?>
+							<code id="wpworker-pw-value" style="font-size:.875rem; padding:5px 10px; background:#f0f0f0; border-radius:3px;"></code>
+							<button type="button" class="button" onclick="wpworkerCopyPassword(this)">
+								<?php esc_html_e( 'Copy password only', 'worker-ai' ); ?>
 							</button>
 						</div>
 					</div>
 
 					<!-- Generate form -->
-					<div id="wpcodex-pw-generate-form">
+					<div id="wpworker-pw-generate-form">
 						<?php $has_passwords = ! empty( $existing_passwords ); ?>
-						<div id="wpcodex-pw-name-wrap" style="margin-bottom:12px;<?php echo $has_passwords ? '' : ' display:none;'; ?>">
-							<label for="wpcodex-pw-name" style="display:block; margin-bottom:4px; font-weight:600;">
-								<?php esc_html_e( 'Name', 'wpcodex' ); ?>
+						<div id="wpworker-pw-name-wrap" style="margin-bottom:12px;<?php echo $has_passwords ? '' : ' display:none;'; ?>">
+							<label for="wpworker-pw-name" style="display:block; margin-bottom:4px; font-weight:600;">
+								<?php esc_html_e( 'Name', 'worker-ai' ); ?>
 								<span style="color:#d63638; margin-left:2px;" aria-hidden="true">*</span>
 							</label>
 							<input
 								type="text"
-								id="wpcodex-pw-name"
+								id="wpworker-pw-name"
 								class="regular-text"
-								placeholder="<?php esc_attr_e( 'e.g. Cursor on laptop, Claude Desktop', 'wpcodex' ); ?>"
+								placeholder="<?php esc_attr_e( 'e.g. Cursor on laptop, Claude Desktop', 'worker-ai' ); ?>"
 								maxlength="70"
 							>
 							<p class="description" style="margin-top:4px;">
-								<?php esc_html_e( 'A unique label for this credential — one per AI client.', 'wpcodex' ); ?>
+								<?php esc_html_e( 'A unique label for this credential — one per AI client.', 'worker-ai' ); ?>
 							</p>
 						</div>
 						<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-							<button type="button" class="button button-primary" id="wpcodex-pw-generate-btn" onclick="wpcodexGeneratePassword(this)">
-								<?php esc_html_e( 'Generate application password', 'wpcodex' ); ?>
+							<button type="button" class="button button-primary" id="wpworker-pw-generate-btn" onclick="wpworkerGeneratePassword(this)">
+								<?php esc_html_e( 'Generate application password', 'worker-ai' ); ?>
 							</button>
-							<span id="wpcodex-pw-spinner" class="spinner" style="float:none; margin:0; display:none;"></span>
+							<span id="wpworker-pw-spinner" class="spinner" style="float:none; margin:0; display:none;"></span>
 						</div>
 					</div>
 
@@ -163,54 +163,54 @@ final class ConfigurationPage {
 
 					<!-- Go to Application Passwords -->
 					<div>
-						<p class="wpcodex-config__card-desc" style="margin-bottom:10px;">
+						<p class="wpworker-config__card-desc" style="margin-bottom:10px;">
 							<?php
 							printf(
 								wp_kses_post(
 									/* translators: %s: link to the Application Passwords section of the user profile */
-									__( 'Prefer to manage passwords manually? Go to %s, enter a name like <strong>"Claude Code"</strong>, and click <strong>Add New Application Password</strong>. Copy the generated password — it is shown only once.', 'wpcodex' )
+									__( 'Prefer to manage passwords manually? Go to %s, enter a name like <strong>"Claude Code"</strong>, and click <strong>Add New Application Password</strong>. Copy the generated password — it is shown only once.', 'worker-ai' )
 								),
 								'<a href="' . esc_url( admin_url( 'profile.php#application-passwords-section' ) ) . '" target="_blank">'
-								. esc_html__( 'your profile → Application Passwords', 'wpcodex' )
+								. esc_html__( 'your profile → Application Passwords', 'worker-ai' )
 								. '</a>'
 							);
 							?>
 						</p>
-						<p class="wpcodex-config__card-desc" style="margin-bottom:12px;">
-							<?php esc_html_e( 'Create one password per AI client so you can revoke access individually.', 'wpcodex' ); ?>
+						<p class="wpworker-config__card-desc" style="margin-bottom:12px;">
+							<?php esc_html_e( 'Create one password per AI client so you can revoke access individually.', 'worker-ai' ); ?>
 						</p>
 						<a href="<?php echo esc_url( admin_url( 'profile.php#application-passwords-section' ) ); ?>"
 						   class="button button-primary" target="_blank">
-							<?php esc_html_e( 'Go to Application Passwords ↗', 'wpcodex' ); ?>
+							<?php esc_html_e( 'Go to Application Passwords ↗', 'worker-ai' ); ?>
 						</a>
 					</div>
 
-					<!-- Existing passwords table — only WPCodex-prefixed, shown at the bottom -->
-					<div id="wpcodex-pw-existing" style="<?php echo empty( $existing_passwords ) ? 'display:none;' : ''; ?>margin-top:20px; padding-top:20px; border-top:1px solid #dcdcde;">
-						<p class="wpcodex-pw-section-label">
-							<?php esc_html_e( 'Manage existing application passwords', 'wpcodex' ); ?>
-							&nbsp;<span id="wpcodex-pw-count">(<?php echo esc_html( (string) count( $existing_passwords ) ); ?>)</span>
+					<!-- Existing passwords table — only WPWorker-prefixed, shown at the bottom -->
+					<div id="wpworker-pw-existing" style="<?php echo empty( $existing_passwords ) ? 'display:none;' : ''; ?>margin-top:20px; padding-top:20px; border-top:1px solid #dcdcde;">
+						<p class="wpworker-pw-section-label">
+							<?php esc_html_e( 'Manage existing application passwords', 'worker-ai' ); ?>
+							&nbsp;<span id="wpworker-pw-count">(<?php echo esc_html( (string) count( $existing_passwords ) ); ?>)</span>
 						</p>
-						<div class="wpcodex-pw-table-wrap">
-							<table class="wpcodex-pw-table" id="wpcodex-pw-table">
+						<div class="wpworker-pw-table-wrap">
+							<table class="wpworker-pw-table" id="wpworker-pw-table">
 								<thead>
 									<tr>
-										<th><?php esc_html_e( 'Name', 'wpcodex' ); ?></th>
-										<th><?php esc_html_e( 'Created', 'wpcodex' ); ?></th>
-										<th><?php esc_html_e( 'Last Used', 'wpcodex' ); ?></th>
+										<th><?php esc_html_e( 'Name', 'worker-ai' ); ?></th>
+										<th><?php esc_html_e( 'Created', 'worker-ai' ); ?></th>
+										<th><?php esc_html_e( 'Last Used', 'worker-ai' ); ?></th>
 										<th></th>
 									</tr>
 								</thead>
-								<tbody id="wpcodex-pw-tbody">
+								<tbody id="wpworker-pw-tbody">
 									<?php foreach ( $existing_passwords as $pw ) : ?>
 										<tr data-uuid="<?php echo esc_attr( $pw['uuid'] ); ?>">
-											<td class="wpcodex-pw-table__name"><?php echo esc_html( $pw['display_name'] ); ?></td>
-											<td class="wpcodex-pw-table__meta"><?php echo esc_html( $pw['created'] ); ?></td>
-											<td class="wpcodex-pw-table__meta"><?php echo esc_html( $pw['last_used'] ); ?></td>
-											<td class="wpcodex-pw-table__actions">
-												<button type="button" class="button button-small wpcodex-pw-revoke-btn"
-												        onclick="wpcodexRevokePassword('<?php echo esc_js( $pw['uuid'] ); ?>', this)">
-													<?php esc_html_e( 'Revoke', 'wpcodex' ); ?>
+											<td class="wpworker-pw-table__name"><?php echo esc_html( $pw['display_name'] ); ?></td>
+											<td class="wpworker-pw-table__meta"><?php echo esc_html( $pw['created'] ); ?></td>
+											<td class="wpworker-pw-table__meta"><?php echo esc_html( $pw['last_used'] ); ?></td>
+											<td class="wpworker-pw-table__actions">
+												<button type="button" class="button button-small wpworker-pw-revoke-btn"
+												        onclick="wpworkerRevokePassword('<?php echo esc_js( $pw['uuid'] ); ?>', this)">
+													<?php esc_html_e( 'Revoke', 'worker-ai' ); ?>
 												</button>
 											</td>
 										</tr>
@@ -227,27 +227,27 @@ final class ConfigurationPage {
 			     STEP 3 — Connect Your AI Client
 			     ══════════════════════════════════════════════════════════════ -->
 			<?php $step3_hidden = true; // Only revealed via JS after a password is generated. ?>
-			<div class="wpcodex-config__card"
-			     id="wpcodex-step-3"
+			<div class="wpworker-config__card"
+			     id="wpworker-step-3"
 			     data-step="3"
 			     <?php echo $step3_hidden ? 'style="display:none;"' : ''; ?>>
-				<div class="wpcodex-config__card-header">
-					<span class="wpcodex-config__step">3</span>
-					<h2 class="wpcodex-config__card-title"><?php esc_html_e( 'Connect Your AI Client', 'wpcodex' ); ?></h2>
+				<div class="wpworker-config__card-header">
+					<span class="wpworker-config__step">3</span>
+					<h2 class="wpworker-config__card-title"><?php esc_html_e( 'Connect Your AI Client', 'worker-ai' ); ?></h2>
 				</div>
 
 				<p style="margin:0 0 12px;">
-					<?php esc_html_e( 'Copy the block below and paste it to your AI agent.', 'wpcodex' ); ?>
+					<?php esc_html_e( 'Copy the block below and paste it to your AI agent.', 'worker-ai' ); ?>
 				</p>
 
 				<div class="notice notice-info inline" style="margin:0 0 12px;">
 					<p style="margin:0;">
-						<strong><?php esc_html_e( 'This prompt shares your application password with your AI agent.', 'wpcodex' ); ?></strong>
+						<strong><?php esc_html_e( 'This prompt shares your application password with your AI agent.', 'worker-ai' ); ?></strong>
 						<?php
 						printf(
 							wp_kses(
 								/* translators: %s: link */
-								__( 'Prefer to keep it private? Use the <button type="button" class="button-link" onclick="wpcodexOpenManualConfig()">manual configuration</button> and paste the snippet into the config file yourself.', 'wpcodex' ),
+								__( 'Prefer to keep it private? Use the <button type="button" class="button-link" onclick="wpworkerOpenManualConfig()">manual configuration</button> and paste the snippet into the config file yourself.', 'worker-ai' ),
 								[ 'button' => [ 'type' => [], 'class' => [], 'onclick' => [] ] ]
 							)
 						);
@@ -256,77 +256,77 @@ final class ConfigurationPage {
 				</div>
 
 				<!-- Paste block -->
-				<div class="wpcodex-paste-block">
-					<div class="wpcodex-paste-content is-expanded" id="wpcodex-paste-content">
-						<pre id="wpcodex-paste-text"></pre>
+				<div class="wpworker-paste-block">
+					<div class="wpworker-paste-content is-expanded" id="wpworker-paste-content">
+						<pre id="wpworker-paste-text"></pre>
 					</div>
-					<div class="wpcodex-paste-actions">
-						<button type="button" class="button-link" id="wpcodex-paste-expand"
-						        onclick="wpcodexToggleExpandPaste(this)" aria-expanded="true"
-						        aria-controls="wpcodex-paste-content">
-							<?php esc_html_e( 'Show less', 'wpcodex' ); ?>
+					<div class="wpworker-paste-actions">
+						<button type="button" class="button-link" id="wpworker-paste-expand"
+						        onclick="wpworkerToggleExpandPaste(this)" aria-expanded="true"
+						        aria-controls="wpworker-paste-content">
+							<?php esc_html_e( 'Show less', 'worker-ai' ); ?>
 						</button>
-						<button type="button" class="button button-primary" onclick="wpcodexCopyPaste(this)">
-							<?php esc_html_e( 'Copy prompt', 'wpcodex' ); ?>
+						<button type="button" class="button button-primary" onclick="wpworkerCopyPaste(this)">
+							<?php esc_html_e( 'Copy prompt', 'worker-ai' ); ?>
 						</button>
-						<p id="wpcodex-paste-warning" style="display:none; margin:0; color:#d63638; font-size:13px; font-weight:600;">
-							<?php esc_html_e( "Don't share with anyone: it contains an application password that grants access to this WordPress site.", 'wpcodex' ); ?>
+						<p id="wpworker-paste-warning" style="display:none; margin:0; color:#d63638; font-size:13px; font-weight:600;">
+							<?php esc_html_e( "Don't share with anyone: it contains an application password that grants access to this WordPress site.", 'worker-ai' ); ?>
 						</p>
 					</div>
 				</div>
 
 				<!-- Server name -->
 				<p style="margin:14px 0 4px;">
-					<button type="button" class="button-link" id="wpcodex-name-toggle"
-					        aria-expanded="false" aria-controls="wpcodex-name-field"
-					        onclick="wpcodexToggleServerName(this)">
-						<?php esc_html_e( 'Change server name (optional)', 'wpcodex' ); ?>
+					<button type="button" class="button-link" id="wpworker-name-toggle"
+					        aria-expanded="false" aria-controls="wpworker-name-field"
+					        onclick="wpworkerToggleServerName(this)">
+						<?php esc_html_e( 'Change server name (optional)', 'worker-ai' ); ?>
 					</button>
 				</p>
-				<div id="wpcodex-name-field" style="display:none; margin:6px 0 14px;">
-					<input type="text" id="wpcodex-mcp-name"
+				<div id="wpworker-name-field" style="display:none; margin:6px 0 14px;">
+					<input type="text" id="wpworker-mcp-name"
 					       value="<?php echo esc_attr( $default_name ); ?>"
 					       placeholder="<?php echo esc_attr( $default_name ); ?>"
 					       maxlength="25" style="width:240px;"
-					       oninput="wpcodexUpdateName(this.value)">
+					       oninput="wpworkerUpdateName(this.value)">
 					<p class="description" style="margin:6px 0 0;">
-						<?php esc_html_e( 'Editing here updates the connection text and JSON snippets below in real time. Each AI client config keeps its own name once saved on its side.', 'wpcodex' ); ?>
+						<?php esc_html_e( 'Editing here updates the connection text and JSON snippets below in real time. Each AI client config keeps its own name once saved on its side.', 'worker-ai' ); ?>
 					</p>
-					<div id="wpcodex-name-warning" class="notice notice-warning inline" style="display:none; margin:8px 0 0;">
-						<p style="margin:0;"><?php esc_html_e( 'Maximum 25 characters reached. Required for client compatibility.', 'wpcodex' ); ?></p>
+					<div id="wpworker-name-warning" class="notice notice-warning inline" style="display:none; margin:8px 0 0;">
+						<p style="margin:0;"><?php esc_html_e( 'Maximum 25 characters reached. Required for client compatibility.', 'worker-ai' ); ?></p>
 					</div>
-					<div id="wpcodex-name-suggestion" class="notice notice-warning inline" style="display:none; margin:8px 0 0;">
-						<p style="margin:0;"><?php esc_html_e( 'Tip: keep "wpcodex" in the name so you (and your AI agent) can tell this MCP server apart from others.', 'wpcodex' ); ?></p>
+					<div id="wpworker-name-suggestion" class="notice notice-warning inline" style="display:none; margin:8px 0 0;">
+						<p style="margin:0;"><?php esc_html_e( 'Tip: keep "wpworker" in the name so you (and your AI agent) can tell this MCP server apart from others.', 'worker-ai' ); ?></p>
 					</div>
 				</div>
 
 				<!-- Manual / per-client JSON config -->
 				<p style="margin:6px 0 4px;">
-					<button type="button" class="button-link" id="wpcodex-manual-toggle"
-					        aria-expanded="false" aria-controls="wpcodex-manual-config"
-					        onclick="wpcodexToggleManualConfig(this)">
-						<?php esc_html_e( 'Need the JSON config for a specific client?', 'wpcodex' ); ?>
+					<button type="button" class="button-link" id="wpworker-manual-toggle"
+					        aria-expanded="false" aria-controls="wpworker-manual-config"
+					        onclick="wpworkerToggleManualConfig(this)">
+						<?php esc_html_e( 'Need the JSON config for a specific client?', 'worker-ai' ); ?>
 					</button>
 				</p>
-				<div id="wpcodex-manual-config" style="display:none;">
+				<div id="wpworker-manual-config" style="display:none;">
 					<p class="description" style="margin:0 0 12px;">
-						<?php esc_html_e( 'Select your AI client to copy the JSON snippet for its config file.', 'wpcodex' ); ?>
+						<?php esc_html_e( 'Select your AI client to copy the JSON snippet for its config file.', 'worker-ai' ); ?>
 					</p>
 
 					<div class="notice notice-warning inline" style="margin:0 0 14px;">
 						<p style="margin:0;">
-							<strong><?php esc_html_e( 'Node.js 20.1 or higher is required.', 'wpcodex' ); ?></strong>
-							<?php esc_html_e( 'These configs use', 'wpcodex' ); ?>
+							<strong><?php esc_html_e( 'Node.js 20.1 or higher is required.', 'worker-ai' ); ?></strong>
+							<?php esc_html_e( 'These configs use', 'worker-ai' ); ?>
 							<code>npx</code>
-							<?php esc_html_e( 'to run the MCP transport. Run', 'wpcodex' ); ?>
+							<?php esc_html_e( 'to run the MCP transport. Run', 'worker-ai' ); ?>
 							<code>node -v</code>
-							<?php esc_html_e( 'in your terminal to check. If your version is below 20.1, download the latest LTS from', 'wpcodex' ); ?>
+							<?php esc_html_e( 'in your terminal to check. If your version is below 20.1, download the latest LTS from', 'worker-ai' ); ?>
 							<a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer">nodejs.org</a>.
 							<?php
 							printf(
 								wp_kses(
 									/* translators: %s: button label */
-									__( "Can't install Node.js? Use the <strong>npx-free alternative</strong> below instead.", 'wpcodex' ),
+									__( "Can't install Node.js? Use the <strong>npx-free alternative</strong> below instead.", 'worker-ai' ),
 									[ 'strong' => [] ]
 								)
 							);
@@ -334,7 +334,7 @@ final class ConfigurationPage {
 						</p>
 					</div>
 
-					<div class="wpcodex-client-tabs" id="wpcodex-manual-tabs">
+					<div class="wpworker-client-tabs" id="wpworker-manual-tabs">
 						<?php
 						$manual_clients = [
 							'claude-code'    => 'Claude Code',
@@ -357,67 +357,67 @@ final class ConfigurationPage {
 						foreach ( $manual_clients as $slug => $label ) :
 							?>
 							<button type="button"
-							        class="wpcodex-client-tab<?php echo $first ? ' is-active' : ''; ?>"
+							        class="wpworker-client-tab<?php echo $first ? ' is-active' : ''; ?>"
 							        data-client="<?php echo esc_attr( $slug ); ?>">
 								<?php echo esc_html( $label ); ?>
 							</button>
 							<?php $first = false; ?>
 						<?php endforeach; ?>
 					</div>
-					<div class="wpcodex-config-block">
-						<pre id="wpcodex-config-code"></pre>
-						<button type="button" class="button wpcodex-copy-code-btn" onclick="wpcodexCopyConfig(this)">
-							<?php esc_html_e( 'Copy', 'wpcodex' ); ?>
+					<div class="wpworker-config-block">
+						<pre id="wpworker-config-code"></pre>
+						<button type="button" class="button wpworker-copy-code-btn" onclick="wpworkerCopyConfig(this)">
+							<?php esc_html_e( 'Copy', 'worker-ai' ); ?>
 						</button>
 					</div>
-					<div class="wpcodex-config-footer">
-						<div id="wpcodex-config-hint" class="wpcodex-config-hint"></div>
-						<div id="wpcodex-config-paths" class="wpcodex-config-paths" style="display:none;"></div>
+					<div class="wpworker-config-footer">
+						<div id="wpworker-config-hint" class="wpworker-config-hint"></div>
+						<div id="wpworker-config-paths" class="wpworker-config-paths" style="display:none;"></div>
 					</div>
 				</div>
 
 				<!-- npx-free alternative -->
 				<p style="margin:6px 0 4px;">
-					<button type="button" class="button-link" id="wpcodex-npxless-toggle"
-					        aria-expanded="false" aria-controls="wpcodex-npxless-config"
-					        onclick="wpcodexToggleNpxless(this)">
-						<?php esc_html_e( 'Configs above not working? Try this npx-free alternative.', 'wpcodex' ); ?>
+					<button type="button" class="button-link" id="wpworker-npxless-toggle"
+					        aria-expanded="false" aria-controls="wpworker-npxless-config"
+					        onclick="wpworkerToggleNpxless(this)">
+						<?php esc_html_e( 'Configs above not working? Try this npx-free alternative.', 'worker-ai' ); ?>
 					</button>
 				</p>
-				<div id="wpcodex-npxless-config" style="display:none;">
+				<div id="wpworker-npxless-config" style="display:none;">
 					<p class="description" style="margin:0 0 12px;">
-						<?php esc_html_e( 'Copy this configuration snippet to connect using direct HTTP (no Node/npx required).', 'wpcodex' ); ?>
+						<?php esc_html_e( 'Copy this configuration snippet to connect using direct HTTP (no Node/npx required).', 'worker-ai' ); ?>
 					</p>
-					<div class="wpcodex-client-tabs">
-						<button type="button" class="wpcodex-client-tab wpcodex-npxless-tab is-active"
+					<div class="wpworker-client-tabs">
+						<button type="button" class="wpworker-client-tab wpworker-npxless-tab is-active"
 						        data-client="claude">
-							<?php esc_html_e( 'Claude Code', 'wpcodex' ); ?>
+							<?php esc_html_e( 'Claude Code', 'worker-ai' ); ?>
 						</button>
-						<button type="button" class="wpcodex-client-tab wpcodex-npxless-tab"
+						<button type="button" class="wpworker-client-tab wpworker-npxless-tab"
 						        data-client="codex">
-							<?php esc_html_e( 'Codex', 'wpcodex' ); ?>
+							<?php esc_html_e( 'Codex', 'worker-ai' ); ?>
 						</button>
 					</div>
-					<div class="wpcodex-config-block">
-						<pre id="wpcodex-npxless-code"></pre>
-						<button type="button" class="button wpcodex-copy-code-btn" onclick="wpcodexCopyNpxless(this)">
-							<?php esc_html_e( 'Copy', 'wpcodex' ); ?>
+					<div class="wpworker-config-block">
+						<pre id="wpworker-npxless-code"></pre>
+						<button type="button" class="button wpworker-copy-code-btn" onclick="wpworkerCopyNpxless(this)">
+							<?php esc_html_e( 'Copy', 'worker-ai' ); ?>
 						</button>
 					</div>
-					<div class="wpcodex-config-footer">
-						<div id="wpcodex-npxless-hint" class="wpcodex-config-hint"></div>
-						<div id="wpcodex-npxless-paths" class="wpcodex-config-paths"></div>
+					<div class="wpworker-config-footer">
+						<div id="wpworker-npxless-hint" class="wpworker-config-hint"></div>
+						<div id="wpworker-npxless-paths" class="wpworker-config-paths"></div>
 					</div>
 				</div>
 			</div>
-		</div><!-- .wpcodex-config -->
+		</div><!-- .wpworker-config -->
 
 		<?php
 		// Pass server-side data to the external configuration.js module.
 		// All logic lives in src/admin/components/configuration.js — no inline JS here.
 		wp_add_inline_script(
-			'wpcodex-admin',
-			'window.wpcodexConfig = ' . wp_json_encode( [
+			'wpworker-admin',
+			'window.wpworkerConfig = ' . wp_json_encode( [
 				'mcpUrl'          => $mcp_url,
 				'username'        => $username,
 				'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
@@ -429,18 +429,18 @@ final class ConfigurationPage {
 				'ajaxRevoke'      => self::AJAX_REVOKE,
 				'step2Complete'   => ! empty( $existing_passwords ),
 				'l10n'            => [
-					'copied'          => __( 'Copied!', 'wpcodex' ),
-					'showLess'        => __( 'Show less', 'wpcodex' ),
-					'showFull'        => __( 'Show full text', 'wpcodex' ),
-					'generateAnother' => __( 'Generate another application password', 'wpcodex' ),
-					'never'           => __( 'Never', 'wpcodex' ),
-					'revoke'          => __( 'Revoke', 'wpcodex' ),
-					'revokeConfirm'   => __( 'Revoke this application password? The AI client using it will lose access immediately.', 'wpcodex' ),
-					'errorNameRequired' => __( 'Please enter a name for this password.', 'wpcodex' ),
-					'errorGenerate'   => __( 'Error generating password.', 'wpcodex' ),
-					'errorNetwork'    => __( 'Network error. Please try again.', 'wpcodex' ),
-					'completeStep1'   => __( 'Complete step 1 first', 'wpcodex' ),
-					'completeStep2'   => __( 'Complete step 2 first', 'wpcodex' ),
+					'copied'          => __( 'Copied!', 'worker-ai' ),
+					'showLess'        => __( 'Show less', 'worker-ai' ),
+					'showFull'        => __( 'Show full text', 'worker-ai' ),
+					'generateAnother' => __( 'Generate another application password', 'worker-ai' ),
+					'never'           => __( 'Never', 'worker-ai' ),
+					'revoke'          => __( 'Revoke', 'worker-ai' ),
+					'revokeConfirm'   => __( 'Revoke this application password? The AI client using it will lose access immediately.', 'worker-ai' ),
+					'errorNameRequired' => __( 'Please enter a name for this password.', 'worker-ai' ),
+					'errorGenerate'   => __( 'Error generating password.', 'worker-ai' ),
+					'errorNetwork'    => __( 'Network error. Please try again.', 'worker-ai' ),
+					'completeStep1'   => __( 'Complete step 1 first', 'worker-ai' ),
+					'completeStep2'   => __( 'Complete step 2 first', 'worker-ai' ),
 				],
 			] ) . ';',
 			'before'
@@ -449,34 +449,34 @@ final class ConfigurationPage {
 
 	// Action handlers
 	private static function handle_toggle(): void {
-		if ( ! isset( $_POST['wpcodex_abilities_toggle'] ) ) {
+		if ( ! isset( $_POST['wpworker_abilities_toggle'] ) ) {
 			return;
 		}
-		check_admin_referer( 'wpcodex_toggle_abilities', 'wpcodex_toggle_nonce' );
+		check_admin_referer( 'wpworker_toggle_abilities', 'wpworker_toggle_nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		update_option( AdminMenu::ABILITIES_ENABLED_OPTION, '1' === wp_unslash( $_POST['wpcodex_abilities_value'] ?? '0' ), false );
+		update_option( AdminMenu::ABILITIES_ENABLED_OPTION, '1' === wp_unslash( $_POST['wpworker_abilities_value'] ?? '0' ), false );
 	}
 
 	// AJAX handlers
 	public function ajax_generate_password(): void {
 		check_ajax_referer( self::AJAX_GENERATE, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'wpcodex' ) );
+			wp_send_json_error( __( 'Insufficient permissions.', 'worker-ai' ) );
 		}
 
 		if ( ! class_exists( 'WP_Application_Passwords' ) ) {
-			wp_send_json_error( __( 'Application Passwords are not available.', 'wpcodex' ) );
+			wp_send_json_error( __( 'Application Passwords are not available.', 'worker-ai' ) );
 		}
 
 		$raw_name = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		// First password (no name provided) → stored as "WPCodex".
-		// Subsequent passwords → stored as "WPCodex: {name}".
+		// First password (no name provided) → stored as "WPWorker".
+		// Subsequent passwords → stored as "WPWorker: {name}".
 		if ( $raw_name === '' ) {
-			$name = 'WPCodex';
+			$name = 'Worker AI';
 		} else {
-			$name = 'WPCodex: ' . $raw_name;
+			$name = 'Worker AI: ' . $raw_name;
 		}
 		$user_id  = get_current_user_id();
 
@@ -501,11 +501,11 @@ final class ConfigurationPage {
 	public function ajax_revoke_password(): void {
 		check_ajax_referer( self::AJAX_REVOKE, 'nonce' );
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'wpcodex' ) );
+			wp_send_json_error( __( 'Insufficient permissions.', 'worker-ai' ) );
 		}
 
 		if ( ! class_exists( 'WP_Application_Passwords' ) ) {
-			wp_send_json_error( __( 'Application Passwords are not available.', 'wpcodex' ) );
+			wp_send_json_error( __( 'Application Passwords are not available.', 'worker-ai' ) );
 		}
 
 		$uuid    = isset( $_POST['uuid'] ) ? sanitize_text_field( wp_unslash( $_POST['uuid'] ) ) : '';
@@ -537,8 +537,8 @@ final class ConfigurationPage {
 		foreach ( $all as $pw ) {
 			$pw_name = (string) ( $pw['name'] ?? '' );
 
-			// Only show passwords created by WPCodex: exact "WPCodex" or "WPCodex: *".
-			if ( $pw_name !== 'WPCodex' && stripos( $pw_name, 'WPCodex: ' ) !== 0 ) {
+			// Only show passwords created by WPWorker: exact "WPWorker" or "WPWorker: *".
+			if ( $pw_name !== 'Worker AI' && stripos( $pw_name, 'Worker AI: ' ) !== 0 ) {
 				continue;
 			}
 
@@ -548,7 +548,7 @@ final class ConfigurationPage {
 				// Show the full stored name (prefix visible in the table).
 				'display_name' => $pw_name,
 				'created'      => $pw['created'] ? (string) wp_date( get_option( 'date_format' ) . ' g:i a', $pw['created'] ) : '—',
-				'last_used'    => $pw['last_used'] ? (string) wp_date( get_option( 'date_format' ), $pw['last_used'] ) : __( 'Never', 'wpcodex' ),
+				'last_used'    => $pw['last_used'] ? (string) wp_date( get_option( 'date_format' ), $pw['last_used'] ) : __( 'Never', 'worker-ai' ),
 			];
 		}
 
@@ -567,13 +567,13 @@ final class ConfigurationPage {
 			. "Connection details:\n"
 			. "- Server URL: " . $mcp_url . "\n"
 			. "- Username: " . $username . "\n"
-			. "- Application password: __WPCODEX_PW_SLOT__\n"
-			. "- Server name to use in the config: __WPCODEX_MCP_NAME__\n"
+			. "- Application password: __WPWORKER_PW_SLOT__\n"
+			. "- Server name to use in the config: __WPWORKER_MCP_NAME__\n"
 			. "- Transport: @automattic/mcp-wordpress-remote via npx\n\n"
 			. "Setup rules:\n"
 			. "- Pass credentials ONLY as env vars: WP_API_URL, WP_API_USERNAME, WP_API_PASSWORD. Do NOT use CLI flags like --url or --password (the package ignores them).\n"
 			. "- args array must be exactly [\"-y\", \"@automattic/mcp-wordpress-remote@latest\"].\n\n"
 			. "Don't ask me to confirm choices already specified above. After writing the config, restart or reload the MCP session (most clients require it), then verify by listing the server's tools. If it fails, show me the stderr from the npx process before proposing changes.\n\n"
-			. "If you cannot modify the config of this AI client from here, tell me to expand \"Need the JSON config for a specific client?\" on the WPCodex Configuration page and copy the snippet manually.";
+			. "If you cannot modify the config of this AI client from here, tell me to expand \"Need the JSON config for a specific client?\" on the Worker AI Configuration page and copy the snippet manually.";
 	}
 }

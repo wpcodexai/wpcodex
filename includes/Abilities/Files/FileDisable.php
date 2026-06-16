@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/file-disable
+ * Ability: wpworker/file-disable
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Files;
+namespace WPWorker\Abilities\Files;
 
-use WPCodex\Abilities\AbstractAbility;
+use WPWorker\Abilities\AbstractAbility;
 
 /**
  * Class FileDisable
@@ -21,24 +21,24 @@ class FileDisable extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-general';
+		return 'wpworker-general';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/file-disable';
+		return 'wpworker/file-disable';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Disable Sandbox File', 'wpcodex' );
+		return __( 'Disable Sandbox File', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'Disables a PHP file in the WPCodex sandbox (wp-content/wpcodex-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
-			'wpcodex'
+			'Disables a PHP file in the WPWorker sandbox (wp-content/wpworker-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
+			'wpworker'
 		);
 	}
 
@@ -49,7 +49,7 @@ class FileDisable extends AbstractAbility {
 			'properties'           => [
 				'path' => [
 					'type'        => 'string',
-					'description' => 'Absolute path to the sandbox file to disable. Must be inside wp-content/wpcodex-sandbox/.',
+					'description' => 'Absolute path to the sandbox file to disable. Must be inside wp-content/wpworker-sandbox/.',
 					'minLength'   => 1,
 				],
 			],
@@ -79,27 +79,27 @@ class FileDisable extends AbstractAbility {
 	public function execute( array $input ): array|\WP_Error {
 		$path = isset( $input['path'] ) ? (string) $input['path'] : '';
 		if ( '' === $path ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'wpworker_invalid_input', __( 'path must be a non-empty string.', 'worker-ai' ) );
 		}
 
 		$resolved = realpath( $path );
 		if ( false === $resolved ) {
 			/* translators: %s: file path */
-			return new \WP_Error( 'wpcodex_not_found', sprintf( __( 'File not found: %s', 'wpcodex' ), $path ) );
+			return new \WP_Error( 'wpworker_not_found', sprintf( __( 'File not found: %s', 'worker-ai' ), $path ) );
 		}
 
 		// Must be inside sandbox directory.
-		$sandbox = rtrim( (string) realpath( WPCODEX_SANDBOX_DIR ), '/\\' );
+		$sandbox = rtrim( (string) realpath( WPWORKER_SANDBOX_DIR ), '/\\' );
 		if ( ! str_starts_with( $resolved, $sandbox . DIRECTORY_SEPARATOR ) && $resolved !== $sandbox ) {
 			return new \WP_Error(
-				'wpcodex_path_outside_sandbox',
-				__( 'Path must be inside the WPCodex sandbox directory.', 'wpcodex' )
+				'wpworker_path_outside_sandbox',
+				__( 'Path must be inside the WPWorker sandbox directory.', 'worker-ai' )
 			);
 		}
 
 		if ( ! is_file( $resolved ) ) {
 			/* translators: %s: file path */
-			return new \WP_Error( 'wpcodex_not_a_file', sprintf( __( 'Not a file: %s', 'wpcodex' ), $resolved ) );
+			return new \WP_Error( 'wpworker_not_a_file', sprintf( __( 'Not a file: %s', 'worker-ai' ), $resolved ) );
 		}
 
 		// Idempotent: already disabled.
@@ -115,16 +115,16 @@ class FileDisable extends AbstractAbility {
 
 		if ( file_exists( $disabled_path ) ) {
 			return new \WP_Error(
-				'wpcodex_disabled_exists',
+				'wpworker_disabled_exists',
 				/* translators: %s: file path */
-				sprintf( __( 'A disabled version already exists: %s', 'wpcodex' ), $disabled_path )
+				sprintf( __( 'A disabled version already exists: %s', 'worker-ai' ), $disabled_path )
 			);
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- WP_Filesystem::move() requires filesystem init not available in this context
 		if ( ! rename( $resolved, $disabled_path ) ) {
 			/* translators: %s: file path */
-			return new \WP_Error( 'wpcodex_rename_failed', sprintf( __( 'Failed to rename: %s', 'wpcodex' ), $resolved ) );
+			return new \WP_Error( 'wpworker_rename_failed', sprintf( __( 'Failed to rename: %s', 'worker-ai' ), $resolved ) );
 		}
 
 		return [

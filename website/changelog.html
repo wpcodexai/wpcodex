@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Changelog — WPCodex</title>
-<meta name="description" content="WPCodex release history — new features, fixes, and breaking changes.">
+<title>Changelog — WPWorker</title>
+<meta name="description" content="WPWorker release history — new features, fixes, and breaking changes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -14,7 +14,7 @@
 <div class="page-hero">
   <div class="container">
     <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;margin-bottom:16px;">Changelog</span>
-    <h1>What's new in WPCodex</h1>
+    <h1>What's new in WPWorker</h1>
     <p>Every release, documented. Subscribe to the <a href="news.html" style="color:var(--light-blue);">newsletter</a> for announcements.</p>
   </div>
 </div>
@@ -29,7 +29,7 @@
       </div>
       <div class="date">June 13, 2026</div>
       <ul>
-        <li>Initial stable release of WPCodex</li>
+        <li>Initial stable release of WPWorker</li>
         <li>Registered 10 core MCP abilities: <code>php-execute</code>, <code>wpcli-run</code>, <code>db-query</code>, <code>file-read</code>, <code>file-write</code>, <code>file-list</code>, <code>site-info</code>, <code>option-get</code>, <code>option-set</code>, <code>post-query</code></li>
         <li>Skills system: create, read, update, delete, and list playbooks stored in the database</li>
         <li>Agentic skills (loaded at session start) and prompt skills (surfaced in AI interfaces)</li>
@@ -85,8 +85,8 @@
       <div class="date">April 18, 2026</div>
       <ul>
         <li>First working implementation of core abilities via WordPress Abilities API</li>
-        <li>MCP transport over WordPress REST API (<code>/wp-json/wpcodex/v1/mcp</code>)</li>
-        <li>Breaking: renamed ability namespace from <code>novamira/*</code> to <code>wpcodex/*</code></li>
+        <li>MCP transport over WordPress REST API (<code>/wp-json/wpworker/v1/mcp</code>)</li>
+        <li>Breaking: renamed ability namespace from <code>novamira/*</code> to <code>wpworker/*</code></li>
         <li>Authentication switched from API keys to WordPress Application Passwords</li>
         <li>Added <code>WPCODEX_ENABLE_MCP</code> constant guard</li>
       </ul>

@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/skill-list-revisions
+ * Ability: wpworker/skill-list-revisions
  *
- * @package WPCodex
+ * @package WPWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace WPWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Repository;
+use WPWorker\Abilities\AbstractAbility;
+use WPWorker\Skills\Repository;
 
 /**
  * Class SkillListRevisions
@@ -22,24 +22,24 @@ class SkillListRevisions extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'wpworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-list-revisions';
+		return 'wpworker/skill-list-revisions';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'List Skill Revisions', 'wpcodex' );
+		return __( 'List Skill Revisions', 'worker-ai' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
 			'Return up to 10 saved revisions for a skill, newest first. Each revision includes the body, description, and flags captured before the previous save.',
-			'wpcodex'
+			'worker-ai'
 		);
 	}
 

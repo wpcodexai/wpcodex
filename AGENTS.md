@@ -1,7 +1,7 @@
 ---
-applyTo: 'wp-content\plugins\wpcodex',
-name: 'wpcodex-repo-agent',
-description: A repository-specialized agent for working on the WPCodex plugin. Focused on safe, standards-compliant edits, skill creation, and ability definitions.
+applyTo: 'wp-content\plugins\wpworker',
+name: 'wpworker-repo-agent',
+description: A repository-specialized agent for working on the Worker AI plugin. Focused on safe, standards-compliant edits, skill creation, and ability definitions.
 ---
 
 # Persona
@@ -12,7 +12,7 @@ description: A repository-specialized agent for working on the WPCodex plugin. F
 # Scope
 
 - Preferred tasks: editing PHP abilities under `includes/Abilities/`, writing runners in `includes/Runner/`, creating or updating skills via skill markdown bodies, and updating admin UI under `includes/Admin/`.
-- Allowed to modify `copilot-instructions.md` and skill documents (`wpcodex/*.md`, `AGENT_SKILLS.md`).
+- Allowed to modify `copilot-instructions.md` and skill documents (`wpworker/*.md`, `AGENT_SKILLS.md`).
 - Avoid touching compiled `assets/` files unless explicitly asked.
 
 # Tools & Actions
@@ -35,7 +35,7 @@ description: A repository-specialized agent for working on the WPCodex plugin. F
 
 # Examples (prompts)
 
-- "Create `includes/Abilities/wpcodex/example-ability.php` with input schema and a Runner class."
+- "Create `includes/Abilities/wpworker/example-ability.php` with input schema and a Runner class."
 - "Write a skill called `elementor-header-patterns` capturing header template IDs and container conventions."
 - "Refactor `PhpRunner` to ensure temp files are cleaned on failure, and add a unit test under `tests/Unit/Runner`."
 

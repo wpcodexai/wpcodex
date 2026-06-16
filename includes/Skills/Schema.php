@@ -2,21 +2,21 @@
 /**
  * Skills — database schema.
  *
- * @package WPCodex
+ * @package WPWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Skills;
+namespace WPWorker\Skills;
 
 /**
  * Class Schema
  *
- * Manages the wpcodex_skills custom table.
+ * Manages the wpworker_skills custom table.
  */
 class Schema {
 
-	public const TABLE_VERSION_OPTION = 'wpcodex_skills_table_version';
+	public const TABLE_VERSION_OPTION = 'wpworker_skills_table_version';
 	public const TABLE_VERSION        = 2;
 
 	/**
@@ -25,8 +25,8 @@ class Schema {
 	public static function create_table(): void {
 		global $wpdb;
 
-		$skills_table    = $wpdb->prefix . 'wpcodex_skills';
-		$revisions_table = $wpdb->prefix . 'wpcodex_skill_revisions';
+		$skills_table    = $wpdb->prefix . 'wpworker_skills';
+		$revisions_table = $wpdb->prefix . 'wpworker_skill_revisions';
 		$charset         = $wpdb->get_charset_collate();
 
 		$sql_skills = "CREATE TABLE {$skills_table} (
@@ -78,7 +78,7 @@ class Schema {
 	 */
 	public static function table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'wpcodex_skills';
+		return $wpdb->prefix . 'wpworker_skills';
 	}
 
 	/**
@@ -86,6 +86,6 @@ class Schema {
 	 */
 	public static function revisions_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'wpcodex_skill_revisions';
+		return $wpdb->prefix . 'wpworker_skill_revisions';
 	}
 }

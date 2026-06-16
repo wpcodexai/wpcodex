@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Introduction — WPCodex Docs</title>
-<meta name="description" content="WPCodex developer documentation — abilities reference, skills system, and extension API.">
+<title>Introduction — WPWorker Docs</title>
+<meta name="description" content="WPWorker developer documentation — abilities reference, skills system, and extension API.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -383,16 +383,16 @@ body { background: #f9fafb; }
 
     <div class="docs-eyebrow" id="sectionEyebrow">Getting Started</div>
     <h1 id="introduction">Introduction</h1>
-    <p class="lead">WPCodex gives AI agents unrestricted control over a WordPress installation via an MCP server plugin. This guide walks you through what it does, how to set it up, and how to connect your first agent.</p>
+    <p class="lead">WPWorker gives AI agents unrestricted control over a WordPress installation via an MCP server plugin. This guide walks you through what it does, how to set it up, and how to connect your first agent.</p>
 
     <!-- Section 1 -->
     <div class="docs-section">
       <div class="docs-h2">
         <div class="docs-h2-num">1</div>
-        <h2>What is WPCodex?</h2>
+        <h2>What is WPWorker?</h2>
       </div>
-      <p>WPCodex turns your WordPress site into a fully programmable environment for AI agents. With arbitrary PHP execution, WP-CLI access, full filesystem access, and direct database query support, an agent can do <em>anything</em> WordPress can do.</p>
-      <p>The core idea: rather than building narrow, purpose-specific API endpoints, WPCodex exposes the full surface of WordPress as a set of MCP tools — and lets you add your own via a simple filter hook.</p>
+      <p>WPWorker turns your WordPress site into a fully programmable environment for AI agents. With arbitrary PHP execution, WP-CLI access, full filesystem access, and direct database query support, an agent can do <em>anything</em> WordPress can do.</p>
+      <p>The core idea: rather than building narrow, purpose-specific API endpoints, WPWorker exposes the full surface of WordPress as a set of MCP tools — and lets you add your own via a simple filter hook.</p>
       <div class="callout callout-info">
         <span class="callout-icon">💡</span>
         <p><strong>New here?</strong> The fastest path is the <a href="quickstart.html">Quick Start guide</a> — it gets you connected in under 5 minutes.</p>
@@ -405,10 +405,10 @@ body { background: #f9fafb; }
         <div class="docs-h2-num">2</div>
         <h2 id="installation">Installation</h2>
       </div>
-      <p>WPCodex requires WordPress 6.9+ and PHP 8.0+. Install via the WordPress admin or WP-CLI:</p>
+      <p>WPWorker requires WordPress 6.9+ and PHP 8.0+. Install via the WordPress admin or WP-CLI:</p>
       <div class="code-block">
         <span class="cm"># WP-CLI (recommended)</span><br>
-        wp plugin install wpcodex --activate<br><br>
+        wp plugin install wpworker --activate<br><br>
         <span class="cm"># Or upload the ZIP via Admin → Plugins → Add New → Upload</span>
       </div>
       <div class="callout callout-warn">
@@ -436,7 +436,7 @@ body { background: #f9fafb; }
         <div class="docs-h2-num">4</div>
         <h2 id="authentication">Authentication</h2>
       </div>
-      <p>WPCodex uses <strong>WordPress Application Passwords</strong> (built into WP 5.6+). Go to <strong>Users → Your Profile → Application Passwords</strong>, create a new one, and copy it — it's shown only once.</p>
+      <p>WPWorker uses <strong>WordPress Application Passwords</strong> (built into WP 5.6+). Go to <strong>Users → Your Profile → Application Passwords</strong>, create a new one, and copy it — it's shown only once.</p>
       <p>Pass it as HTTP Basic auth on every request:</p>
       <div class="code-block">
         Authorization: Basic &lt;base64(username:application-password)&gt;
@@ -451,13 +451,13 @@ body { background: #f9fafb; }
         <h2 id="connecting-agents">Connecting Agents</h2>
       </div>
       <p>Your MCP endpoint is:</p>
-      <div class="code-block">https://yoursite.com/wp-json/wpcodex/v1/mcp</div>
+      <div class="code-block">https://yoursite.com/wp-json/wpworker/v1/mcp</div>
       <p>Point any MCP-compatible client at this URL. For Claude Desktop, edit <code>claude_desktop_config.json</code>:</p>
       <div class="code-block">
         {<br>
         &nbsp;&nbsp;<span class="str">"mcpServers"</span>: {<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"wpcodex"</span>: {<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"url"</span>: <span class="str">"https://yoursite.com/wp-json/wpcodex/v1/mcp"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"wpworker"</span>: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"url"</span>: <span class="str">"https://yoursite.com/wp-json/wpworker/v1/mcp"</span>,<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"headers"</span>: { <span class="str">"Authorization"</span>: <span class="str">"Basic &lt;base64-credentials&gt;"</span> }<br>
         &nbsp;&nbsp;&nbsp;&nbsp;}<br>
         &nbsp;&nbsp;}<br>
@@ -509,9 +509,9 @@ body { background: #f9fafb; }
         <div class="docs-h2-num">1</div>
         <h2 id="creating-skills">Creating a Skill</h2>
       </div>
-      <p>Call <code>wpcodex/skill-create</code> with a name, description, and Markdown body. Use YAML frontmatter to set flags:</p>
+      <p>Call <code>wpworker/skill-create</code> with a name, description, and Markdown body. Use YAML frontmatter to set flags:</p>
       <div class="code-block">
-        <span class="cm">// wpcodex/skill-create</span><br>
+        <span class="cm">// wpworker/skill-create</span><br>
         {<br>
         &nbsp;&nbsp;<span class="str">"name"</span>: <span class="str">"site-structure"</span>,<br>
         &nbsp;&nbsp;<span class="str">"description"</span>: <span class="str">"Custom post types, taxonomies, and theme on this site."</span>,<br>
@@ -528,12 +528,12 @@ body { background: #f9fafb; }
       </div>
       <p>Skills with <code>enable_agentic: true</code> are your agent's long-term memory. At the start of every session your agent should:</p>
       <ul>
-        <li>Call <code>wpcodex/skill-list</code> to retrieve all skill names and descriptions</li>
-        <li>For every skill where <code>enable_agentic</code> is <code>true</code>, call <code>wpcodex/skill-read</code> to load the full body</li>
+        <li>Call <code>wpworker/skill-list</code> to retrieve all skill names and descriptions</li>
+        <li>For every skill where <code>enable_agentic</code> is <code>true</code>, call <code>wpworker/skill-read</code> to load the full body</li>
       </ul>
       <div class="callout callout-tip">
         <span class="callout-icon">✅</span>
-        <p>The <a href="index.html">CLAUDE.md</a> in the WPCodex repo contains a <strong>Session Start Protocol</strong> that implements this pattern. Copy it into your agent's system prompt.</p>
+        <p>The <a href="index.html">CLAUDE.md</a> in the WPWorker repo contains a <strong>Session Start Protocol</strong> that implements this pattern. Copy it into your agent's system prompt.</p>
       </div>
     </div>
 
@@ -589,7 +589,7 @@ body { background: #f9fafb; }
 
     <div class="docs-section">
       <h2 id="license" style="font-size:1.2rem;margin-bottom:10px;">License</h2>
-      <p>WPCodex is released under the <strong>MIT License</strong>. You are free to use, modify, and distribute it — including in commercial projects — with attribution.</p>
+      <p>WPWorker is released under the <strong>MIT License</strong>. You are free to use, modify, and distribute it — including in commercial projects — with attribution.</p>
     </div>
 
     <!-- Prev / Next -->

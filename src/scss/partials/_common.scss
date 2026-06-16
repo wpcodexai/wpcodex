@@ -1,5 +1,5 @@
 /**
- * WPCodex — Common / shared styles.
+ * Worker AI — Common / shared styles.
  *
  * Used on every admin page: page wrap, empty state, generic card grid,
  * badges, and the toggle switch component.
@@ -7,9 +7,9 @@
 
 // ─── Page wrap ────────────────────────────────────────────────────────────────
 
-.wpcodex-wrap {
+.wpworker-wrap {
 
-	.wpcodex-page-header {
+	.wpworker-page-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -18,18 +18,18 @@
 		margin: 16px 0 8px;
 	}
 
-	.wpcodex-page-title {
+	.wpworker-page-title {
 		margin: 0;
 		font-size: 1.5rem;
 		color: $color-text;
 	}
 
-	.wpcodex-page-actions {
+	.wpworker-page-actions {
 		display: flex;
 		gap: 8px;
 	}
 
-	.wpcodex-page-description {
+	.wpworker-page-description {
 		color: $color-text-muted;
 		margin-bottom: 20px;
 		max-width: 720px;
@@ -38,7 +38,7 @@
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
 
-.wpcodex-empty-state {
+.wpworker-empty-state {
 	background: $color-bg-white;
 	border: 1px solid $color-border-lt;
 	border-radius: $radius-md;
@@ -54,14 +54,14 @@
 
 // ─── Generic card grid ────────────────────────────────────────────────────────
 
-.wpcodex-cards {
+.wpworker-cards {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 16px;
 	margin-top: 16px;
 }
 
-.wpcodex-card {
+.wpworker-card {
 	background: $color-bg-white;
 	border: 1px solid $color-border-lt;
 	border-radius: $radius-md;
@@ -128,7 +128,7 @@
 
 // ─── Badges ───────────────────────────────────────────────────────────────────
 
-.wpcodex-badge {
+.wpworker-badge {
 	display: inline-flex;
 	align-items: center;
 	padding: 2px 7px;
@@ -162,7 +162,7 @@
 
 // ─── Toggle switch ────────────────────────────────────────────────────────────
 
-.wpcodex-toggle {
+.wpworker-toggle {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -214,7 +214,7 @@
 	// ── Large variant ──
 	&--lg {
 
-		.wpcodex-toggle__slider {
+		.wpworker-toggle__slider {
 			width: 52px;
 			height: 28px;
 
@@ -226,11 +226,11 @@
 			}
 		}
 
-		input:checked+.wpcodex-toggle__slider::after {
+		input:checked+.wpworker-toggle__slider::after {
 			transform: translateX(24px);
 		}
 
-		.wpcodex-toggle__label {
+		.wpworker-toggle__label {
 			font-size: .9375rem;
 			font-weight: 600;
 			color: $color-text;

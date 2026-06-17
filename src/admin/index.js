@@ -1,5 +1,5 @@
 /**
- * Worker AI Admin — entry point.
+ * WPWorker Admin — entry point.
  *
  * @file   src/admin/index.js
  * @since  1.0.0
@@ -14,8 +14,9 @@
  *  4. Skills page — auto-resize textarea
  */
 import './../scss/admin.scss';
+import './components/abilities.js';
+import './components/configuration.js';
 import './components/copy-button.js';
 import './components/notices.js';
-import './components/abilities.js';
 import './components/skills.js';
-import './components/configuration.js';
+

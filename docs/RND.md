@@ -1,18 +1,18 @@
-# Worker AI — Research & Development Notes
+# WPWorker — Research & Development Notes
 
 > **Location:** `docs/RND.md`  
 > **Status:** Active pre-release development  
 > **Last updated:** June 2026
 
-This document tracks open research questions, architectural decisions, experiment logs, and the forward roadmap for Worker AI. It is a living document — update it as decisions are made or invalidated.
+This document tracks open research questions, architectural decisions, experiment logs, and the forward roadmap for WPWorker. It is a living document — update it as decisions are made or invalidated.
 
 ---
 
 ## 1. Vision & Goals
 
-### What Worker AI Is
+### What WPWorker Is
 
-Worker AI is a WordPress MCP server plugin. It exposes low-level WordPress primitives (PHP execution, WP-CLI, `$wpdb`, filesystem) as MCP tools so any compatible AI agent can build and manage WordPress sites with full autonomy.
+WPWorker is a WordPress MCP server plugin. It exposes low-level WordPress primitives (PHP execution, WP-CLI, `$wpdb`, filesystem) as MCP tools so any compatible AI agent can build and manage WordPress sites with full autonomy.
 
 It is a clean-room implementation inspired by Novamira, built under GPL-3.0, with a PSR-4 class structure, a strict `includes/` source layout, and a first-class Skills system from day one.
 
@@ -24,11 +24,11 @@ It is a clean-room implementation inspired by Novamira, built under GPL-3.0, wit
 
 ### Core Design Principles
 
-1. **Primitives, not opinions.** Worker AI exposes raw capabilities. The AI decides how to compose them.
+1. **Primitives, not opinions.** WPWorker exposes raw capabilities. The AI decides how to compose them.
 2. **Direct connection.** No SaaS layer between the AI client and the WordPress install.
 3. **Transparent execution.** Every action the AI takes is logged and reviewable.
 4. **Recoverable by design.** PHP sandbox uses temp files. File writes are atomic with `.bak` backups.
-5. **PSR-4 throughout.** All PHP under `includes/` with the `Worker AI\` namespace root.
+5. **PSR-4 throughout.** All PHP under `includes/` with the `WPWorker\` namespace root.
 6. **Standards-first.** Use official WordPress infrastructure where it exists rather than reinventing it.
 
 ---
@@ -37,17 +37,17 @@ It is a clean-room implementation inspired by Novamira, built under GPL-3.0, wit
 
 ### 2.1 Directory Layout vs. Novamira
 
-Novamira uses a flat procedural `includes/` with `require_once` chains. Worker AI uses the same `includes/` root but with PSR-4 autoloading and a class-per-file structure. This gives us static analysis, testability, and IDE navigation without diverging from the familiar `includes/` convention WordPress developers expect.
+Novamira uses a flat procedural `includes/` with `require_once` chains. WPWorker uses the same `includes/` root but with PSR-4 autoloading and a class-per-file structure. This gives us static analysis, testability, and IDE navigation without diverging from the familiar `includes/` convention WordPress developers expect.
 
-| Concern | Novamira | Worker AI |
+| Concern | Novamira | WPWorker |
 |---|---|---|
 | PHP loading | `require_once` chains | PSR-4 via Jetpack Autoloader (`autoload_packages.php`) |
-| Namespace root | None (procedural) | `Worker AI\` → `includes/` |
+| Namespace root | None (procedural) | `WPWorker\` → `includes/` |
 | MCP transport | `wordpress/mcp-adapter` (bundled in `vendor/`) | `wordpress/mcp-adapter` (same — bundled in `vendor/`) |
 | Tool registration | WordPress Abilities API (`wp_register_ability()`) | WordPress Abilities API (`wp_register_ability()`) — same |
 | WP version minimum | 6.9 (Abilities API in core) | 6.9 (Abilities API in core) |
 | Skills storage | WordPress database | WordPress database (same) |
-| Skills admin | Novamira → Skills UI | Worker AI → Skills UI |
+| Skills admin | Novamira → Skills UI | WPWorker → Skills UI |
 | Front-end source | `assets/` (direct) | `src/` (TS/SCSS) → compiled to `assets/` |
 
 ### 2.2 MCP Transport — WordPress MCP Adapter
@@ -75,7 +75,7 @@ WordPress Abilities API  ←  wp_register_ability() / wp_get_abilities()  (WP 6.
     │
     │  dispatches to execute_callback
     ▼
-Worker AI ability files  ←  includes/Abilities/*.php
+WPWorker ability files  ←  includes/Abilities/*.php
     │
     │  delegates to Runner classes
     ▼
@@ -91,7 +91,7 @@ includes/Runner/  ←  PhpRunner, CliRunner, DbRunner, FileManager
 
 **Jetpack Autoloader:**
 
-When multiple plugins on the same site bundle `wordpress/mcp-adapter`, they must not load conflicting versions. The Jetpack Autoloader (`automattic/jetpack-autoloader`) solves this: it ensures only the newest version of any shared package is loaded across all active plugins. Worker AI uses `autoload_packages.php` instead of `autoload.php`:
+When multiple plugins on the same site bundle `wordpress/mcp-adapter`, they must not load conflicting versions. The Jetpack Autoloader (`automattic/jetpack-autoloader`) solves this: it ensures only the newest version of any shared package is loaded across all active plugins. WPWorker uses `autoload_packages.php` instead of `autoload.php`:
 
 ```php
 // wpworker.php
@@ -105,7 +105,7 @@ The `vendor/` directory is **not committed to the Git repository**. It is added 
 **Why not build a custom transport:**
 - The MCP specification evolves. Every spec update would require manual changes to `Server.php`.
 - The Adapter already handles HTTP transport, STDIO transport, session management, error handling, observability, and MCP component validation. Building all of this correctly is months of work.
-- Tools registered via `wp_register_ability()` are automatically available to any MCP client using the standard WordPress MCP Adapter — not just Worker AI. Worker AI becomes interoperable with the broader WordPress MCP ecosystem.
+- Tools registered via `wp_register_ability()` are automatically available to any MCP client using the standard WordPress MCP Adapter — not just WPWorker. WPWorker becomes interoperable with the broader WordPress MCP ecosystem.
 
 ### 2.3 PHP Execution Sandbox
 
@@ -151,7 +151,7 @@ Authentication is handled by the `wordpress/mcp-adapter` using **WordPress Appli
 - Audit trail: WordPress logs Application Password usage
 - Per-client access control out of the box — create one Application Password per AI client
 
-**Deferred to v1.1:** Expose Application Password creation on the Worker AI Connect page for one-step setup.
+**Deferred to v1.1:** Expose Application Password creation on the WPWorker Connect page for one-step setup.
 
 ### 2.6 File Operations
 
@@ -170,7 +170,7 @@ Every write operation in `FileManager`:
 
 This matches Novamira's approach exactly:
 
-- Skills are created and edited via **Worker AI → Skills** in the admin, or directly by the agent using `wpworker/skill-create` / `wpworker/skill-update` abilities
+- Skills are created and edited via **WPWorker → Skills** in the admin, or directly by the agent using `wpworker/skill-create` / `wpworker/skill-update` abilities
 - Each skill has YAML frontmatter (`name`, `description`, `enable_agentic`, `enable_prompt`) and a plain Markdown body
 - The `description` field is the trigger — the agent reads all descriptions at session start to decide which skills are relevant
 - Full skill bodies are loaded on demand via `wpworker/skill-read`
@@ -184,7 +184,7 @@ This matches Novamira's approach exactly:
 
 **`includes/Skills/` contains only PHP engine code:**
 - `Repository.php` — DB read/write for skill records
-- `AdminPage.php` — Worker AI → Skills admin UI
+- `AdminPage.php` — WPWorker → Skills admin UI
 - `Schema.php` — DB table creation and upgrade on activation
 
 **MCP abilities for skills** (registered via `wp_register_ability()`):
@@ -219,7 +219,7 @@ This matches Novamira's approach exactly:
 - [x] `wpworker/skill-list` / `wpworker/skill-read` / `wpworker/skill-create` / `wpworker/skill-update` / `wpworker/skill-delete`
 - [x] `wpworker/skill-list-revisions` / `wpworker/skill-restore-revision` — skill version history
 - [x] Skills DB schema (`wpworker_skills` table), `Repository`, `Schema`
-- [x] Worker AI → Skills admin UI (`AdminPage`)
+- [x] WPWorker → Skills admin UI (`AdminPage`)
 - [x] Connect page (Application Password setup guide)
 - [x] Settings page (abilities toggle per category)
 - [x] Admin bar status indicator
@@ -253,7 +253,7 @@ This matches Novamira's approach exactly:
 
 ### v2.0 — Pro Tier: Builder Specialisations (Target: Q2 2027)
 
-No skill bundle has been built for any theme or plugin yet — all are at Research stage. The Tier column records the planned distribution: Free = bundled with the core plugin, Pro = requires Worker AI Pro. The Progress column tracks active development for Free-tier items once work begins.
+No skill bundle has been built for any theme or plugin yet — all are at Research stage. The Tier column records the planned distribution: Free = bundled with the core plugin, Pro = requires WPWorker Pro. The Progress column tracks active development for Free-tier items once work begins.
 
 **Themes**
 
@@ -322,13 +322,13 @@ The `wordpress/mcp-adapter` includes a STDIO transport for local development via
 Open questions:
 - Does STDIO transport work correctly with the Jetpack Autoloader on Windows/WAMP?
 - What is the UX for connecting AI clients via STDIO vs HTTP?
-- Should the Worker AI Connect page show both connection methods?
+- Should the WPWorker Connect page show both connection methods?
 
 Document findings and add a `STDIO.md` guide targeting v1.2.
 
 ### RQ-004: CI/CD Usage
 
-Some teams want Worker AI active in CI/CD pipelines (GitHub Actions running AI-generated integration tests). Different threat model: no human reviewing in real time, automated Application Password rotation needed, read-only mode critical. Draft a `CICD.md` guide targeting v1.1.
+Some teams want WPWorker active in CI/CD pipelines (GitHub Actions running AI-generated integration tests). Different threat model: no human reviewing in real time, automated Application Password rotation needed, read-only mode critical. Draft a `CICD.md` guide targeting v1.1.
 
 ---
 
@@ -341,7 +341,7 @@ Some teams want Worker AI active in CI/CD pipelines (GitHub Actions running AI-g
 | TD-003 | Admin connect page copy button uses `document.execCommand` fallback — deprecated, migrate to Clipboard API fully | Low | v1.1 |
 | TD-004 | No test coverage on `DbRunner` — SQL surface needs unit tests | High | v1.0 |
 | TD-005 | `CliRunner::find_wp_binary()` calls `shell_exec('which wp')` — should use `escapeshellcmd` and check return code | Medium | v1.0 |
-| TD-006 | Ability name convention needs audit — Novamira uses `novamira/execute-php` (kebab-case after slash); Worker AI should follow `wpworker/php-execute` consistently throughout | Low | v1.0 |
+| TD-006 | Ability name convention needs audit — Novamira uses `novamira/execute-php` (kebab-case after slash); WPWorker should follow `wpworker/php-execute` consistently throughout | Low | v1.0 |
 
 ---
 
@@ -367,7 +367,7 @@ Some teams want Worker AI active in CI/CD pipelines (GitHub Actions running AI-g
 
 ## 7. Supported Themes
 
-Worker AI is tested against and explicitly supports the following three WordPress themes. Skills, ability integrations, and any theme-specific PHP execution patterns should be verified against all three.
+WPWorker is tested against and explicitly supports the following three WordPress themes. Skills, ability integrations, and any theme-specific PHP execution patterns should be verified against all three.
 
 ### 7.1 Astra
 
@@ -384,7 +384,7 @@ Worker AI is tested against and explicitly supports the following three WordPres
 | Homepage | https://wpastra.com/ |
 | WordPress.org | https://wordpress.org/themes/astra/ |
 
-Astra is the most-installed third-party theme in the WordPress ecosystem. It is lightweight, highly customizable via the Customizer, and ships deep integration with Spectra (its own block builder), Elementor, and Beaver Builder. Its wide PHP version floor (5.3) means it targets shared hosting environments where PHP upgrades are slow. Worker AI agents building or modifying Astra sites should be aware of Astra's Global Colors and Typography system, its header/footer builder hooks (`astra_header`, `astra_footer`), and the `astra_get_option()` helper for reading theme settings.
+Astra is the most-installed third-party theme in the WordPress ecosystem. It is lightweight, highly customizable via the Customizer, and ships deep integration with Spectra (its own block builder), Elementor, and Beaver Builder. Its wide PHP version floor (5.3) means it targets shared hosting environments where PHP upgrades are slow. WPWorker agents building or modifying Astra sites should be aware of Astra's Global Colors and Typography system, its header/footer builder hooks (`astra_header`, `astra_footer`), and the `astra_get_option()` helper for reading theme settings.
 
 Key hooks and APIs:
 - `astra_get_option( $option, $default )` — reads Astra Customizer settings
@@ -407,7 +407,7 @@ Key hooks and APIs:
 | Homepage | https://www.kadencewp.com/kadence-theme/ |
 | WordPress.org | https://wordpress.org/themes/kadence/ |
 
-Kadence is a full-site editing-ready theme built by StellarWP (the same company behind GiveWP, LearnDash, and other major plugins). Its headline feature is a drag-and-drop header and footer builder backed by a JSON configuration stored in the Customizer. It ships with a library of starter templates importable via the Kadence Starter Templates plugin. The PHP minimum of 7.4 and WP minimum of 6.3 mean it targets a more current hosting baseline than Astra. Worker AI agents modifying Kadence sites should use `kadence_get_option()` for reading theme settings and be aware that header/footer layout is serialised as JSON in the `kadence_global_palette` and `kadence_header` Customizer options.
+Kadence is a full-site editing-ready theme built by StellarWP (the same company behind GiveWP, LearnDash, and other major plugins). Its headline feature is a drag-and-drop header and footer builder backed by a JSON configuration stored in the Customizer. It ships with a library of starter templates importable via the Kadence Starter Templates plugin. The PHP minimum of 7.4 and WP minimum of 6.3 mean it targets a more current hosting baseline than Astra. WPWorker agents modifying Kadence sites should use `kadence_get_option()` for reading theme settings and be aware that header/footer layout is serialised as JSON in the `kadence_global_palette` and `kadence_header` Customizer options.
 
 Key hooks and APIs:
 - `kadence_get_option( $option, $default )` — reads Kadence Customizer settings
@@ -431,7 +431,7 @@ Key hooks and APIs:
 | Homepage | https://creativethemes.com/blocksy/ |
 | WordPress.org | https://wordpress.org/themes/blocksy/ |
 
-Blocksy is the most block-editor-native of the three supported themes. It ships with block editor patterns, block styles, and grid layout support as tagged features, and is kept in active sync with Gutenberg releases (most recently updated May 29, 2026). Its advanced WooCommerce support — product gallery, sticky add-to-cart, wishlist, compare, quick view — is bundled in the free Blocksy Companion plugin. The WP 6.5 minimum makes it the most current-baseline theme of the three. Worker AI agents working on Blocksy sites should use `blocksy_get_theme_mod()` for settings and be aware that Blocksy stores most of its configuration in JSON-encoded theme mods rather than individual options.
+Blocksy is the most block-editor-native of the three supported themes. It ships with block editor patterns, block styles, and grid layout support as tagged features, and is kept in active sync with Gutenberg releases (most recently updated May 29, 2026). Its advanced WooCommerce support — product gallery, sticky add-to-cart, wishlist, compare, quick view — is bundled in the free Blocksy Companion plugin. The WP 6.5 minimum makes it the most current-baseline theme of the three. WPWorker agents working on Blocksy sites should use `blocksy_get_theme_mod()` for settings and be aware that Blocksy stores most of its configuration in JSON-encoded theme mods rather than individual options.
 
 Key hooks and APIs:
 - `blocksy_get_theme_mod( $key, $default )` — reads Blocksy theme mod settings
@@ -445,7 +445,7 @@ Key hooks and APIs:
 
 ## 8. Supported Plugins
 
-Worker AI is tested against and explicitly supports the following eighteen WordPress plugins. Skills, ability integrations, and any plugin-specific PHP execution patterns should be verified against the relevant plugin where applicable.
+WPWorker is tested against and explicitly supports the following eighteen WordPress plugins. Skills, ability integrations, and any plugin-specific PHP execution patterns should be verified against the relevant plugin where applicable.
 
 ### 8.1 Elementor
 
@@ -462,7 +462,7 @@ Worker AI is tested against and explicitly supports the following eighteen WordP
 | Homepage | https://elementor.com/ |
 | WordPress.org | https://wordpress.org/plugins/elementor/ |
 
-Elementor is the most widely installed page builder in the WordPress ecosystem, powering over 10 million sites. It operates as a front-end drag-and-drop editor that stores page layouts as post meta (`_elementor_data`) in JSON format rather than classic post content. Worker AI agents modifying Elementor sites should read and write this meta directly or use `\Elementor\Plugin::$instance->db->get_plain_text( $post_id )` to extract readable content. Elementor Pro adds Theme Builder (header, footer, single, archive templates), WooCommerce builder, and a Form widget with its own submission hooks.
+Elementor is the most widely installed page builder in the WordPress ecosystem, powering over 10 million sites. It operates as a front-end drag-and-drop editor that stores page layouts as post meta (`_elementor_data`) in JSON format rather than classic post content. WPWorker agents modifying Elementor sites should read and write this meta directly or use `\Elementor\Plugin::$instance->db->get_plain_text( $post_id )` to extract readable content. Elementor Pro adds Theme Builder (header, footer, single, archive templates), WooCommerce builder, and a Form widget with its own submission hooks.
 
 Key hooks and APIs:
 - `elementor/init` — fires after Elementor is fully loaded; safe point to interact with its API
@@ -487,7 +487,7 @@ Key hooks and APIs:
 | Homepage | https://yoast.com/wordpress/plugins/seo/ |
 | WordPress.org | https://wordpress.org/plugins/wordpress-seo/ |
 
-Yoast SEO is the original and most-installed SEO plugin for WordPress with a decade-long track record. It manages title tags, meta descriptions, Open Graph / Twitter Card markup, XML sitemaps, breadcrumbs, and structured data (JSON-LD). Per-post SEO settings are stored as post meta with the `_yoast_wpseo_` prefix. Worker AI agents updating SEO data should write these meta keys directly rather than using the UI. The `YoastSEO()->meta->for_post( $post_id )` surface provides read access to all computed SEO values for a given post.
+Yoast SEO is the original and most-installed SEO plugin for WordPress with a decade-long track record. It manages title tags, meta descriptions, Open Graph / Twitter Card markup, XML sitemaps, breadcrumbs, and structured data (JSON-LD). Per-post SEO settings are stored as post meta with the `_yoast_wpseo_` prefix. WPWorker agents updating SEO data should write these meta keys directly rather than using the UI. The `YoastSEO()->meta->for_post( $post_id )` surface provides read access to all computed SEO values for a given post.
 
 Key hooks and APIs:
 - `wpseo_title` filter — modify the computed SEO title before output
@@ -512,7 +512,7 @@ Key hooks and APIs:
 | Homepage | https://rankmath.com/ |
 | WordPress.org | https://wordpress.org/plugins/seo-by-rank-math/ |
 
-Rank Math is a feature-rich SEO plugin that bundles schema markup, a redirection manager, a 404 monitor, local SEO, and an analytics integration into the free tier — capabilities that Yoast and AIOSEO gate behind paid plans. Post-level settings are stored with the `rank_math_` meta key prefix. Worker AI agents managing SEO on Rank Math sites can read and write these meta keys directly. The `RankMath\Post::get_meta( $key, $post_id )` helper provides a clean interface. Rank Math's REST API (`/rankmath/v1/`) can also be called via `wpworker/php-execute` for bulk operations.
+Rank Math is a feature-rich SEO plugin that bundles schema markup, a redirection manager, a 404 monitor, local SEO, and an analytics integration into the free tier — capabilities that Yoast and AIOSEO gate behind paid plans. Post-level settings are stored with the `rank_math_` meta key prefix. WPWorker agents managing SEO on Rank Math sites can read and write these meta keys directly. The `RankMath\Post::get_meta( $key, $post_id )` helper provides a clean interface. Rank Math's REST API (`/rankmath/v1/`) can also be called via `wpworker/php-execute` for bulk operations.
 
 Key hooks and APIs:
 - `rank_math/frontend/title` filter — modify the SEO title
@@ -537,7 +537,7 @@ Key hooks and APIs:
 | Homepage | https://contactform7.com/ |
 | WordPress.org | https://wordpress.org/plugins/contact-form-7/ |
 
-Contact Form 7 is the most-installed WordPress form plugin by raw active installation count. It stores forms as custom post type `wpcf7_contact_form` with mail settings in post meta. The plugin's design is intentionally minimal — no storage of submissions by default (use Flamingo or Cf7 Database plugin for that). Worker AI agents can retrieve form configuration via `WPCF7_ContactForm::get_instance( $id )` and programmatically insert or modify forms via the post type. The `wpcf7_before_send_mail` hook is the primary integration point for pre-send logic.
+Contact Form 7 is the most-installed WordPress form plugin by raw active installation count. It stores forms as custom post type `wpcf7_contact_form` with mail settings in post meta. The plugin's design is intentionally minimal — no storage of submissions by default (use Flamingo or Cf7 Database plugin for that). WPWorker agents can retrieve form configuration via `WPCF7_ContactForm::get_instance( $id )` and programmatically insert or modify forms via the post type. The `wpcf7_before_send_mail` hook is the primary integration point for pre-send logic.
 
 Key hooks and APIs:
 - `wpcf7_before_send_mail` action — fires before the contact email is sent; receive `$contact_form` object
@@ -562,7 +562,7 @@ Key hooks and APIs:
 | Homepage | https://woocommerce.com/ |
 | WordPress.org | https://wordpress.org/plugins/woocommerce/ |
 
-WooCommerce is the dominant WordPress eCommerce platform. It registers custom post types (`product`, `shop_order`, `shop_coupon`), custom taxonomies (`product_cat`, `product_tag`), and a comprehensive REST API (`/wc/v3/`). Product data is a hybrid of post meta and custom tables (HPOS in WooCommerce 7+). Worker AI agents working on WooCommerce stores should use `wc_get_product( $id )` and `wc_get_order( $id )` getters rather than raw post meta reads to ensure HPOS compatibility. The WooCommerce REST API is accessible directly via `wpworker/php-execute` using `WC()->api->get_endpoint_data()` or standard WP REST calls.
+WooCommerce is the dominant WordPress eCommerce platform. It registers custom post types (`product`, `shop_order`, `shop_coupon`), custom taxonomies (`product_cat`, `product_tag`), and a comprehensive REST API (`/wc/v3/`). Product data is a hybrid of post meta and custom tables (HPOS in WooCommerce 7+). WPWorker agents working on WooCommerce stores should use `wc_get_product( $id )` and `wc_get_order( $id )` getters rather than raw post meta reads to ensure HPOS compatibility. The WooCommerce REST API is accessible directly via `wpworker/php-execute` using `WC()->api->get_endpoint_data()` or standard WP REST calls.
 
 Key hooks and APIs:
 - `woocommerce_before_add_to_cart_button` / `woocommerce_after_add_to_cart_button` — inject content around add-to-cart button
@@ -588,7 +588,7 @@ Key hooks and APIs:
 | Homepage | https://www.litespeedtech.com/products/cache-plugins/wordpress-acceleration |
 | WordPress.org | https://wordpress.org/plugins/litespeed-cache/ |
 
-LiteSpeed Cache is the highest-rated full-page caching plugin for WordPress, offering server-level integration with LiteSpeed and OpenLiteSpeed web servers alongside standalone optimisations (image compression, CSS/JS minification, lazy loading, CDN push) that work on any server. Worker AI agents performing content updates should programmatically purge the cache after writes to prevent stale content from being served. Use the `litespeed_purge_all` action for broad purges; use tag-based purging (`litespeed_tag_add`) for precise per-URL invalidation during bulk operations.
+LiteSpeed Cache is the highest-rated full-page caching plugin for WordPress, offering server-level integration with LiteSpeed and OpenLiteSpeed web servers alongside standalone optimisations (image compression, CSS/JS minification, lazy loading, CDN push) that work on any server. WPWorker agents performing content updates should programmatically purge the cache after writes to prevent stale content from being served. Use the `litespeed_purge_all` action for broad purges; use tag-based purging (`litespeed_tag_add`) for precise per-URL invalidation during bulk operations.
 
 Key hooks and APIs:
 - `do_action( 'litespeed_purge_all' )` — purge the entire LiteSpeed cache
@@ -613,7 +613,7 @@ Key hooks and APIs:
 | Homepage | https://wpforms.com/ |
 | WordPress.org | https://wordpress.org/plugins/wpforms-lite/ |
 
-WPForms is a drag-and-drop form builder positioned as the beginner-friendly alternative to Contact Form 7. Forms are stored as the `wpforms` custom post type; the full form configuration (fields, settings, notifications, confirmations) is stored as JSON in the `post_content` field. Worker AI agents can retrieve a form with `wpforms()->form->get( $form_id )` or read its JSON directly. Submissions are stored in a custom `wpforms_entries` database table (Pro). The `wpforms_process_complete` hook fires after a successful submission and is the primary integration point for post-submission automation.
+WPForms is a drag-and-drop form builder positioned as the beginner-friendly alternative to Contact Form 7. Forms are stored as the `wpforms` custom post type; the full form configuration (fields, settings, notifications, confirmations) is stored as JSON in the `post_content` field. WPWorker agents can retrieve a form with `wpforms()->form->get( $form_id )` or read its JSON directly. Submissions are stored in a custom `wpforms_entries` database table (Pro). The `wpforms_process_complete` hook fires after a successful submission and is the primary integration point for post-submission automation.
 
 Key hooks and APIs:
 - `wpforms_process_complete` action — fires after a form is successfully submitted; receives `$fields, $entry, $form_data, $entry_id`
@@ -638,7 +638,7 @@ Key hooks and APIs:
 | Homepage | https://wpmailsmtp.com/ |
 | WordPress.org | https://wordpress.org/plugins/wp-mail-smtp/ |
 
-WP Mail SMTP reconfigures WordPress's `wp_mail()` function to route emails through a dedicated SMTP provider (Gmail, SendGrid, Mailgun, Amazon SES, etc.) rather than the unreliable default PHP mail. Configuration is stored in a single serialised option (`wp_mail_smtp`). Worker AI agents configuring or auditing email delivery should read this option to check the active mailer and credentials. The plugin provides a `\WPMailSMTP\Options` class for safe option access. Logging (Pro) stores email records in the `wp_wpforms_emails_log` table.
+WP Mail SMTP reconfigures WordPress's `wp_mail()` function to route emails through a dedicated SMTP provider (Gmail, SendGrid, Mailgun, Amazon SES, etc.) rather than the unreliable default PHP mail. Configuration is stored in a single serialised option (`wp_mail_smtp`). WPWorker agents configuring or auditing email delivery should read this option to check the active mailer and credentials. The plugin provides a `\WPMailSMTP\Options` class for safe option access. Logging (Pro) stores email records in the `wp_wpforms_emails_log` table.
 
 Key hooks and APIs:
 - `wp_mail` filter — standard WordPress filter; SMTP override hooks in below this via PHPMailer
@@ -663,7 +663,7 @@ Key hooks and APIs:
 | Homepage | https://wpcode.com/ |
 | WordPress.org | https://wordpress.org/plugins/insert-headers-and-footers/ |
 
-WPCode (formerly Insert Headers and Footers) is a code snippet manager that lets site owners inject PHP, HTML, CSS, or JavaScript snippets into specific locations (header, footer, before/after content) without editing theme files. Snippets are stored as the `wpcode_snippet` custom post type with their code in post meta. Worker AI agents can read all active snippets via the CPT, create new snippets programmatically, or use the `wpcode_get_snippet( $id )` API. This plugin is a direct functional peer to Code Snippets — agent skills should detect which is active before injecting code.
+WPCode (formerly Insert Headers and Footers) is a code snippet manager that lets site owners inject PHP, HTML, CSS, or JavaScript snippets into specific locations (header, footer, before/after content) without editing theme files. Snippets are stored as the `wpcode_snippet` custom post type with their code in post meta. WPWorker agents can read all active snippets via the CPT, create new snippets programmatically, or use the `wpcode_get_snippet( $id )` API. This plugin is a direct functional peer to Code Snippets — agent skills should detect which is active before injecting code.
 
 Key hooks and APIs:
 - `wpcode_snippet_run` action — fires when a PHP snippet is executed; receives the snippet object
@@ -688,7 +688,7 @@ Key hooks and APIs:
 | Homepage | https://aioseo.com/ |
 | WordPress.org | https://wordpress.org/plugins/all-in-one-seo-pack/ |
 
-All in One SEO (AIOSEO) is one of the three major SEO plugins alongside Yoast and Rank Math. Unlike Yoast, AIOSEO stores per-post data in a dedicated database table (`aioseo_posts`) rather than in post meta, which means direct meta reads are insufficient — use the `AIOSEO\Plugin\Common\Models\Post::getPost( $post_id )` model. Global settings are split across multiple `aioseo_*` options. Worker AI agents auditing or updating SEO data on AIOSEO sites must query the `aioseo_posts` table or use the model API rather than `get_post_meta()`.
+All in One SEO (AIOSEO) is one of the three major SEO plugins alongside Yoast and Rank Math. Unlike Yoast, AIOSEO stores per-post data in a dedicated database table (`aioseo_posts`) rather than in post meta, which means direct meta reads are insufficient — use the `AIOSEO\Plugin\Common\Models\Post::getPost( $post_id )` model. Global settings are split across multiple `aioseo_*` options. WPWorker agents auditing or updating SEO data on AIOSEO sites must query the `aioseo_posts` table or use the model API rather than `get_post_meta()`.
 
 Key hooks and APIs:
 - `aioseo_title` filter — modify the SEO title before output
@@ -713,7 +713,7 @@ Key hooks and APIs:
 | Homepage | https://ultimateelementor.com/ |
 | WordPress.org | https://wordpress.org/plugins/header-footer-elementor/ |
 
-Ultimate Addons for Elementor (UAE) by Brainstorm Force extends Elementor with additional widgets (Info Box, Price Table, Timeline, Business Hours, etc.) and a Theme Builder for header/footer templates without requiring Elementor Pro. Note: the WordPress.org slug `header-footer-elementor` is the historical slug; the plugin has since been renamed to "Ultimate Addons for Elementor". UAE's Theme Builder stores templates as the `elementor_library` CPT with a `hfe-type` taxonomy for location assignment. Worker AI agents should be aware that Brainstorm Force also makes Spectra (§8.16) and Astra (§7.1) — all three often coexist on the same site.
+Ultimate Addons for Elementor (UAE) by Brainstorm Force extends Elementor with additional widgets (Info Box, Price Table, Timeline, Business Hours, etc.) and a Theme Builder for header/footer templates without requiring Elementor Pro. Note: the WordPress.org slug `header-footer-elementor` is the historical slug; the plugin has since been renamed to "Ultimate Addons for Elementor". UAE's Theme Builder stores templates as the `elementor_library` CPT with a `hfe-type` taxonomy for location assignment. WPWorker agents should be aware that Brainstorm Force also makes Spectra (§8.16) and Astra (§7.1) — all three often coexist on the same site.
 
 Key hooks and APIs:
 - `uael_widgets_list` filter — add or remove widgets from the UAE widget registry
@@ -738,7 +738,7 @@ Key hooks and APIs:
 | Homepage | https://www.advancedcustomfields.com/ |
 | WordPress.org | https://wordpress.org/plugins/advanced-custom-fields/ |
 
-Advanced Custom Fields (ACF) is the standard WordPress developer tool for adding structured custom data to any post type, taxonomy, user, or option page. Field groups and field definitions are stored in the database as the `acf-field-group` and `acf-field` CPTs (or as PHP code using `acf_add_local_field_group()`). Values are stored in standard post meta. ACF Pro adds Repeater, Flexible Content, Gallery, Clone, and Options Pages fields. Worker AI agents that need to read or write custom field data should always use the ACF API (`get_field`, `update_field`) rather than raw `get_post_meta` to ensure sub-field and serialisation handling is correct.
+Advanced Custom Fields (ACF) is the standard WordPress developer tool for adding structured custom data to any post type, taxonomy, user, or option page. Field groups and field definitions are stored in the database as the `acf-field-group` and `acf-field` CPTs (or as PHP code using `acf_add_local_field_group()`). Values are stored in standard post meta. ACF Pro adds Repeater, Flexible Content, Gallery, Clone, and Options Pages fields. WPWorker agents that need to read or write custom field data should always use the ACF API (`get_field`, `update_field`) rather than raw `get_post_meta` to ensure sub-field and serialisation handling is correct.
 
 Key hooks and APIs:
 - `get_field( $name, $post_id )` — read a field value; handles sub-fields, image objects, relationships
@@ -765,7 +765,7 @@ Key hooks and APIs:
 | Homepage | https://essential-addons.com/ |
 | WordPress.org | https://wordpress.org/plugins/essential-addons-for-elementor-lite/ |
 
-Essential Addons for Elementor is one of the two largest Elementor addon packs (alongside ElementsKit), offering 110+ free widgets. It is built by WPDeveloper, the same team behind BetterDocs and NotificationX. The free tier covers Post Grid, Data Table, Price Table, Countdown, Login/Register modal, and WooCommerce Product Grid. Pro adds advanced widgets like Dynamic Gallery, Filterable Gallery, and Advanced Data Table. Widget registration follows the standard `\Elementor\Widget_Base` extension pattern. Worker AI agents should confirm which Elementor addon pack is active (Essential Addons, ElementsKit, or UAE) before attempting widget-specific operations.
+Essential Addons for Elementor is one of the two largest Elementor addon packs (alongside ElementsKit), offering 110+ free widgets. It is built by WPDeveloper, the same team behind BetterDocs and NotificationX. The free tier covers Post Grid, Data Table, Price Table, Countdown, Login/Register modal, and WooCommerce Product Grid. Pro adds advanced widgets like Dynamic Gallery, Filterable Gallery, and Advanced Data Table. Widget registration follows the standard `\Elementor\Widget_Base` extension pattern. WPWorker agents should confirm which Elementor addon pack is active (Essential Addons, ElementsKit, or UAE) before attempting widget-specific operations.
 
 Key hooks and APIs:
 - `eael/controls/register` action — fires when Essential Addons registers its Elementor controls
@@ -790,7 +790,7 @@ Key hooks and APIs:
 | Homepage | https://wpmet.com/plugin/elementskit/ |
 | WordPress.org | https://wordpress.org/plugins/elementskit-lite/ |
 
-ElementsKit Lite by Wpmet is a comprehensive Elementor widget and template library addon. Its distinguishing features are a full Mega Menu builder, a header/footer builder, and a large library of pre-built section templates. The free tier includes 85+ widgets; ElementsKit Pro adds sticky columns, animated gradients, parallax, and advanced widget controls. ElementsKit is made by Wpmet — the same team behind MetForm and ShopEngine. Worker AI agents can access the ElementsKit module system via `\ElementsKit_Lite\Libs\...` and should check for both the `elementskit-lite` and `elementskit` (Pro) slugs when detecting this plugin.
+ElementsKit Lite by Wpmet is a comprehensive Elementor widget and template library addon. Its distinguishing features are a full Mega Menu builder, a header/footer builder, and a large library of pre-built section templates. The free tier includes 85+ widgets; ElementsKit Pro adds sticky columns, animated gradients, parallax, and advanced widget controls. ElementsKit is made by Wpmet — the same team behind MetForm and ShopEngine. WPWorker agents can access the ElementsKit module system via `\ElementsKit_Lite\Libs\...` and should check for both the `elementskit-lite` and `elementskit` (Pro) slugs when detecting this plugin.
 
 Key hooks and APIs:
 - `elementskit/widgets/init` action — fires when ElementsKit initialises its widget registry
@@ -815,7 +815,7 @@ Key hooks and APIs:
 | Homepage | https://codesnippets.pro/ |
 | WordPress.org | https://wordpress.org/plugins/code-snippets/ |
 
-Code Snippets is a developer-friendly snippet manager that stores PHP, HTML, CSS, and JavaScript snippets in a dedicated database table (`wp_snippets`) rather than as a CPT. It has a cleaner data model than WPCode and is preferred by developers. Active PHP snippets are executed via `include` from a cache directory. Worker AI agents can query the snippets table directly, or use the `get_snippets()` function to list all snippets. This plugin is a peer to WPCode (§8.9) — agent skills should detect which is active using `is_plugin_active('code-snippets/code-snippets.php')`.
+Code Snippets is a developer-friendly snippet manager that stores PHP, HTML, CSS, and JavaScript snippets in a dedicated database table (`wp_snippets`) rather than as a CPT. It has a cleaner data model than WPCode and is preferred by developers. Active PHP snippets are executed via `include` from a cache directory. WPWorker agents can query the snippets table directly, or use the `get_snippets()` function to list all snippets. This plugin is a peer to WPCode (§8.9) — agent skills should detect which is active using `is_plugin_active('code-snippets/code-snippets.php')`.
 
 Key hooks and APIs:
 - `code_snippets/execute_snippet` action — fires when a snippet is executed; receives the snippet object
@@ -840,7 +840,7 @@ Key hooks and APIs:
 | Homepage | https://wpspectra.com/ |
 | WordPress.org | https://wordpress.org/plugins/ultimate-addons-for-gutenberg/ |
 
-Spectra (formerly Ultimate Addons for Gutenberg) is Brainstorm Force's block builder for the Gutenberg editor. It provides 40+ blocks (Advanced Heading, Info Box, Price Table, Star Rating, Progress Bar, etc.) and is designed as the block-editor equivalent of UAE (§8.11). Spectra is always present when Astra (§7.1) is the active theme, as Brainstorm Force bundles Spectra prominently in their ecosystem. Blocks are registered via `register_block_type()` using the `uagb/` namespace prefix. Worker AI agents can enumerate active Spectra blocks via `WP_Block_Type_Registry::get_instance()->get_all_registered()` filtering for `uagb/` keys.
+Spectra (formerly Ultimate Addons for Gutenberg) is Brainstorm Force's block builder for the Gutenberg editor. It provides 40+ blocks (Advanced Heading, Info Box, Price Table, Star Rating, Progress Bar, etc.) and is designed as the block-editor equivalent of UAE (§8.11). Spectra is always present when Astra (§7.1) is the active theme, as Brainstorm Force bundles Spectra prominently in their ecosystem. Blocks are registered via `register_block_type()` using the `uagb/` namespace prefix. WPWorker agents can enumerate active Spectra blocks via `WP_Block_Type_Registry::get_instance()->get_all_registered()` filtering for `uagb/` keys.
 
 Key hooks and APIs:
 - `uagb_register_blocks` filter — add or remove blocks from Spectra's block registry
@@ -865,7 +865,7 @@ Key hooks and APIs:
 | Homepage | https://optinmonster.com/ |
 | WordPress.org | https://wordpress.org/plugins/optinmonster/ |
 
-OptinMonster is a SaaS lead-generation tool; the WordPress plugin is a thin connector that loads campaigns (popups, slide-ins, floating bars) from the OptinMonster cloud API via JavaScript embed. Campaign configuration lives entirely on OptinMonster's servers — not in the WordPress database. The plugin stores the site's API key and connected campaigns in WordPress options. Worker AI agents cannot modify campaign content directly but can read which campaigns are connected, toggle campaigns on/off by post, and manage the API connection. The `optinmonster` PHP class is the primary entry point.
+OptinMonster is a SaaS lead-generation tool; the WordPress plugin is a thin connector that loads campaigns (popups, slide-ins, floating bars) from the OptinMonster cloud API via JavaScript embed. Campaign configuration lives entirely on OptinMonster's servers — not in the WordPress database. The plugin stores the site's API key and connected campaigns in WordPress options. WPWorker agents cannot modify campaign content directly but can read which campaigns are connected, toggle campaigns on/off by post, and manage the API connection. The `optinmonster` PHP class is the primary entry point.
 
 Key hooks and APIs:
 - `optin_monster_campaign` action — fires when a campaign embed is output
@@ -890,7 +890,7 @@ Key hooks and APIs:
 | Homepage | https://gutenkit.com/ |
 | WordPress.org | https://wordpress.org/plugins/gutenkit-blocks-addon/ |
 
-GutenKit is WPDeveloper's Gutenberg block library, positioning as the Gutenberg-native companion to their Essential Addons for Elementor product (§8.13). It is the newest and smallest-install-count of the 18 supported plugins, indicating early-growth stage. GutenKit registers blocks under the `gutenkit/` namespace and follows standard Gutenberg `register_block_type()` patterns throughout. Worker AI agents should be aware that both GutenKit and Spectra (§8.16) may be active simultaneously — they do not conflict but both register `40+` blocks to the editor, requiring care when auditing the block library.
+GutenKit is WPDeveloper's Gutenberg block library, positioning as the Gutenberg-native companion to their Essential Addons for Elementor product (§8.13). It is the newest and smallest-install-count of the 18 supported plugins, indicating early-growth stage. GutenKit registers blocks under the `gutenkit/` namespace and follows standard Gutenberg `register_block_type()` patterns throughout. WPWorker agents should be aware that both GutenKit and Spectra (§8.16) may be active simultaneously — they do not conflict but both register `40+` blocks to the editor, requiring care when auditing the block library.
 
 Key hooks and APIs:
 - `gutenkit/register_blocks` filter — add or remove blocks from GutenKit's block registry

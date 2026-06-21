@@ -2,12 +2,12 @@
 /**
  * CLI Runner — WP-CLI subprocess wrapper.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Runner;
+namespace AllyWorker\Runner;
 
 /**
  * Class CliRunner
@@ -52,7 +52,7 @@ class CliRunner {
 		$process = proc_open( $cmd, $descriptors, $pipes, ABSPATH, $this->safe_env() );
 
 		if ( ! is_resource( $process ) ) {
-			throw new \RuntimeException( __( 'WPCodex: Failed to open WP-CLI subprocess.', 'wpcodex' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
+			throw new \RuntimeException( __( 'AllyWorker: Failed to open WP-CLI subprocess.', 'allyworker' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- pipe I/O from proc_open; WP_Filesystem has no equivalent
@@ -64,7 +64,7 @@ class CliRunner {
 		while ( ! feof( $pipes[1] ) ) {
 			if ( time() > $deadline ) {
 				proc_terminate( $process );
-				$output .= "\n[WPCodex] Command timed out after {$timeout}s.";
+				$output .= "\n[AllyWorker] Command timed out after {$timeout}s.";
 				break;
 			}
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread -- pipe I/O from proc_open
@@ -113,7 +113,7 @@ class CliRunner {
 		}
 
 		throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
-			__( 'WPCodex: WP-CLI not found. Install WP-CLI to use this ability.', 'wpcodex' )
+			__( 'AllyWorker: WP-CLI not found. Install WP-CLI to use this ability.', 'allyworker' )
 		);
 	}
 
@@ -127,7 +127,7 @@ class CliRunner {
 		if ( ! is_array( $env ) ) {
 			return [];
 		}
-		unset( $env['HTTP_AUTHORIZATION'], $env['WPCODEX_SECRET'] );
+		unset( $env['HTTP_AUTHORIZATION'], $env['ALLYWORKER_SECRET'] );
 		return $env;
 	}
 }

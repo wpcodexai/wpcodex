@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/create-upload-link
+ * Ability: allyworker/create-upload-link
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Files;
+namespace AllyWorker\Abilities\Files;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\REST\UploadEndpoint;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\REST\UploadEndpoint;
 
 /**
  * Class CreateUploadLink
@@ -22,22 +22,22 @@ class CreateUploadLink extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-general';
+		return 'allyworker-general';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/create-upload-link';
+		return 'allyworker/create-upload-link';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Create Upload Link', 'wpcodex' );
+		return __( 'Create Upload Link', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Creates a temporary upload endpoint and header-only bearer token that external tools (e.g. curl) can use to upload one file into the WordPress filesystem. Accepts raw PUT/POST bodies and multipart/form-data with a field named "file".', 'wpcodex' );
+		return __( 'Creates a temporary upload endpoint and header-only bearer token that external tools (e.g. curl) can use to upload one file into the WordPress filesystem. Accepts raw PUT/POST bodies and multipart/form-data with a field named "file".', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -112,7 +112,7 @@ class CreateUploadLink extends AbstractAbility {
 			'Use this when a file is too large or inconvenient to send through the MCP JSON transport.',
 			'Recommended curl form: curl -X PUT -H "$token_header: $upload_token" --data-binary @/path/to/local-file "$upload_url"',
 			'Multipart form is also accepted: curl -H "$token_header: $upload_token" -F file=@/path/to/local-file "$upload_url"',
-			'PHP files (*.php) and PHP execution control files can ONLY be uploaded to wp-content/wpcodex-sandbox/.',
+			'PHP files (*.php) and PHP execution control files can ONLY be uploaded to wp-content/wp-allyworker-sandbox/.',
 			'Other non-PHP uploads outside the sandbox are intentional; the sandbox is not security isolation for all filesystem writes.',
 		] );
 	}
@@ -120,7 +120,7 @@ class CreateUploadLink extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['path'] ) || ! is_string( $input['path'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'path must be a non-empty string.', 'allyworker' ) );
 		}
 
 		// Resolve and validate the destination path.
@@ -133,7 +133,7 @@ class CreateUploadLink extends AbstractAbility {
 		// Quick sandbox check for PHP files before signing the token.
 		$extension = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
 		if ( 'php' === $extension || in_array( strtolower( basename( $path ) ), [ '.htaccess', '.php.ini', '.user.ini', 'php.ini', 'web.config' ], true ) ) {
-			$sandbox   = WPCODEX_SANDBOX_DIR;
+			$sandbox   = ALLY_WORKER_SANDBOX_DIR;
 			$norm_sand = rtrim( str_replace( '\\', '/', $sandbox ), '/' );
 			$norm_path = str_replace( '\\', '/', dirname( $path ) );
 			if ( ! str_starts_with( $norm_path, $norm_sand ) ) {
@@ -141,7 +141,7 @@ class CreateUploadLink extends AbstractAbility {
 					'php_sandbox_required',
 					sprintf(
 						/* translators: %s sandbox directory path */
-						__( 'PHP files and PHP execution control files can only be uploaded to the sandbox directory: %s.', 'wpcodex' ),
+						__( 'PHP files and PHP execution control files can only be uploaded to the sandbox directory: %s.', 'allyworker' ),
 						$sandbox
 					)
 				);
@@ -167,8 +167,8 @@ class CreateUploadLink extends AbstractAbility {
 			return $token;
 		}
 
-		$upload_url   = rest_url( 'wpcodex/v1/upload' );
-		$token_header = 'X-WPCodex-Upload-Token';
+		$upload_url   = rest_url( 'allyworker/v1/upload' );
+		$token_header = 'X-AllyWorker-Upload-Token';
 
 		return [
 			'upload_url'    => $upload_url,

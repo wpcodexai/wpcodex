@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/file-list
+ * Ability: allyworker/file-list
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Files;
+namespace AllyWorker\Abilities\Files;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Runner\FileManager;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Runner\FileManager;
 
 /**
  * Class FileList
@@ -22,22 +22,22 @@ class FileList extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-general';
+		return 'allyworker-general';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/file-list';
+		return 'allyworker/file-list';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'List Directory', 'wpcodex' );
+		return __( 'List Directory', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'List the contents of a directory. Supports glob patterns, depth control, and hidden-file filtering.', 'wpcodex' );
+		return __( 'List the contents of a directory. Supports glob patterns, depth control, and hidden-file filtering.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -114,7 +114,7 @@ class FileList extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['path'] ) || ! is_string( $input['path'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'path must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'path must be a non-empty string.', 'allyworker' ) );
 		}
 
 		$pattern        = is_string( $input['pattern'] ?? null ) ? (string) $input['pattern'] : '*';
@@ -131,9 +131,9 @@ class FileList extends AbstractAbility {
 				$limit
 			);
 		} catch ( \InvalidArgumentException $e ) {
-			return new \WP_Error( 'wpcodex_path_error', $e->getMessage() );
+			return new \WP_Error( 'allyworker_path_error', $e->getMessage() );
 		} catch ( \RuntimeException $e ) {
-			return new \WP_Error( 'wpcodex_file_error', $e->getMessage() );
+			return new \WP_Error( 'allyworker_file_error', $e->getMessage() );
 		}
 	}
 }

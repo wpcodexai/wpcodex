@@ -1,6 +1,6 @@
-# Get Started with WPCodex
+# Get Started with AllyWorker
 
-WPCodex connects AI agents (Claude, Cursor, Codex, and others) to your WordPress site through the [MCP protocol](https://modelcontextprotocol.io). Once connected, your AI agent can execute PHP, run WP-CLI commands, read and write files, manage skills, and modify Gutenberg content — all directly from the agent's chat interface.
+AllyWorker connects AI agents (Claude, Cursor, Codex, and others) to your WordPress site through the [MCP protocol](https://modelcontextprotocol.io). Once connected, your AI agent can execute PHP, run WP-CLI commands, read and write files, manage skills, and modify Gutenberg content — all directly from the agent's chat interface.
 
 ---
 
@@ -15,27 +15,27 @@ WPCodex connects AI agents (Claude, Cursor, Codex, and others) to your WordPress
 
 ## Installation
 
-1. Upload the `wpcodex` folder to `wp-content/plugins/`.
+1. Upload the `allyworker` folder to `wp-content/plugins/`.
 2. In the plugin directory, run:
    ```bash
    composer install
    npm install && npm run build
    ```
-3. Go to **Plugins → Installed Plugins** in the WordPress admin and activate **WPCodex**.
+3. Go to **Plugins → Installed Plugins** in the WordPress admin and activate **AllyWorker**.
 
-After activation the **WPCodex** menu appears in the admin sidebar.
+After activation the **AllyWorker** menu appears in the admin sidebar.
 
 ---
 
 ## 3-Step Setup (Configuration page)
 
-Navigate to **WPCodex → Configuration**.
+Navigate to **AllyWorker → Configuration**.
 
 ### Step 1 — Enable AI Abilities
 
 Click **Enable AI Abilities**. This activates the MCP server and registers all abilities so agents can connect.
 
-> **Security note.** When enabled, agents can execute PHP and perform filesystem operations. Use on development or staging only — not on live production sites without deliberate precautions. A red "WPCodex ON" badge will appear in the admin bar as a persistent reminder.
+> **Security note.** When enabled, agents can execute PHP and perform filesystem operations. Use on development or staging only — not on live production sites without deliberate precautions. A red "AllyWorker ON" badge will appear in the admin bar as a persistent reminder.
 
 ### Step 2 — Create an Application Password
 
@@ -64,15 +64,15 @@ If the prompt-based setup does not work for your client, click **Need the JSON c
 After the agent writes and applies the config:
 
 1. The agent will restart or reload the MCP session.
-2. Ask it to list the available tools. You should see all `wpcodex/*` abilities.
-3. Run a quick test: ask the agent to call `wpcodex/discover-abilities`. It should return a list of abilities plus environment info for your site.
+2. Ask it to list the available tools. You should see all `allyworker/*` abilities.
+3. Run a quick test: ask the agent to call `allyworker/discover-abilities`. It should return a list of abilities plus environment info for your site.
 
 ---
 
 ## Turn abilities off
 
 - From the **Configuration** page: click **Disable AI Abilities**.
-- From the admin bar: click **WPCodex ON → Turn off AI Abilities**.
+- From the admin bar: click **AllyWorker ON → Turn off AI Abilities**.
 
 Disabling abilities unregisters all MCP tools so agents can no longer execute code on the site, even if they still have a valid application password.
 
@@ -82,7 +82,7 @@ Disabling abilities unregisters all MCP tools so agents can no longer execute co
 
 | Guide | What it covers |
 |---|---|
-| [Abilities Reference](./01-abilities.md) | Every `wpcodex/*` ability, its inputs, and usage examples |
+| [Abilities Reference](./01-abilities.md) | Every `allyworker/*` ability, its inputs, and usage examples |
 | [Skills](./02-skills.md) | Writing and managing AI playbooks |
 | [Sandbox](./03-sandbox.md) | Persisting PHP code across requests |
 | [Gutenberg / Block Editor](./04-gutenberg.md) | Writing Gutenberg content via the Block Editor Queue |

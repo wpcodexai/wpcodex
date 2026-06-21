@@ -1,16 +1,16 @@
 /**
- * WPCodex — Configuration page.
+ * AllyWorker — Configuration page.
  *
  * Covers the full step-by-step connect flow:
- *  - .wpcodex-config            step cards and BEM children
- *  - .wpcodex-paste-block       paste prompt block (step 3)
- *  - .wpcodex-client-tabs       pill-tab row for client selection
- *  - .wpcodex-config-block      dark code block with copy button
- *  - .wpcodex-config-footer     hint + file-path rows below the code block
- *  - .wpcodex-pw-*              application passwords table (step 2)
+ *  - .allyworker-config            step cards and BEM children
+ *  - .allyworker-paste-block       paste prompt block (step 3)
+ *  - .allyworker-client-tabs       pill-tab row for client selection
+ *  - .allyworker-config-block      dark code block with copy button
+ *  - .allyworker-config-footer     hint + file-path rows below the code block
+ *  - .allyworker-pw-*              application passwords table (step 2)
  */
 
-.wpcodex-config {
+.allyworker-config {
 
 	&__notice {
 		margin-bottom: 16px;
@@ -233,14 +233,14 @@
 
 // ─── Paste block (step 3) ─────────────────────────────────────────────────────
 
-.wpcodex-paste-block {
+.allyworker-paste-block {
 	border: 1px solid $color-border-lt;
 	border-radius: $radius-md;
 	overflow: hidden;
 	margin-bottom: 16px;
 }
 
-.wpcodex-paste-content {
+.allyworker-paste-content {
 	max-height: 160px;
 	overflow: hidden;
 	position: relative;
@@ -277,7 +277,7 @@
 	}
 }
 
-.wpcodex-paste-actions {
+.allyworker-paste-actions {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -289,13 +289,13 @@
 
 // ─── Client pill tabs ─────────────────────────────────────────────────────────
 
-.wpcodex-client-tabs {
+.allyworker-client-tabs {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 4px;
 	margin-bottom: 10px;
 
-	.wpcodex-client-tab {
+	.allyworker-client-tab {
 		padding: 5px 12px;
 		border: 1px solid $color-border-lt;
 		border-radius: 20px;
@@ -322,7 +322,7 @@
 
 // ─── Dark code block ──────────────────────────────────────────────────────────
 
-.wpcodex-config-block {
+.allyworker-config-block {
 	position: relative;
 	background: #1e2327;
 	border-radius: $radius-md;
@@ -341,7 +341,7 @@
 		border: none;
 	}
 
-	.wpcodex-copy-code-btn {
+	.allyworker-copy-code-btn {
 		position: absolute;
 		top: 10px;
 		right: 10px;
@@ -358,17 +358,17 @@
 	}
 }
 
-.wpcodex-config-footer {
+.allyworker-config-footer {
 	font-size: .8125rem;
 	color: $color-text-muted;
 	border-top: 1px solid $color-border-lt;
 	margin-top: 2px;
 
-	.wpcodex-config-hint {
+	.allyworker-config-hint {
 		padding: 10px 16px;
 	}
 
-	.wpcodex-config-paths {
+	.allyworker-config-paths {
 		padding: 0 16px 10px;
 
 		ul {
@@ -384,7 +384,7 @@
 
 // ─── Application passwords table (step 2) ────────────────────────────────────
 
-.wpcodex-pw-section-label {
+.allyworker-pw-section-label {
 	font-size: .8125rem;
 	font-weight: 600;
 	color: $color-text-muted;
@@ -393,13 +393,13 @@
 	margin: 0 0 10px;
 }
 
-.wpcodex-pw-table-wrap {
+.allyworker-pw-table-wrap {
 	border: 1px solid $color-border-lt;
 	border-radius: $radius-md;
 	overflow: hidden;
 }
 
-.wpcodex-pw-table {
+.allyworker-pw-table {
 	width: 100%;
 	border-collapse: collapse;
 	font-size: .875rem;
@@ -439,24 +439,24 @@
 		vertical-align: middle;
 		color: $color-text;
 
-		&.wpcodex-pw-table__name {
+		&.allyworker-pw-table__name {
 			font-weight: 600;
 		}
 
-		&.wpcodex-pw-table__meta {
+		&.allyworker-pw-table__meta {
 			color: $color-text-muted;
 			font-size: .8125rem;
 			white-space: nowrap;
 		}
 
-		&.wpcodex-pw-table__actions {
+		&.allyworker-pw-table__actions {
 			text-align: right;
 			white-space: nowrap;
 		}
 	}
 }
 
-.wpcodex-pw-revoke-btn {
+.allyworker-pw-revoke-btn {
 	color: $color-danger !important;
 	border-color: rgba(214, 54, 56, .35) !important;
 

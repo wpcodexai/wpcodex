@@ -1,12 +1,12 @@
 /**
- * WPCodex — Skills page.
+ * AllyWorker — Skills page.
  *
- * Scoped to #wpcodex-skills (list view) and #wpcodex-skill-editor (edit view).
+ * Scoped to #allyworker-skills (list view) and #allyworker-skill-editor (edit view).
  */
 
-#wpcodex-skills {
+#allyworker-skills {
 
-	.wpcodex-upload-area {
+	.allyworker-upload-area {
 		background: $color-bg-white;
 		border: 1px solid $color-border-lt;
 		border-radius: $radius-md;
@@ -27,9 +27,9 @@
 	}
 }
 
-#wpcodex-skill-editor {
+#allyworker-skill-editor {
 
-	.wpcodex-skill-editor {
+	.allyworker-skill-editor {
 		font-family: $font-mono;
 		font-size: .875rem;
 		line-height: 1.6;

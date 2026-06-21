@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-get-pending-batch
+ * Ability: allyworker/gutenberg-get-pending-batch
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace AllyWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class GetPadding
@@ -24,22 +24,22 @@ class GetPadding extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'allyworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-get-pending-batch';
+		return 'allyworker/gutenberg-get-pending-batch';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Get Gutenberg Pending Batch', 'wpcodex' );
+		return __( 'Get Gutenberg Pending Batch', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Returns compact status, item summaries, validation errors, Block Editor Queue runtime status, and curl SSE/poll URLs for one pending batch.', 'wpcodex' );
+		return __( 'Returns compact status, item summaries, validation errors, Block Editor Queue runtime status, and curl SSE/poll URLs for one pending batch.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -87,7 +87,7 @@ class GetPadding extends AbstractAbility {
 			return new \WP_Error(
 				'gutenberg_batch_not_found',
 				/* translators: %d: batch ID */
-				sprintf( __( 'Gutenberg batch %d was not found.', 'wpcodex' ), $batch_id )
+				sprintf( __( 'Gutenberg batch %d was not found.', 'allyworker' ), $batch_id )
 			);
 		}
 

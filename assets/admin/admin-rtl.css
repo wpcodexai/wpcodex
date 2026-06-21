@@ -3,12 +3,12 @@
   \********************************************************************************************************************************************************************************************************************************************/
 @charset "UTF-8";
 /**
- * WPCodex Admin Styles
+ * AllyWorker Admin Styles
  *
  * Source : src/scss/admin.scss
  * Output : assets/admin/admin.css  (via wp-scripts build)
  *
- * Naming convention: .wpcodex-* for all custom classes.
+ * Naming convention: .allyworker-* for all custom classes.
  *
  * Partials load order:
  *  1. _variables     — design tokens (colours, radii, shadows, fonts)
@@ -20,17 +20,17 @@
  *  7. _configuration — Configuration page (step-by-step connect flow)
  */
 /**
- * WPCodex — Design tokens & shared variables.
+ * AllyWorker — Design tokens & shared variables.
  *
  * Imported first so every partial has access to these values.
  */
 /**
- * WPCodex — Common / shared styles.
+ * AllyWorker — Common / shared styles.
  *
  * Used on every admin page: page wrap, empty state, generic card grid,
  * badges, and the toggle switch component.
  */
-.wpcodex-wrap .wpcodex-page-header {
+.allyworker-wrap .allyworker-page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -38,21 +38,21 @@
   gap: 12px;
   margin: 16px 0 8px;
 }
-.wpcodex-wrap .wpcodex-page-title {
+.allyworker-wrap .allyworker-page-title {
   margin: 0;
   font-size: 1.5rem;
   color: #1e2327;
 }
-.wpcodex-wrap .wpcodex-page-actions {
+.allyworker-wrap .allyworker-page-actions {
   display: flex;
   gap: 8px;
 }
-.wpcodex-wrap .wpcodex-page-description {
+.allyworker-wrap .allyworker-page-description {
   color: #646970;
   margin-bottom: 20px;
   max-width: 720px;
 }
-.wpcodex-empty-state {
+.allyworker-empty-state {
   background: #fff;
   border: 1px solid #dcdcde;
   border-radius: 6px;
@@ -61,16 +61,16 @@
   color: #646970;
   margin-top: 16px;
 }
-.wpcodex-empty-state p {
+.allyworker-empty-state p {
   margin: 0;
 }
-.wpcodex-cards {
+.allyworker-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
-.wpcodex-card {
+.allyworker-card {
   background: #fff;
   border: 1px solid #dcdcde;
   border-radius: 6px;
@@ -78,53 +78,53 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
-.wpcodex-card:hover {
+.allyworker-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
   border-color: #c3c4c7;
 }
-.wpcodex-card.is-disabled {
+.allyworker-card.is-disabled {
   background: #f0f0f0;
   opacity: 0.75;
 }
-.wpcodex-card__header {
+.allyworker-card__header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 8px;
   margin-bottom: 8px;
 }
-.wpcodex-card__name {
+.allyworker-card__name {
   font-weight: 600;
   font-size: 0.9375rem;
   color: #1e2327;
   word-break: break-all;
 }
-.wpcodex-card__id {
+.allyworker-card__id {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.75rem;
   color: #646970;
   margin-top: 2px;
 }
-.wpcodex-card__description, .wpcodex-card__meta {
+.allyworker-card__description, .allyworker-card__meta {
   font-size: 0.875rem;
   color: #646970;
   margin: 0 0 12px;
   line-height: 1.5;
 }
-.wpcodex-card__badges {
+.allyworker-card__badges {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
   flex-shrink: 0;
 }
-.wpcodex-card__footer, .wpcodex-card__actions {
+.allyworker-card__footer, .allyworker-card__actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
   margin-top: 4px;
 }
-.wpcodex-badge {
+.allyworker-badge {
   display: inline-flex;
   align-items: center;
   padding: 2px 7px;
@@ -135,35 +135,35 @@
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
-.wpcodex-badge--agentic {
+.allyworker-badge--agentic {
   background: #d7f0e0;
   color: #1a5c35;
 }
-.wpcodex-badge--prompt {
+.allyworker-badge--prompt {
   background: #dde8f5;
   color: #1a4778;
 }
-.wpcodex-badge--php {
+.allyworker-badge--php {
   background: #ede4f5;
   color: #4a1b8c;
 }
-.wpcodex-badge--disabled {
+.allyworker-badge--disabled {
   background: #f0f0f0;
   color: #646970;
 }
-.wpcodex-toggle {
+.allyworker-toggle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
 }
-.wpcodex-toggle input[type=checkbox] {
+.allyworker-toggle input[type=checkbox] {
   position: absolute;
   opacity: 0;
   width: 0;
   height: 0;
 }
-.wpcodex-toggle__slider {
+.allyworker-toggle__slider {
   position: relative;
   width: 36px;
   height: 20px;
@@ -172,7 +172,7 @@
   flex-shrink: 0;
   transition: background 0.2s ease;
 }
-.wpcodex-toggle__slider::after {
+.allyworker-toggle__slider::after {
   content: "";
   position: absolute;
   top: 3px;
@@ -183,46 +183,45 @@
   border-radius: 50%;
   transition: transform 0.2s ease;
 }
-input:checked + .wpcodex-toggle__slider {
+input:checked + .allyworker-toggle__slider {
   background: #00a32a;
 }
-input:checked + .wpcodex-toggle__slider::after {
+input:checked + .allyworker-toggle__slider::after {
   transform: translateX(-16px);
 }
-.wpcodex-toggle__label {
+.allyworker-toggle__label {
   font-size: 0.8125rem;
   color: #646970;
   -webkit-user-select: none;
-     -moz-user-select: none;
           user-select: none;
 }
-.wpcodex-toggle--lg .wpcodex-toggle__slider {
+.allyworker-toggle--lg .allyworker-toggle__slider {
   width: 52px;
   height: 28px;
 }
-.wpcodex-toggle--lg .wpcodex-toggle__slider::after {
+.allyworker-toggle--lg .allyworker-toggle__slider::after {
   width: 20px;
   height: 20px;
   top: 4px;
   right: 4px;
 }
-.wpcodex-toggle--lg input:checked + .wpcodex-toggle__slider::after {
+.allyworker-toggle--lg input:checked + .allyworker-toggle__slider::after {
   transform: translateX(-24px);
 }
-.wpcodex-toggle--lg .wpcodex-toggle__label {
+.allyworker-toggle--lg .allyworker-toggle__label {
   font-size: 0.9375rem;
   font-weight: 600;
   color: #1e2327;
 }
 /**
- * WPCodex — Abilities Hub page.
+ * AllyWorker — Abilities Hub page.
  *
- * Scoped to #wpcodex-abilities-settings.
+ * Scoped to #allyworker-abilities-settings.
  */
-#wpcodex-abilities-settings .wpcodex-ability-group {
+#allyworker-abilities-settings .allyworker-ability-group {
   margin-bottom: 32px;
 }
-#wpcodex-abilities-settings .wpcodex-group-title {
+#allyworker-abilities-settings .allyworker-group-title {
   font-size: 1rem;
   font-weight: 600;
   color: #646970;
@@ -232,50 +231,50 @@ input:checked + .wpcodex-toggle__slider::after {
   padding-bottom: 8px;
   border-bottom: 1px solid #dcdcde;
 }
-#wpcodex-abilities-settings .wpcodex-ability-cards {
+#allyworker-abilities-settings .allyworker-ability-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 14px;
 }
-#wpcodex-abilities-settings .wpcodex-ability-card {
+#allyworker-abilities-settings .allyworker-ability-card {
   background: #fff;
   border: 1px solid #dcdcde;
   border-radius: 6px;
   padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
-#wpcodex-abilities-settings .wpcodex-ability-card.is-disabled {
+#allyworker-abilities-settings .allyworker-ability-card.is-disabled {
   background: #f0f0f0;
   opacity: 0.8;
 }
-#wpcodex-abilities-settings .wpcodex-ability-card__header {
+#allyworker-abilities-settings .allyworker-ability-card__header {
   margin-bottom: 6px;
 }
-#wpcodex-abilities-settings .wpcodex-ability-card__name {
+#allyworker-abilities-settings .allyworker-ability-card__name {
   font-weight: 600;
   font-size: 0.9rem;
   display: block;
 }
-#wpcodex-abilities-settings .wpcodex-ability-card__id {
+#allyworker-abilities-settings .allyworker-ability-card__id {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.75rem;
   color: #646970;
 }
-#wpcodex-abilities-settings .wpcodex-ability-card__description {
+#allyworker-abilities-settings .allyworker-ability-card__description {
   font-size: 0.8125rem;
   color: #646970;
   margin: 6px 0 12px;
   line-height: 1.5;
 }
-#wpcodex-abilities-settings .wpcodex-ability-card__footer {
+#allyworker-abilities-settings .allyworker-ability-card__footer {
   margin-top: auto;
 }
 /**
- * WPCodex — Skills page.
+ * AllyWorker — Skills page.
  *
- * Scoped to #wpcodex-skills (list view) and #wpcodex-skill-editor (edit view).
+ * Scoped to #allyworker-skills (list view) and #allyworker-skill-editor (edit view).
  */
-#wpcodex-skills .wpcodex-upload-area {
+#allyworker-skills .allyworker-upload-area {
   background: #fff;
   border: 1px solid #dcdcde;
   border-radius: 6px;
@@ -286,111 +285,111 @@ input:checked + .wpcodex-toggle__slider::after {
   gap: 12px;
   flex-wrap: wrap;
 }
-#wpcodex-skills .wpcodex-upload-area form {
+#allyworker-skills .allyworker-upload-area form {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
   margin: 0;
 }
-#wpcodex-skill-editor .wpcodex-skill-editor {
+#allyworker-skill-editor .allyworker-skill-editor {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.875rem;
   line-height: 1.6;
   resize: vertical;
 }
-#wpcodex-skill-editor .form-table th {
+#allyworker-skill-editor .form-table th {
   width: 180px;
 }
 /**
- * WPCodex — Sandbox page.
+ * AllyWorker — Sandbox page.
  *
- * Scoped to #wpcodex-sandbox.
+ * Scoped to #allyworker-sandbox.
  */
-#wpcodex-sandbox .wpcodex-flex {
+#allyworker-sandbox .allyworker-flex {
   display: unset;
 }
-#wpcodex-sandbox .wpcodex-card__meta {
+#allyworker-sandbox .allyworker-card__meta {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.75rem;
 }
-#wpcodex-sandbox .wpcodex-card.is-suspended {
+#allyworker-sandbox .allyworker-card.is-suspended {
   opacity: 0.6;
   filter: grayscale(0.3);
 }
-.wpcodex-badge--warn {
+.allyworker-badge--warn {
   background: #fff3cd;
   color: #7a4f00;
 }
 /**
- * WPCodex — Block Editor Queue page.
+ * AllyWorker — Block Editor Queue page.
  *
- * Scoped to #wpcodex-block-editor.
+ * Scoped to #allyworker-block-editor.
  */
-#wpcodex-block-editor .wpcodex-flex {
+#allyworker-block-editor .allyworker-flex {
   display: unset;
 }
-#wpcodex-block-editor .wpcodex-queue-table-wrap {
+#allyworker-block-editor .allyworker-queue-table-wrap {
   margin-top: 16px;
   overflow-x: auto;
 }
-#wpcodex-block-editor .wpcodex-queue-table {
+#allyworker-block-editor .allyworker-queue-table {
   min-width: 700px;
 }
-#wpcodex-block-editor .wpcodex-queue-table code {
+#allyworker-block-editor .allyworker-queue-table code {
   font-size: 0.75rem;
   background: #f6f7f7;
   padding: 2px 5px;
   border-radius: 3px;
 }
-#wpcodex-block-editor .wpcodex-status {
+#allyworker-block-editor .allyworker-status {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 0.75rem;
   font-weight: 600;
 }
-#wpcodex-block-editor .wpcodex-status--draft {
+#allyworker-block-editor .allyworker-status--draft {
   background: #f0f0f0;
   color: #646970;
 }
-#wpcodex-block-editor .wpcodex-status--pending {
+#allyworker-block-editor .allyworker-status--pending {
   background: #fef3cd;
   color: #7a4f00;
 }
-#wpcodex-block-editor .wpcodex-status--ready {
+#allyworker-block-editor .allyworker-status--ready {
   background: #d7f0e0;
   color: #1a5c35;
 }
-#wpcodex-block-editor .wpcodex-status--running {
+#allyworker-block-editor .allyworker-status--running {
   background: #e8f0fb;
   color: #1a4778;
 }
-#wpcodex-block-editor .wpcodex-status--prepared {
+#allyworker-block-editor .allyworker-status--prepared {
   background: #e8f0fb;
   color: #1a4778;
 }
-#wpcodex-block-editor .wpcodex-status--complete, #wpcodex-block-editor .wpcodex-status--finalized {
+#allyworker-block-editor .allyworker-status--complete, #allyworker-block-editor .allyworker-status--finalized {
   background: #dde8f5;
   color: #1a4778;
 }
-#wpcodex-block-editor .wpcodex-status--failed {
+#allyworker-block-editor .allyworker-status--failed {
   background: #fde8e8;
   color: #8b1a1a;
 }
-#wpcodex-block-editor .wpcodex-status--conflicted {
+#allyworker-block-editor .allyworker-status--conflicted {
   background: #fff0e6;
   color: #7a3500;
 }
-#wpcodex-block-editor .wpcodex-status--canceled, #wpcodex-block-editor .wpcodex-status--cancelled {
+#allyworker-block-editor .allyworker-status--canceled, #allyworker-block-editor .allyworker-status--cancelled {
   background: #f0f0f0;
   color: #646970;
 }
-#wpcodex-block-editor .wpcodex-status--stale {
+#allyworker-block-editor .allyworker-status--stale {
   background: #f0f0f0;
   color: #646970;
 }
-#wpcodex-block-editor .wpcodex-info-box {
+#allyworker-block-editor .allyworker-info-box {
   background: #fff;
   border: 1px solid #dcdcde;
   border-right: 4px solid #2271b1;
@@ -399,35 +398,35 @@ input:checked + .wpcodex-toggle__slider::after {
   margin-top: 32px;
   max-width: 700px;
 }
-#wpcodex-block-editor .wpcodex-info-box h3 {
+#allyworker-block-editor .allyworker-info-box h3 {
   margin: 0 0 10px;
   font-size: 0.9375rem;
 }
-#wpcodex-block-editor .wpcodex-info-box ol {
+#allyworker-block-editor .allyworker-info-box ol {
   margin: 0;
   padding-right: 20px;
 }
-#wpcodex-block-editor .wpcodex-info-box ol li {
+#allyworker-block-editor .allyworker-info-box ol li {
   margin-bottom: 6px;
   color: #646970;
   line-height: 1.6;
   font-size: 0.875rem;
 }
 /**
- * WPCodex — Configuration page.
+ * AllyWorker — Configuration page.
  *
  * Covers the full step-by-step connect flow:
- *  - .wpcodex-config            step cards and BEM children
- *  - .wpcodex-paste-block       paste prompt block (step 3)
- *  - .wpcodex-client-tabs       pill-tab row for client selection
- *  - .wpcodex-config-block      dark code block with copy button
- *  - .wpcodex-config-footer     hint + file-path rows below the code block
- *  - .wpcodex-pw-*              application passwords table (step 2)
+ *  - .allyworker-config            step cards and BEM children
+ *  - .allyworker-paste-block       paste prompt block (step 3)
+ *  - .allyworker-client-tabs       pill-tab row for client selection
+ *  - .allyworker-config-block      dark code block with copy button
+ *  - .allyworker-config-footer     hint + file-path rows below the code block
+ *  - .allyworker-pw-*              application passwords table (step 2)
  */
-.wpcodex-config__notice {
+.allyworker-config__notice {
   margin-bottom: 16px;
 }
-.wpcodex-config__card {
+.allyworker-config__card {
   background: #fff;
   border: 1px solid #dcdcde;
   border-radius: 6px;
@@ -436,24 +435,23 @@ input:checked + .wpcodex-toggle__slider::after {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: border-color 0.15s ease, opacity 0.25s ease, filter 0.25s ease;
 }
-.wpcodex-config__card.is-active {
+.allyworker-config__card.is-active {
   border-right: 4px solid #00a32a;
 }
-.wpcodex-config__card.is-locked {
+.allyworker-config__card.is-locked {
   opacity: 0.45;
   filter: grayscale(0.4);
   pointer-events: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
           user-select: none;
 }
-.wpcodex-config__card-header {
+.allyworker-config__card-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
 }
-.wpcodex-config__step {
+.allyworker-config__step {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -466,12 +464,12 @@ input:checked + .wpcodex-toggle__slider::after {
   font-weight: 700;
   flex-shrink: 0;
 }
-.wpcodex-config__card-title {
+.allyworker-config__card-title {
   margin: 0;
   font-size: 1.0625rem;
   font-weight: 600;
 }
-.wpcodex-config__status {
+.allyworker-config__status {
   margin-right: auto;
   font-size: 0.75rem;
   font-weight: 700;
@@ -479,15 +477,15 @@ input:checked + .wpcodex-toggle__slider::after {
   padding: 3px 9px;
   border-radius: 10px;
 }
-.wpcodex-config__status.is-on {
+.allyworker-config__status.is-on {
   background: #d7f0e0;
   color: #00a32a;
 }
-.wpcodex-config__status.is-off {
+.allyworker-config__status.is-off {
   background: #f0f0f0;
   color: #646970;
 }
-.wpcodex-config__step-hint {
+.allyworker-config__step-hint {
   margin-right: auto;
   font-size: 0.75rem;
   font-weight: 500;
@@ -495,14 +493,14 @@ input:checked + .wpcodex-toggle__slider::after {
   font-style: italic;
   white-space: nowrap;
 }
-.wpcodex-config__card-desc {
+.allyworker-config__card-desc {
   color: #646970;
   font-size: 0.875rem;
   line-height: 1.6;
   margin-bottom: 12px;
   max-width: 640px;
 }
-.wpcodex-config__security-note {
+.allyworker-config__security-note {
   background: #fff8e6;
   border: 1px solid #f5e4a0;
   border-radius: 3px;
@@ -512,26 +510,26 @@ input:checked + .wpcodex-toggle__slider::after {
   line-height: 1.5;
   margin-bottom: 16px;
 }
-.wpcodex-config__security-note strong {
+.allyworker-config__security-note strong {
   color: #5a4000;
 }
-.wpcodex-config__security-note--info {
+.allyworker-config__security-note--info {
   background: #e8f0fb;
   border-color: #b3cbef;
   color: #1a4778;
 }
-.wpcodex-config__security-note--info strong {
+.allyworker-config__security-note--info strong {
   color: #133563;
 }
-.wpcodex-config__btn-disable {
+.allyworker-config__btn-disable {
   border-color: #d63638 !important;
   color: #d63638 !important;
 }
-.wpcodex-config__btn-disable:hover {
+.allyworker-config__btn-disable:hover {
   background: #d63638 !important;
   color: #fff !important;
 }
-.wpcodex-config__client-tabs {
+.allyworker-config__client-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
@@ -539,7 +537,7 @@ input:checked + .wpcodex-toggle__slider::after {
   border-bottom: 2px solid #dcdcde;
   padding-bottom: 0;
 }
-.wpcodex-config__tab {
+.allyworker-config__tab {
   padding: 7px 14px;
   border: none;
   border-bottom: 2px solid transparent;
@@ -551,28 +549,28 @@ input:checked + .wpcodex-toggle__slider::after {
   border-radius: 3px 3px 0 0;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
-.wpcodex-config__tab:hover {
+.allyworker-config__tab:hover {
   color: #2271b1;
 }
-.wpcodex-config__tab.is-active {
+.allyworker-config__tab.is-active {
   color: #2271b1;
   border-bottom-color: #2271b1;
   font-weight: 600;
 }
-.wpcodex-config__tab-panel {
+.allyworker-config__tab-panel {
   display: none;
 }
-.wpcodex-config__tab-panel.is-active {
+.allyworker-config__tab-panel.is-active {
   display: block;
 }
-.wpcodex-config__prompt-label {
+.allyworker-config__prompt-label {
   display: block;
   font-size: 0.8125rem;
   font-weight: 600;
   color: #646970;
   margin-bottom: 6px;
 }
-.wpcodex-config__prompt-textarea {
+.allyworker-config__prompt-textarea {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.8125rem;
   line-height: 1.6;
@@ -582,28 +580,27 @@ input:checked + .wpcodex-toggle__slider::after {
   margin-bottom: 10px;
   resize: vertical;
 }
-.wpcodex-config__manual {
+.allyworker-config__manual {
   margin-top: 20px;
   border-top: 1px solid #dcdcde;
   padding-top: 16px;
 }
-.wpcodex-config__manual summary {
+.allyworker-config__manual summary {
   cursor: pointer;
   font-size: 0.875rem;
   color: #646970;
   -webkit-user-select: none;
-     -moz-user-select: none;
           user-select: none;
 }
-.wpcodex-config__manual summary:hover {
+.allyworker-config__manual summary:hover {
   color: #2271b1;
 }
-.wpcodex-config__manual p {
+.allyworker-config__manual p {
   font-size: 0.8125rem;
   color: #646970;
   margin: 10px 0 12px;
 }
-.wpcodex-config__json {
+.allyworker-config__json {
   font-family: "Courier New", Courier, monospace;
   font-size: 0.75rem;
   line-height: 1.6;
@@ -612,19 +609,19 @@ input:checked + .wpcodex-toggle__slider::after {
   border-radius: 3px;
   margin-bottom: 8px;
 }
-.wpcodex-paste-block {
+.allyworker-paste-block {
   border: 1px solid #dcdcde;
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 16px;
 }
-.wpcodex-paste-content {
+.allyworker-paste-content {
   max-height: 160px;
   overflow: hidden;
   position: relative;
   transition: max-height 0.2s ease;
 }
-.wpcodex-paste-content::after {
+.allyworker-paste-content::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -633,13 +630,13 @@ input:checked + .wpcodex-toggle__slider::after {
   height: 48px;
   background: linear-gradient(transparent, #fff);
 }
-.wpcodex-paste-content.is-expanded {
+.allyworker-paste-content.is-expanded {
   max-height: none;
 }
-.wpcodex-paste-content.is-expanded::after {
+.allyworker-paste-content.is-expanded::after {
   display: none;
 }
-.wpcodex-paste-content pre {
+.allyworker-paste-content pre {
   margin: 0;
   padding: 14px 16px;
   font-family: "Courier New", Courier, monospace;
@@ -650,7 +647,7 @@ input:checked + .wpcodex-toggle__slider::after {
   background: #f6f7f7;
   border: none;
 }
-.wpcodex-paste-actions {
+.allyworker-paste-actions {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -659,13 +656,13 @@ input:checked + .wpcodex-toggle__slider::after {
   border-top: 1px solid #dcdcde;
   background: #fff;
 }
-.wpcodex-client-tabs {
+.allyworker-client-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 10px;
 }
-.wpcodex-client-tabs .wpcodex-client-tab {
+.allyworker-client-tabs .allyworker-client-tab {
   padding: 5px 12px;
   border: 1px solid #dcdcde;
   border-radius: 20px;
@@ -676,23 +673,23 @@ input:checked + .wpcodex-toggle__slider::after {
   transition: all 0.15s ease;
   white-space: nowrap;
 }
-.wpcodex-client-tabs .wpcodex-client-tab:hover {
+.allyworker-client-tabs .allyworker-client-tab:hover {
   border-color: #2271b1;
   color: #2271b1;
 }
-.wpcodex-client-tabs .wpcodex-client-tab.is-active {
+.allyworker-client-tabs .allyworker-client-tab.is-active {
   background: var(--wp-admin-theme-color);
   border-color: var(--wp-admin-theme-color);
   color: #fff;
   font-weight: 600;
 }
-.wpcodex-config-block {
+.allyworker-config-block {
   position: relative;
   background: #1e2327;
   border-radius: 6px;
   overflow: hidden;
 }
-.wpcodex-config-block pre {
+.allyworker-config-block pre {
   margin: 0;
   padding: 16px 16px 16px 60px;
   font-family: "Courier New", Courier, monospace;
@@ -704,7 +701,7 @@ input:checked + .wpcodex-toggle__slider::after {
   background: transparent;
   border: none;
 }
-.wpcodex-config-block .wpcodex-copy-code-btn {
+.allyworker-config-block .allyworker-copy-code-btn {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -713,31 +710,31 @@ input:checked + .wpcodex-toggle__slider::after {
   color: #e0e0e0;
   font-size: 0.75rem;
 }
-.wpcodex-config-block .wpcodex-copy-code-btn:hover {
+.allyworker-config-block .allyworker-copy-code-btn:hover {
   background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.4);
   color: #fff;
 }
-.wpcodex-config-footer {
+.allyworker-config-footer {
   font-size: 0.8125rem;
   color: #646970;
   border-top: 1px solid #dcdcde;
   margin-top: 2px;
 }
-.wpcodex-config-footer .wpcodex-config-hint {
+.allyworker-config-footer .allyworker-config-hint {
   padding: 10px 16px;
 }
-.wpcodex-config-footer .wpcodex-config-paths {
+.allyworker-config-footer .allyworker-config-paths {
   padding: 0 16px 10px;
 }
-.wpcodex-config-footer .wpcodex-config-paths ul {
+.allyworker-config-footer .allyworker-config-paths ul {
   margin: 4px 0 0;
   padding-right: 20px;
 }
-.wpcodex-config-footer .wpcodex-config-paths li {
+.allyworker-config-footer .allyworker-config-paths li {
   margin-bottom: 3px;
 }
-.wpcodex-pw-section-label {
+.allyworker-pw-section-label {
   font-size: 0.8125rem;
   font-weight: 600;
   color: #646970;
@@ -745,17 +742,17 @@ input:checked + .wpcodex-toggle__slider::after {
   letter-spacing: 0.05em;
   margin: 0 0 10px;
 }
-.wpcodex-pw-table-wrap {
+.allyworker-pw-table-wrap {
   border: 1px solid #dcdcde;
   border-radius: 6px;
   overflow: hidden;
 }
-.wpcodex-pw-table {
+.allyworker-pw-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
 }
-.wpcodex-pw-table thead th {
+.allyworker-pw-table thead th {
   text-align: right;
   padding: 9px 14px;
   font-size: 0.75rem;
@@ -767,41 +764,41 @@ input:checked + .wpcodex-toggle__slider::after {
   border-bottom: 1px solid #dcdcde;
   white-space: nowrap;
 }
-.wpcodex-pw-table thead th:last-child {
+.allyworker-pw-table thead th:last-child {
   text-align: left;
 }
-.wpcodex-pw-table tbody tr {
+.allyworker-pw-table tbody tr {
   border-bottom: 1px solid #dcdcde;
   transition: background 0.12s ease;
 }
-.wpcodex-pw-table tbody tr:last-child {
+.allyworker-pw-table tbody tr:last-child {
   border-bottom: none;
 }
-.wpcodex-pw-table tbody tr:hover {
+.allyworker-pw-table tbody tr:hover {
   background: #f6f7f7;
 }
-.wpcodex-pw-table td {
+.allyworker-pw-table td {
   padding: 10px 14px;
   vertical-align: middle;
   color: #1e2327;
 }
-.wpcodex-pw-table td.wpcodex-pw-table__name {
+.allyworker-pw-table td.allyworker-pw-table__name {
   font-weight: 600;
 }
-.wpcodex-pw-table td.wpcodex-pw-table__meta {
+.allyworker-pw-table td.allyworker-pw-table__meta {
   color: #646970;
   font-size: 0.8125rem;
   white-space: nowrap;
 }
-.wpcodex-pw-table td.wpcodex-pw-table__actions {
+.allyworker-pw-table td.allyworker-pw-table__actions {
   text-align: left;
   white-space: nowrap;
 }
-.wpcodex-pw-revoke-btn {
+.allyworker-pw-revoke-btn {
   color: #d63638 !important;
   border-color: rgba(214, 54, 56, 0.35) !important;
 }
-.wpcodex-pw-revoke-btn:hover {
+.allyworker-pw-revoke-btn:hover {
   background: #d63638 !important;
   border-color: #d63638 !important;
   color: #fff !important;

@@ -2,12 +2,12 @@
 /**
  * DB Runner — $wpdb query interface.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Runner;
+namespace AllyWorker\Runner;
 
 /**
  * Class DbRunner
@@ -47,7 +47,7 @@ class DbRunner {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$results = $wpdb->get_results( $prepared, ARRAY_A );
 			if ( '' !== (string) $wpdb->last_error ) {
-				throw new \RuntimeException( '[WPCodex DB] ' . esc_html( $wpdb->last_error ) );
+				throw new \RuntimeException( '[AllyWorker DB] ' . esc_html( $wpdb->last_error ) );
 			}
 			return wp_json_encode( $results, JSON_PRETTY_PRINT ) ?: '[]';
 		}
@@ -55,7 +55,7 @@ class DbRunner {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$affected = $wpdb->query( $prepared );
 		if ( false === $affected ) {
-			throw new \RuntimeException( '[WPCodex DB] ' . esc_html( $wpdb->last_error ) );
+			throw new \RuntimeException( '[AllyWorker DB] ' . esc_html( $wpdb->last_error ) );
 		}
 		return sprintf( 'Query OK. Rows affected: %d', (int) $affected );
 	}

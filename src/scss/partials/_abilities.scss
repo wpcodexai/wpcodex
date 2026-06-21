@@ -1,16 +1,16 @@
 /**
- * WPCodex — Abilities Hub page.
+ * AllyWorker — Abilities Hub page.
  *
- * Scoped to #wpcodex-abilities-settings.
+ * Scoped to #allyworker-abilities-settings.
  */
 
-#wpcodex-abilities-settings {
+#allyworker-abilities-settings {
 
-	.wpcodex-ability-group {
+	.allyworker-ability-group {
 		margin-bottom: 32px;
 	}
 
-	.wpcodex-group-title {
+	.allyworker-group-title {
 		font-size: 1rem;
 		font-weight: 600;
 		color: $color-text-muted;
@@ -21,13 +21,13 @@
 		border-bottom: 1px solid $color-border-lt;
 	}
 
-	.wpcodex-ability-cards {
+	.allyworker-ability-cards {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: 14px;
 	}
 
-	.wpcodex-ability-card {
+	.allyworker-ability-card {
 		background: $color-bg-white;
 		border: 1px solid $color-border-lt;
 		border-radius: $radius-md;

@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/option-set
+ * Ability: allyworker/option-set
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Site;
+namespace AllyWorker\Abilities\Site;
 
-use WPCodex\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class OptionSet
@@ -19,21 +19,21 @@ use WPCodex\Abilities\AbstractAbility;
  */
 class OptionSet extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpcodex-site';
+		return 'allyworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/option-set';
+		return 'allyworker/option-set';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Set Option', 'wpcodex' );
+		return __( 'Set Option', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Set a WordPress option value. The value is stored as a string.', 'wpcodex' );
+		return __( 'Set a WordPress option value. The value is stored as a string.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -75,10 +75,10 @@ class OptionSet extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): string|\WP_Error {
 		if ( empty( $input['option_name'] ) || ! is_string( $input['option_name'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'option_name must be a non-empty string.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'option_name must be a non-empty string.', 'allyworker' ) );
 		}
 		if ( ! isset( $input['option_value'] ) || ! is_string( $input['option_value'] ) ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'option_value must be a string.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'option_value must be a string.', 'allyworker' ) );
 		}
 		$name     = sanitize_key( $input['option_name'] );
 		$value    = $input['option_value'];

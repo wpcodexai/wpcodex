@@ -2,19 +2,19 @@
 /**
  * Skills admin page — create, edit, delete, and toggle skills.
  *
- * Matches WPCodex's Skills page: card layout, enable/disable toggle,
+ * Matches AllyWorker's Skills page: card layout, enable/disable toggle,
  * inline editor with name/description/body fields, and file upload.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Admin;
+namespace AllyWorker\Admin;
 
-use WPCodex\Skills\Notices as SkillNotices;
-use WPCodex\Skills\Repository;
-use WPCodex\Skills\Sources;
+use AllyWorker\Skills\Notices as SkillNotices;
+use AllyWorker\Skills\Repository;
+use AllyWorker\Skills\Sources;
 
 /**
  * Class SkillsPage
@@ -23,16 +23,16 @@ final class SkillsPage {
 
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'allyworker' ) );
 		}
 
 		$action  = isset( $_GET['action'] ) ? sanitize_key( $_GET['action'] ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$notices = self::handle_actions();
 
 		// Pick up notices that were passed via redirect (e.g. after new skill creation).
-		$redirect_notice = isset( $_GET['wpcodex_notice'] ) ? sanitize_key( $_GET['wpcodex_notice'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$redirect_notice = isset( $_GET['allyworker_notice'] ) ? sanitize_key( $_GET['allyworker_notice'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( 'created' === $redirect_notice ) {
-			$notices[] = [ 'type' => 'success', 'message' => __( 'Skill created.', 'wpcodex' ) ];
+			$notices[] = [ 'type' => 'success', 'message' => __( 'Skill created.', 'allyworker' ) ];
 		}
 
 		// Show the MCP-reload reminder only when no action notice is already present
@@ -66,11 +66,11 @@ final class SkillsPage {
 	private static function handle_actions(): array {
 		$notices = [];
 
-		if ( ! isset( $_POST['wpcodex_skills_nonce'] ) ) {
+		if ( ! isset( $_POST['allyworker_skills_nonce'] ) ) {
 			return $notices;
 		}
 
-		check_admin_referer( 'wpcodex_skills_action', 'wpcodex_skills_nonce' );
+		check_admin_referer( 'allyworker_skills_action', 'allyworker_skills_nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return $notices;
@@ -118,7 +118,7 @@ final class SkillsPage {
 		$is_edit         = '' !== $original_name;
 
 		if ( ! $name || ! $description || ! $body ) {
-			return [ [ 'type' => 'error', 'message' => __( 'Name, description, and body are all required.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'error', 'message' => __( 'Name, description, and body are all required.', 'allyworker' ) ] ];
 		}
 
 		$repo = Repository::instance();
@@ -130,7 +130,7 @@ final class SkillsPage {
 				return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 			}
 
-			return [ [ 'type' => 'success', 'message' => __( 'Skill updated.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'success', 'message' => __( 'Skill updated.', 'allyworker' ) ] ];
 		}
 
 		// New skill — create then redirect to its edit page so the notice shows there.
@@ -143,10 +143,10 @@ final class SkillsPage {
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'            => 'wpcodex-skills',
-					'action'          => 'edit',
-					'name'            => $name,
-					'wpcodex_notice'  => 'created',
+					'page'              => 'allyworker-skills',
+					'action'            => 'edit',
+					'name'              => $name,
+					'allyworker_notice' => 'created',
 				],
 				admin_url( 'admin.php' )
 			)
@@ -166,7 +166,7 @@ final class SkillsPage {
 			return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 		}
 
-		return [ [ 'type' => 'success', 'message' => __( 'Skill deleted.', 'wpcodex' ) ] ];
+		return [ [ 'type' => 'success', 'message' => __( 'Skill deleted.', 'allyworker' ) ] ];
 	}
 
 	/**
@@ -189,7 +189,7 @@ final class SkillsPage {
 			return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 		}
 
-		return [ [ 'type' => 'success', 'message' => __( 'Skill updated.', 'wpcodex' ) ] ];
+		return [ [ 'type' => 'success', 'message' => __( 'Skill updated.', 'allyworker' ) ] ];
 	}
 
 	/**
@@ -198,7 +198,7 @@ final class SkillsPage {
 	private static function handle_upload(): array {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in handle_actions(); $_FILES keys are standard PHP upload fields
 		if ( ! isset( $_FILES['skill_file'] ) || UPLOAD_ERR_OK !== $_FILES['skill_file']['error'] ) {
-			return [ [ 'type' => 'error', 'message' => __( 'File upload failed.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'error', 'message' => __( 'File upload failed.', 'allyworker' ) ] ];
 		}
 
 		$tmp  = $_FILES['skill_file']['tmp_name'];
@@ -206,21 +206,21 @@ final class SkillsPage {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotValidated,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( ! str_ends_with( $name, '.md' ) ) {
-			return [ [ 'type' => 'error', 'message' => __( 'Only .md files can be uploaded as skills.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'error', 'message' => __( 'Only .md files can be uploaded as skills.', 'allyworker' ) ] ];
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$content = file_get_contents( $tmp );
 
 		if ( false === $content ) {
-			return [ [ 'type' => 'error', 'message' => __( 'Could not read the uploaded file.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'error', 'message' => __( 'Could not read the uploaded file.', 'allyworker' ) ] ];
 		}
 
 		// Parse frontmatter.
 		$parsed = self::parse_frontmatter( $content );
 
 		if ( empty( $parsed['name'] ) || empty( $parsed['description'] ) ) {
-			return [ [ 'type' => 'error', 'message' => __( 'The uploaded skill file must contain a YAML frontmatter block with at least "name" and "description" fields.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'error', 'message' => __( 'The uploaded skill file must contain a YAML frontmatter block with at least "name" and "description" fields.', 'allyworker' ) ] ];
 		}
 
 		$result = Repository::instance()->create( [
@@ -235,7 +235,7 @@ final class SkillsPage {
 			return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 		}
 
-		return [ [ 'type' => 'success', 'message' => __( 'Skill imported from file.', 'wpcodex' ) ] ];
+		return [ [ 'type' => 'success', 'message' => __( 'Skill imported from file.', 'allyworker' ) ] ];
 	}
 
 	/**
@@ -246,7 +246,7 @@ final class SkillsPage {
 		$revision_id = isset( $_POST['revision_id'] ) ? (int) $_POST['revision_id'] : 0;
 
 		if ( $revision_id <= 0 ) {
-			return [ [ 'type' => 'error', 'message' => __( 'Invalid revision ID.', 'wpcodex' ) ] ];
+			return [ [ 'type' => 'error', 'message' => __( 'Invalid revision ID.', 'allyworker' ) ] ];
 		}
 
 		$result = Repository::instance()->restore_revision( $revision_id );
@@ -255,7 +255,7 @@ final class SkillsPage {
 			return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 		}
 
-		return [ [ 'type' => 'success', 'message' => __( 'Revision restored successfully.', 'wpcodex' ) ] ];
+		return [ [ 'type' => 'success', 'message' => __( 'Revision restored successfully.', 'allyworker' ) ] ];
 	}
 
 
@@ -283,43 +283,43 @@ final class SkillsPage {
 			$external_groups[ $src ]['skills'][] = $skill;
 		}
 		?>
-		<div class="wrap wpcodex-wrap" id="wpcodex-skills">
-			<div class="wpcodex-page-header">
-				<h1 class="wpcodex-page-title"><?php esc_html_e( 'Skills', 'wpcodex' ); ?></h1>
-				<div class="wpcodex-page-actions">
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=wpcodex-skills&action=new' ) ); ?>"
+		<div class="wrap allyworker-wrap" id="allyworker-skills">
+			<div class="allyworker-page-header">
+				<h1 class="allyworker-page-title"><?php esc_html_e( 'Skills', 'allyworker' ); ?></h1>
+				<div class="allyworker-page-actions">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=allyworker-skills&action=new' ) ); ?>"
 					   class="button button-primary">
-						<?php esc_html_e( '+ New Skill', 'wpcodex' ); ?>
+						<?php esc_html_e( '+ New Skill', 'allyworker' ); ?>
 					</a>
 				</div>
 			</div>
 			<div class="wp-header-end"></div>
 			<?php self::render_notices( $notices ); ?>
-			<p class="wpcodex-page-description">
-				<?php esc_html_e( 'Skills are Markdown playbooks stored in the WordPress database. The agent reads their descriptions at session start and loads the body when the description matches the task.', 'wpcodex' ); ?>
+			<p class="allyworker-page-description">
+				<?php esc_html_e( 'Skills are Markdown playbooks stored in the WordPress database. The agent reads their descriptions at session start and loads the body when the description matches the task.', 'allyworker' ); ?>
 			</p>
 
 			<!-- Upload form -->
-			<div class="wpcodex-upload-area">
+			<div class="allyworker-upload-area">
 				<form method="post" enctype="multipart/form-data" action="">
-					<?php wp_nonce_field( 'wpcodex_skills_action', 'wpcodex_skills_nonce' ); ?>
+					<?php wp_nonce_field( 'allyworker_skills_action', 'allyworker_skills_nonce' ); ?>
 					<input type="hidden" name="form_action" value="upload">
-					<label for="wpcodex-skill-upload" class="wpcodex-upload-label">
-						<?php esc_html_e( 'Import skill from .md file:', 'wpcodex' ); ?>
+					<label for="allyworker-skill-upload" class="allyworker-upload-label">
+						<?php esc_html_e( 'Import skill from .md file:', 'allyworker' ); ?>
 					</label>
-					<input type="file" id="wpcodex-skill-upload" name="skill_file" accept=".md">
-					<button type="submit" class="button"><?php esc_html_e( 'Upload', 'wpcodex' ); ?></button>
+					<input type="file" id="allyworker-skill-upload" name="skill_file" accept=".md">
+					<button type="submit" class="button"><?php esc_html_e( 'Upload', 'allyworker' ); ?></button>
 				</form>
 			</div>
 
 			<!-- Your skills grid -->
 			<?php if ( empty( $user_skills ) && empty( $external_groups ) ) : ?>
-				<div class="wpcodex-empty-state">
-					<p><?php esc_html_e( 'No skills yet. Create your first skill or upload a .md file.', 'wpcodex' ); ?></p>
+				<div class="allyworker-empty-state">
+					<p><?php esc_html_e( 'No skills yet. Create your first skill or upload a .md file.', 'allyworker' ); ?></p>
 				</div>
 			<?php else : ?>
 				<?php if ( ! empty( $user_skills ) ) : ?>
-					<div class="wpcodex-cards">
+					<div class="allyworker-cards">
 						<?php foreach ( $user_skills as $skill ) : ?>
 							<?php self::render_skill_card( $skill ); ?>
 						<?php endforeach; ?>
@@ -331,15 +331,15 @@ final class SkillsPage {
 						<?php
 						printf(
 							/* translators: %s: source label, e.g. "Built-in" */
-							esc_html__( 'Skills from %s', 'wpcodex' ),
+							esc_html__( 'Skills from %s', 'allyworker' ),
 							esc_html( $group['label'] )
 						);
 						?>
 						<span style="font-size:0.75em;font-weight:400;color:#666;margin-left:0.5em;">
-							<?php esc_html_e( '(read-only)', 'wpcodex' ); ?>
+							<?php esc_html_e( '(read-only)', 'allyworker' ); ?>
 						</span>
 					</h2>
-					<div class="wpcodex-cards">
+					<div class="allyworker-cards">
 						<?php foreach ( $group['skills'] as $skill ) : ?>
 							<?php self::render_skill_card( $skill, true ); ?>
 						<?php endforeach; ?>
@@ -357,13 +357,13 @@ final class SkillsPage {
 	private static function render_edit( string $action, array $notices ): void {
 		$name  = isset( $_GET['name'] ) ? sanitize_title( wp_unslash( $_GET['name'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$skill = 'edit' === $action && $name ? Repository::instance()->find( $name ) : null;
-		$title = 'edit' === $action ? __( 'Edit Skill', 'wpcodex' ) : __( 'New Skill', 'wpcodex' );
+		$title = 'edit' === $action ? __( 'Edit Skill', 'allyworker' ) : __( 'New Skill', 'allyworker' );
 		?>
-		<div class="wrap wpcodex-wrap" id="wpcodex-skill-editor">
-			<div class="wpcodex-page-header">
-				<h1 class="wpcodex-page-title"><?php echo esc_html( $title ); ?></h1>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=wpcodex-skills' ) ); ?>"
-				   class="button">&larr; <?php esc_html_e( 'Back to Skills', 'wpcodex' ); ?></a>
+		<div class="wrap allyworker-wrap" id="allyworker-skill-editor">
+			<div class="allyworker-page-header">
+				<h1 class="allyworker-page-title"><?php echo esc_html( $title ); ?></h1>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=allyworker-skills' ) ); ?>"
+				   class="button">&larr; <?php esc_html_e( 'Back to Skills', 'allyworker' ); ?></a>
 			</div>
 			<div class="wp-header-end"></div>
 			<?php self::render_notices( $notices ); ?>
@@ -372,7 +372,7 @@ final class SkillsPage {
 			// Post back to the current page so notices render here, not on the list.
 			$self_url = add_query_arg(
 				array_filter( [
-					'page'   => 'wpcodex-skills',
+					'page'   => 'allyworker-skills',
 					'action' => $action,
 					'name'   => ( 'edit' === $action && isset( $skill['name'] ) ) ? (string) $skill['name'] : null,
 				] ),
@@ -380,13 +380,13 @@ final class SkillsPage {
 			);
 			?>
 			<form method="post" action="<?php echo esc_url( $self_url ); ?>">
-				<?php wp_nonce_field( 'wpcodex_skills_action', 'wpcodex_skills_nonce' ); ?>
+				<?php wp_nonce_field( 'allyworker_skills_action', 'allyworker_skills_nonce' ); ?>
 				<input type="hidden" name="form_action"   value="save">
 				<input type="hidden" name="original_name" value="<?php echo esc_attr( $skill['name'] ?? '' ); ?>">
 
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><label for="skill_name"><?php esc_html_e( 'Name (slug)', 'wpcodex' ); ?></label></th>
+						<th scope="row"><label for="skill_name"><?php esc_html_e( 'Name (slug)', 'allyworker' ); ?></label></th>
 						<td>
 							<input
 								type="text"
@@ -397,11 +397,11 @@ final class SkillsPage {
 								<?php echo $skill ? 'readonly' : ''; ?>
 								required
 							>
-							<p class="description"><?php esc_html_e( 'Lowercase, hyphen-separated. Cannot be changed after creation.', 'wpcodex' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Lowercase, hyphen-separated. Cannot be changed after creation.', 'allyworker' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="skill_description"><?php esc_html_e( 'Description (trigger)', 'wpcodex' ); ?></label></th>
+						<th scope="row"><label for="skill_description"><?php esc_html_e( 'Description (trigger)', 'allyworker' ); ?></label></th>
 						<td>
 							<input
 								type="text"
@@ -411,47 +411,47 @@ final class SkillsPage {
 								class="large-text"
 								required
 							>
-							<p class="description"><?php esc_html_e( 'The trigger sentence the agent reads at session start. Write it so the agent knows when to use this skill.', 'wpcodex' ); ?></p>
+							<p class="description"><?php esc_html_e( 'The trigger sentence the agent reads at session start. Write it so the agent knows when to use this skill.', 'allyworker' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="skill_body"><?php esc_html_e( 'Body (Markdown)', 'wpcodex' ); ?></label></th>
+						<th scope="row"><label for="skill_body"><?php esc_html_e( 'Body (Markdown)', 'allyworker' ); ?></label></th>
 						<td>
 							<textarea
 								id="skill_body"
 								name="skill_body"
 								rows="20"
-								class="large-text code wpcodex-skill-editor"
+								class="large-text code allyworker-skill-editor"
 								required
 							><?php echo esc_textarea( $skill['body'] ?? '' ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'Plain Markdown. This is loaded into the agent\'s context when the description matches.', 'wpcodex' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Plain Markdown. This is loaded into the agent\'s context when the description matches.', 'allyworker' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Agentic mode', 'wpcodex' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Agentic mode', 'allyworker' ); ?></th>
 						<td>
 							<label>
 								<input type="hidden"   name="enable_agentic" value="0">
 								<input type="checkbox" name="enable_agentic" value="1"
 								       <?php checked( $skill['enable_agentic'] ?? true ); ?>>
-								<?php esc_html_e( 'Fire automatically when description matches (enable_agentic)', 'wpcodex' ); ?>
+								<?php esc_html_e( 'Fire automatically when description matches (enable_agentic)', 'allyworker' ); ?>
 							</label>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Prompt menu', 'wpcodex' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Prompt menu', 'allyworker' ); ?></th>
 						<td>
 							<label>
 								<input type="hidden"   name="enable_prompt" value="0">
 								<input type="checkbox" name="enable_prompt" value="1"
 								       <?php checked( $skill['enable_prompt'] ?? true ); ?>>
-								<?php esc_html_e( 'Show in AI client prompt menu (enable_prompt)', 'wpcodex' ); ?>
+								<?php esc_html_e( 'Show in AI client prompt menu (enable_prompt)', 'allyworker' ); ?>
 							</label>
 						</td>
 					</tr>
 				</table>
 
-				<?php submit_button( $skill ? __( 'Update Skill', 'wpcodex' ) : __( 'Create Skill', 'wpcodex' ) ); ?>
+				<?php submit_button( $skill ? __( 'Update Skill', 'allyworker' ) : __( 'Create Skill', 'allyworker' ) ); ?>
 			</form>
 
 			<?php if ( 'edit' === $action && null !== $skill ) : ?>
@@ -459,16 +459,16 @@ final class SkillsPage {
 				$revisions = Repository::instance()->get_revisions( (string) $skill['name'] );
 				if ( ! empty( $revisions ) ) :
 				?>
-				<div class="wpcodex-revisions" style="margin-top: 2em;">
-					<h2><?php esc_html_e( 'Revision History', 'wpcodex' ); ?></h2>
-					<p class="description"><?php esc_html_e( 'Up to 10 previous versions. Restoring a revision snapshots the current state first, so every restore is reversible.', 'wpcodex' ); ?></p>
+				<div class="allyworker-revisions" style="margin-top: 2em;">
+					<h2><?php esc_html_e( 'Revision History', 'allyworker' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'Up to 10 previous versions. Restoring a revision snapshots the current state first, so every restore is reversible.', 'allyworker' ); ?></p>
 					<table class="widefat striped" style="margin-top: 0.75em;">
 						<thead>
 							<tr>
-								<th><?php esc_html_e( '#', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Saved', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Description', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Body preview', 'wpcodex' ); ?></th>
+								<th><?php esc_html_e( '#', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Saved', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Description', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Body preview', 'allyworker' ); ?></th>
 								<th></th>
 							</tr>
 						</thead>
@@ -481,16 +481,16 @@ final class SkillsPage {
 									<td><code style="font-size:0.85em;"><?php echo esc_html( mb_strimwidth( (string) $rev['body'], 0, 90, '…' ) ); ?></code></td>
 									<td>
 										<form method="post"
-										      action="<?php echo esc_url( admin_url( 'admin.php?page=wpcodex-skills&action=edit&name=' . urlencode( (string) $skill['name'] ) ) ); ?>"
+										      action="<?php echo esc_url( admin_url( 'admin.php?page=allyworker-skills&action=edit&name=' . urlencode( (string) $skill['name'] ) ) ); ?>"
 										      style="display:inline;">
-											<?php wp_nonce_field( 'wpcodex_skills_action', 'wpcodex_skills_nonce' ); ?>
+											<?php wp_nonce_field( 'allyworker_skills_action', 'allyworker_skills_nonce' ); ?>
 											<input type="hidden" name="form_action"  value="restore">
 											<input type="hidden" name="revision_id"  value="<?php echo esc_attr( (string) $rev['id'] ); ?>">
 											<input type="hidden" name="skill_name"   value="<?php echo esc_attr( (string) $skill['name'] ); ?>">
 											<button type="submit"
 											        class="button button-small"
-											        onclick="return confirm('<?php echo esc_js( __( 'Restore this revision? The current state will be saved first.', 'wpcodex' ) ); ?>')">
-												<?php esc_html_e( 'Restore', 'wpcodex' ); ?>
+											        onclick="return confirm('<?php echo esc_js( __( 'Restore this revision? The current state will be saved first.', 'allyworker' ) ); ?>')">
+												<?php esc_html_e( 'Restore', 'allyworker' ); ?>
 											</button>
 										</form>
 									</td>
@@ -514,33 +514,33 @@ final class SkillsPage {
 		$description    = (string) ( $skill['description'] ?? '' );
 		$enable_agentic = (bool) ( $skill['enable_agentic'] ?? true );
 		$enable_prompt  = (bool) ( $skill['enable_prompt'] ?? false );
-		$edit_url       = admin_url( 'admin.php?page=wpcodex-skills&action=edit&name=' . urlencode( $name ) );
+		$edit_url       = admin_url( 'admin.php?page=allyworker-skills&action=edit&name=' . urlencode( $name ) );
 		?>
-		<div class="wpcodex-card<?php echo $readonly ? ' wpcodex-card--readonly' : ''; ?>">
-			<div class="wpcodex-card__header">
-				<span class="wpcodex-card__name"><?php echo esc_html( $name ); ?></span>
-				<div class="wpcodex-card__badges">
+		<div class="allyworker-card<?php echo $readonly ? ' allyworker-card--readonly' : ''; ?>">
+			<div class="allyworker-card__header">
+				<span class="allyworker-card__name"><?php echo esc_html( $name ); ?></span>
+				<div class="allyworker-card__badges">
 					<?php if ( $enable_agentic ) : ?>
-						<span class="wpcodex-badge wpcodex-badge--agentic"><?php esc_html_e( 'Agentic', 'wpcodex' ); ?></span>
+						<span class="allyworker-badge allyworker-badge--agentic"><?php esc_html_e( 'Agentic', 'allyworker' ); ?></span>
 					<?php endif; ?>
 					<?php if ( $enable_prompt ) : ?>
-						<span class="wpcodex-badge wpcodex-badge--prompt"><?php esc_html_e( 'Prompt', 'wpcodex' ); ?></span>
+						<span class="allyworker-badge allyworker-badge--prompt"><?php esc_html_e( 'Prompt', 'allyworker' ); ?></span>
 					<?php endif; ?>
 				</div>
 			</div>
-			<p class="wpcodex-card__description"><?php echo esc_html( $description ); ?></p>
+			<p class="allyworker-card__description"><?php echo esc_html( $description ); ?></p>
 			<?php if ( ! $readonly ) : ?>
-			<div class="wpcodex-card__actions">
+			<div class="allyworker-card__actions">
 				<a href="<?php echo esc_url( $edit_url ); ?>" class="button button-small">
-					<?php esc_html_e( 'Edit', 'wpcodex' ); ?>
+					<?php esc_html_e( 'Edit', 'allyworker' ); ?>
 				</a>
 				<form method="post" action="" style="display:inline;">
-					<?php wp_nonce_field( 'wpcodex_skills_action', 'wpcodex_skills_nonce' ); ?>
+					<?php wp_nonce_field( 'allyworker_skills_action', 'allyworker_skills_nonce' ); ?>
 					<input type="hidden" name="form_action" value="delete">
 					<input type="hidden" name="skill_name"  value="<?php echo esc_attr( $name ); ?>">
 					<button type="submit" class="button button-small button-link-delete"
-					        onclick="return confirm('<?php echo esc_js( __( 'Delete this skill? This cannot be undone.', 'wpcodex' ) ); ?>')">
-						<?php esc_html_e( 'Delete', 'wpcodex' ); ?>
+					        onclick="return confirm('<?php echo esc_js( __( 'Delete this skill? This cannot be undone.', 'allyworker' ) ); ?>')">
+						<?php esc_html_e( 'Delete', 'allyworker' ); ?>
 					</button>
 				</form>
 			</div>

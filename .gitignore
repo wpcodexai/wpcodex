@@ -1,14 +1,14 @@
-# WPCodex — .gitignore
+# AllyWorker — .gitignore
 
 # Live skill files — gitignored so every install keeps its own skills.
 # The read-only templates in skills/ ARE committed. Only the live directory
-# wpcodex-skills/ is excluded.
+# allyworker-skills/ is excluded.
 
-wpcodex-skills/
+allyworker-skills/
 
 # PHP sandbox — runtime directory created on plugin activation.
 # Contains only temp execution files; never commit.
-wpcodex-sandbox/
+wp-allyworker-sandbox/
 
 # Composer
 /vendor/

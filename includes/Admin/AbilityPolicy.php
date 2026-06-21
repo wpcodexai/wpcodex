@@ -2,18 +2,18 @@
 /**
  * Ability policy enforcement — unregisters abilities disabled via the Abilities Hub.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Admin;
+namespace AllyWorker\Admin;
 
 /**
  * Class AbilityPolicy
  *
  * Reads the per-ability option written by AbilitiesSettingsPage and
- * unregisters any disabled wpcodex/ ability from the WordPress Abilities
+ * unregisters any disabled allyworker/ ability from the WordPress Abilities
  * registry. Runs at a high priority inside wp_abilities_api_init so the
  * ability list is already fully populated before we prune it.
  *
@@ -30,7 +30,7 @@ class AbilityPolicy {
 	 * @since 1.0.0
 	 * @var   string
 	 */
-	private const OPTION_PREFIX = 'wpcodex_ability_';
+	private const OPTION_PREFIX = 'allyworker_ability_';
 
 	/**
 	 * Wires the late wp_abilities_api_init hook.
@@ -49,7 +49,7 @@ class AbilityPolicy {
 	 * acts on. Pure read — no side effects.
 	 *
 	 * @since  1.0.0
-	 * @param  string $ability_name Full ability name, e.g. 'wpcodex/file-read'.
+	 * @param  string $ability_name Full ability name, e.g. 'allyworker/file-read'.
 	 * @return bool True if the ability is enabled; false if explicitly disabled.
 	 */
 	public static function is_enabled( string $ability_name ): bool {
@@ -58,7 +58,7 @@ class AbilityPolicy {
 	}
 
 	/**
-	 * Unregisters all wpcodex/ abilities whose stored option is 'no'.
+	 * Unregisters all allyworker/ abilities whose stored option is 'no'.
 	 *
 	 * @since 1.0.0
 	 */
@@ -68,7 +68,7 @@ class AbilityPolicy {
 		}
 
 		foreach ( wp_get_abilities() as $id => $ability ) {
-			if ( ! is_string( $id ) || ! str_starts_with( $id, 'wpcodex/' ) ) {
+			if ( ! is_string( $id ) || ! str_starts_with( $id, 'allyworker/' ) ) {
 				continue;
 			}
 

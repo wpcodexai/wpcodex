@@ -2,26 +2,26 @@
 /**
  * File Manager — filesystem operations with path traversal protection.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Runner;
+namespace AllyWorker\Runner;
 
 /**
  * Class FileManager
  *
- * Provides structured filesystem operations for the WPCodex file abilities.
+ * Provides structured filesystem operations for the AllyWorker file abilities.
  * All methods return typed arrays on success and throw \RuntimeException or
  * \InvalidArgumentException on failure so callers can convert to \WP_Error.
  */
 // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are not HTML output; they go into error handling, not the browser.
 class FileManager {
 
-	private const BACKUP_TRANSIENT_PREFIX = 'wpcodex_bak_';
+	private const BACKUP_TRANSIENT_PREFIX = 'allyworker_bak_';
 
-	/** Extensions / basenames that must be written inside WPCODEX_SANDBOX_DIR. */
+	/** Extensions / basenames that must be written inside ALLY_WORKER_SANDBOX_DIR. */
 	private const SANDBOX_REQUIRED_EXT   = [ 'php' ];
 	private const SANDBOX_REQUIRED_NAMES = [ '.htaccess', '.php.ini', '.user.ini', 'php.ini', 'web.config' ];
 
@@ -61,7 +61,7 @@ class FileManager {
 			throw new \RuntimeException(
 				sprintf(
 					/* translators: %s: File path. */
-					__( 'File not found: %s', 'wpcodex' ),
+					__( 'File not found: %s', 'allyworker' ),
 					esc_html( $path )
 				)
 			);
@@ -71,7 +71,7 @@ class FileManager {
 			throw new \RuntimeException(
 				sprintf(
 					/* translators: %s: File path. */
-					__( 'File not readable: %s', 'wpcodex' ),
+					__( 'File not readable: %s', 'allyworker' ),
 					esc_html( $path )
 				)
 			);
@@ -84,7 +84,7 @@ class FileManager {
 		if ( false === $fh ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'Failed to open: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Failed to open: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
@@ -101,7 +101,7 @@ class FileManager {
 		if ( false === $raw ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'Failed to read: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Failed to read: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
@@ -164,7 +164,7 @@ class FileManager {
 		if ( is_link( $path ) ) {
 			throw new \InvalidArgumentException(
 				/* translators: %s: file path */
-				sprintf( __( 'Refusing to write through symlink: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Refusing to write through symlink: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
@@ -175,7 +175,7 @@ class FileManager {
 		if ( 'base64' === $encoding ) {
 			$decoded = base64_decode( $content, true );
 			if ( false === $decoded ) {
-				throw new \RuntimeException( __( 'Content is not valid base64.', 'wpcodex' ) );
+				throw new \RuntimeException( __( 'Content is not valid base64.', 'allyworker' ) );
 			}
 			$content = $decoded;
 		}
@@ -188,7 +188,7 @@ class FileManager {
 			if ( ! $create_directories ) {
 				throw new \RuntimeException(
 					/* translators: %s: directory path */
-					sprintf( __( 'Parent directory does not exist: %s', 'wpcodex' ), esc_html( $parent_dir ) )
+					sprintf( __( 'Parent directory does not exist: %s', 'allyworker' ), esc_html( $parent_dir ) )
 				);
 			}
 			$directories_created = $this->ensure_and_track_dirs( $parent_dir );
@@ -197,7 +197,7 @@ class FileManager {
 		if ( ! wp_is_writable( $parent_dir ) ) {
 			throw new \RuntimeException(
 				/* translators: %s: directory path */
-				sprintf( __( 'Directory not writable: %s', 'wpcodex' ), esc_html( $parent_dir ) )
+				sprintf( __( 'Directory not writable: %s', 'allyworker' ), esc_html( $parent_dir ) )
 			);
 		}
 
@@ -207,7 +207,7 @@ class FileManager {
 			if ( false === $result ) {
 				throw new \RuntimeException(
 					/* translators: %s: file path */
-					sprintf( __( 'Failed to append to: %s', 'wpcodex' ), esc_html( $path ) )
+					sprintf( __( 'Failed to append to: %s', 'allyworker' ), esc_html( $path ) )
 				);
 			}
 		} else {
@@ -244,7 +244,7 @@ class FileManager {
 		if ( ! file_exists( $path ) ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'File not found: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'File not found: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
@@ -253,21 +253,21 @@ class FileManager {
 		if ( false === $current ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'Failed to read: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Failed to read: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
 		$count = substr_count( $current, $old_string );
 
 		if ( 0 === $count ) {
-			throw new \RuntimeException( __( 'old_string not found in file.', 'wpcodex' ) );
+			throw new \RuntimeException( __( 'old_string not found in file.', 'allyworker' ) );
 		}
 
 		if ( ! $replace_all && $count > 1 ) {
 			throw new \RuntimeException(
 				sprintf(
 					/* translators: %d occurrence count */
-					__( 'old_string appears %d times — must appear exactly once for a safe edit, or set replace_all to true.', 'wpcodex' ),
+					__( 'old_string appears %d times — must appear exactly once for a safe edit, or set replace_all to true.', 'allyworker' ),
 					$count
 				)
 			);
@@ -309,7 +309,7 @@ class FileManager {
 		if ( ! is_dir( $path ) ) {
 			throw new \RuntimeException(
 				/* translators: %s: directory path */
-				sprintf( __( 'Not a directory: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Not a directory: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
@@ -362,7 +362,7 @@ class FileManager {
 				throw new \RuntimeException(
 					sprintf(
 						/* translators: %s: directory path */
-						__( 'Path is a directory — set recursive to true to delete it: %s', 'wpcodex' ),
+						__( 'Path is a directory — set recursive to true to delete it: %s', 'allyworker' ),
 						esc_html( $path )
 					)
 				);
@@ -375,7 +375,7 @@ class FileManager {
 		if ( ! unlink( $path ) ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'Failed to delete: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Failed to delete: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 
@@ -409,13 +409,13 @@ class FileManager {
 
 		if ( preg_match( '#^[A-Za-z]:/#', $normalized_path ) ) {
 			throw new \InvalidArgumentException(
-				__( 'Path traversal outside WordPress root is not allowed.', 'wpcodex' )
+				__( 'Path traversal outside WordPress root is not allowed.', 'allyworker' )
 			);
 		}
 
 		if ( str_starts_with( $normalized_path, '/' ) || str_starts_with( $normalized_path, '\\' ) ) {
 			throw new \InvalidArgumentException(
-				__( 'Path traversal outside WordPress root is not allowed.', 'wpcodex' )
+				__( 'Path traversal outside WordPress root is not allowed.', 'allyworker' )
 			);
 		}
 
@@ -430,7 +430,7 @@ class FileManager {
 	}
 
 	/**
-	 * Assert that a PHP / execution-control file lives inside WPCODEX_SANDBOX_DIR.
+	 * Assert that a PHP / execution-control file lives inside ALLY_WORKER_SANDBOX_DIR.
 	 *
 	 * @throws \InvalidArgumentException When the path is outside the sandbox.
 	 */
@@ -445,13 +445,13 @@ class FileManager {
 			return;
 		}
 
-		if ( ! defined( 'WPCODEX_SANDBOX_DIR' ) ) {
+		if ( ! defined( 'ALLY_WORKER_SANDBOX_DIR' ) ) {
 			throw new \InvalidArgumentException(
-				__( 'PHP and execution-control files require the sandbox but WPCODEX_SANDBOX_DIR is not defined.', 'wpcodex' )
+				__( 'PHP and execution-control files require the sandbox but ALLY_WORKER_SANDBOX_DIR is not defined.', 'allyworker' )
 			);
 		}
 
-		$sandbox          = WPCODEX_SANDBOX_DIR;
+		$sandbox          = ALLY_WORKER_SANDBOX_DIR;
 		$normalized_box   = rtrim( str_replace( '\\', '/', $sandbox ), '/' );
 		$normalized_dir   = rtrim( str_replace( '\\', '/', dirname( $path ) ), '/' );
 
@@ -461,7 +461,7 @@ class FileManager {
 			throw new \InvalidArgumentException(
 				sprintf(
 					/* translators: %s: sandbox directory path */
-					__( 'PHP files can only be written to the sandbox directory: %s', 'wpcodex' ),
+					__( 'PHP files can only be written to the sandbox directory: %s', 'allyworker' ),
 					esc_html( $sandbox )
 				)
 			);
@@ -486,7 +486,7 @@ class FileManager {
 				throw new \InvalidArgumentException(
 					sprintf(
 						/* translators: %s: directory path */
-						__( 'Deleting this path is not allowed — it is a protected WordPress directory: %s', 'wpcodex' ),
+						__( 'Deleting this path is not allowed — it is a protected WordPress directory: %s', 'allyworker' ),
 						esc_html( $path )
 					)
 				);
@@ -626,7 +626,7 @@ class FileManager {
 		if ( false === file_put_contents( $tmp, $content ) ) {
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'Failed to write temp file for: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Failed to write temp file for: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
@@ -635,7 +635,7 @@ class FileManager {
 			@unlink( $tmp );
 			throw new \RuntimeException(
 				/* translators: %s: file path */
-				sprintf( __( 'Failed to rename temp file to: %s', 'wpcodex' ), esc_html( $path ) )
+				sprintf( __( 'Failed to rename temp file to: %s', 'allyworker' ), esc_html( $path ) )
 			);
 		}
 	}

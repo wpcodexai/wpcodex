@@ -1,24 +1,24 @@
 <?php
 /**
- * Unit tests for WPCodex\Skills\BuiltIn.
+ * Unit tests for AllyWorker\Skills\BuiltIn.
  *
  * load() touches the filesystem and Parser, so it is covered by integration tests.
  * Here we test the pure parts: constants and add_source().
  *
- * @package WPCodex\Tests\Unit\Skills
+ * @package AllyWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Skills;
+namespace AllyWorker\Tests\Unit\Skills;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Skills\BuiltIn;
+use AllyWorker\Skills\BuiltIn;
 
 /**
- * @covers \WPCodex\Skills\BuiltIn
+ * @covers \AllyWorker\Skills\BuiltIn
  */
 class BuiltInTest extends TestCase {
 
@@ -48,10 +48,10 @@ class BuiltInTest extends TestCase {
 
 	// ── Constructor registers filter ───────────────────────────────────────────
 
-	public function test_constructor_registers_wpcodex_skill_sources_filter(): void {
+	public function test_constructor_registers_allyworker_skill_sources_filter(): void {
 		Functions\expect( 'add_filter' )
 			->once()
-			->with( 'wpcodex_skill_sources', \Mockery::type( 'array' ) );
+			->with( 'allyworker_skill_sources', \Mockery::type( 'array' ) );
 
 		new BuiltIn();
 	}

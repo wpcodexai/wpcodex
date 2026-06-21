@@ -2,32 +2,32 @@
 /**
  * Unit tests for SandboxLoader.
  *
- * Uses WPCODEX_SANDBOX_DIR (defined in bootstrap) as the real temp sandbox so
+ * Uses ALLY_WORKER_SANDBOX_DIR (defined in bootstrap) as the real temp sandbox so
  * filesystem behaviour (glob, file_exists, etc.) is exercised without mocking.
  * WordPress functions are stubbed via Brain\Monkey where needed.
  *
- * @package WPCodex\Tests\Unit\Runner
+ * @package AllyWorker\Tests\Unit\Runner
  */
 
 declare( strict_types=1 );
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir,WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- test setup/teardown requires direct FS calls; WP_Filesystem is not available in unit test context
 
-namespace WPCodex\Tests\Unit\Runner;
+namespace AllyWorker\Tests\Unit\Runner;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Runner\SandboxLoader;
+use AllyWorker\Runner\SandboxLoader;
 
 /**
- * @covers \WPCodex\Runner\SandboxLoader
+ * @covers \AllyWorker\Runner\SandboxLoader
  */
 final class SandboxLoaderTest extends TestCase {
 
 	/**
 	 * Absolute path to the test sandbox directory.
-	 * Equals WPCODEX_SANDBOX_DIR so the SandboxLoader constant and the test
+	 * Equals ALLY_WORKER_SANDBOX_DIR so the SandboxLoader constant and the test
 	 * work on the same directory.
 	 */
 	private string $sandbox_dir;
@@ -39,8 +39,8 @@ final class SandboxLoaderTest extends TestCase {
 		parent::setUp();
 		Monkey\setUp();
 
-		// WPCODEX_SANDBOX_DIR is defined in bootstrap — use it directly.
-		$this->sandbox_dir  = WPCODEX_SANDBOX_DIR;
+		// ALLY_WORKER_SANDBOX_DIR is defined in bootstrap — use it directly.
+		$this->sandbox_dir  = ALLY_WORKER_SANDBOX_DIR;
 		$this->crashed_file = $this->sandbox_dir . '.crashed';
 
 		// Reset hooks from previous tests.
@@ -123,12 +123,12 @@ final class SandboxLoaderTest extends TestCase {
 
 	public function test_load_skips_all_files_when_safe_mode_query_param_set(): void {
 		Functions\when( 'get_option' )->justReturn( true );
-		$_GET['wpcodex_safe_mode'] = '1';
+		$_GET['allyworker_safe_mode'] = '1';
 
 		file_put_contents( $this->sandbox_dir . 'plugin.php', '<?php $GLOBALS["safe_mode_test"] = true;' );
 		( new SandboxLoader() )->load();
 
-		unset( $_GET['wpcodex_safe_mode'] );
+		unset( $_GET['allyworker_safe_mode'] );
 
 		$this->assertFalse( $GLOBALS['safe_mode_test'] ?? false );
 	}
@@ -302,27 +302,27 @@ final class SandboxLoaderTest extends TestCase {
 	}
 
 	public function test_is_safe_mode_true_when_query_param_is_1(): void {
-		$_GET['wpcodex_safe_mode'] = '1';
+		$_GET['allyworker_safe_mode'] = '1';
 
 		$loader = new SandboxLoader();
 		$method = new \ReflectionMethod( SandboxLoader::class, 'is_safe_mode' );
 		$method->setAccessible( true );
 
 		$result = $method->invoke( $loader );
-		unset( $_GET['wpcodex_safe_mode'] );
+		unset( $_GET['allyworker_safe_mode'] );
 
 		$this->assertTrue( $result );
 	}
 
 	public function test_is_safe_mode_false_when_query_param_is_not_1(): void {
-		$_GET['wpcodex_safe_mode'] = '0';
+		$_GET['allyworker_safe_mode'] = '0';
 
 		$loader = new SandboxLoader();
 		$method = new \ReflectionMethod( SandboxLoader::class, 'is_safe_mode' );
 		$method->setAccessible( true );
 
 		$result = $method->invoke( $loader );
-		unset( $_GET['wpcodex_safe_mode'] );
+		unset( $_GET['allyworker_safe_mode'] );
 
 		$this->assertFalse( $result );
 	}

@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-enable-batch-finalization
+ * Ability: allyworker/gutenberg-enable-batch-finalization
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace AllyWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class EnableFinalization
@@ -24,22 +24,22 @@ class EnableFinalization extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'allyworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-enable-batch-finalization';
+		return 'allyworker/gutenberg-enable-batch-finalization';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Enable Gutenberg Batch Finalization', 'wpcodex' );
+		return __( 'Enable Gutenberg Batch Finalization', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Transitions a draft Gutenberg batch to ready so the Block Editor Queue can begin finalization. The browser-side JS runtime picks it up automatically when the queue page is open.', 'wpcodex' );
+		return __( 'Transitions a draft Gutenberg batch to ready so the Block Editor Queue can begin finalization. The browser-side JS runtime picks it up automatically when the queue page is open.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -70,7 +70,7 @@ class EnableFinalization extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function get_instructions(): string {
 		return implode( "\n", [
-			'Call after wpcodex/gutenberg-add-pending-change to transition the batch from draft to ready.',
+			'Call after allyworker/gutenberg-add-pending-change to transition the batch from draft to ready.',
 			'After calling this, the Block Editor Queue page will automatically begin finalization if it is open.',
 			'Check finalizer_runtime.online; if false ask the user to open finalization_url (the queue dashboard) and keep it open.',
 			'Watch sse_url with curl -N or poll poll_url until the batch is finalized, failed, or conflicted.',
@@ -86,7 +86,7 @@ class EnableFinalization extends AbstractAbility {
 			return new \WP_Error(
 				'gutenberg_batch_not_found',
 				/* translators: %d: batch ID */
-				sprintf( __( 'Gutenberg batch %d was not found.', 'wpcodex' ), $batch_id )
+				sprintf( __( 'Gutenberg batch %d was not found.', 'allyworker' ), $batch_id )
 			);
 		}
 
@@ -121,7 +121,7 @@ class EnableFinalization extends AbstractAbility {
 		if ( $items === [] ) {
 			return new \WP_Error(
 				'gutenberg_batch_empty',
-				sprintf( 'Gutenberg batch %d has no items. Add at least one change with wpcodex/gutenberg-add-pending-change.', $batch->ID ),
+				sprintf( 'Gutenberg batch %d has no items. Add at least one change with allyworker/gutenberg-add-pending-change.', $batch->ID ),
 				[ 'status' => 409 ]
 			);
 		}

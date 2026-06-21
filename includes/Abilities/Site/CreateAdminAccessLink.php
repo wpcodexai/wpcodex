@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/create-admin-access-link
+ * Ability: allyworker/create-admin-access-link
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Site;
+namespace AllyWorker\Abilities\Site;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\REST\AdminAccessEndpoint;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\REST\AdminAccessEndpoint;
 
 /**
  * Class CreateAdminAccessLink
@@ -20,21 +20,21 @@ use WPCodex\REST\AdminAccessEndpoint;
  */
 class CreateAdminAccessLink extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpcodex-site';
+		return 'allyworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/create-admin-access-link';
+		return 'allyworker/create-admin-access-link';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Create Admin Access Link', 'wpcodex' );
+		return __( 'Create Admin Access Link', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Creates a temporary one-time admin session exchange for browser automation tools (e.g. Claude in Chrome). The tool POSTs the token and nonce to the exchange URL, receives a short-lived login URL, opens it in the browser, and is redirected into wp-admin without needing credentials.', 'wpcodex' );
+		return __( 'Creates a temporary one-time admin session exchange for browser automation tools (e.g. Claude in Chrome). The tool POSTs the token and nonce to the exchange URL, receives a short-lived login URL, opens it in the browser, and is redirected into wp-admin without needing credentials.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -140,9 +140,9 @@ class CreateAdminAccessLink extends AbstractAbility {
 			return $result;
 		}
 
-		$exchange_url = rest_url( 'wpcodex/v1/admin-access' );
-		$token_header = 'X-WPCodex-Admin-Access-Token';
-		$nonce_header = 'X-WPCodex-Admin-Access-Nonce';
+		$exchange_url = rest_url( 'allyworker/v1/admin-access' );
+		$token_header = 'X-AllyWorker-Admin-Access-Token';
+		$nonce_header = 'X-AllyWorker-Admin-Access-Nonce';
 
 		$admin_path_clean = ltrim( $admin_path, '/' );
 		if ( str_starts_with( $admin_path_clean, 'wp-admin/' ) ) {

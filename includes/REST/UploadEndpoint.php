@@ -6,19 +6,19 @@
  * (e.g. curl) can use to upload files directly into the WordPress filesystem
  * without sending the file through the MCP JSON transport.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\REST;
+namespace AllyWorker\REST;
 
 /**
  * Class UploadEndpoint
  */
 class UploadEndpoint {
 
-	private const ROUTE_NAMESPACE = 'wpcodex/v1';
+	private const ROUTE_NAMESPACE = 'allyworker/v1';
 	private const ROUTE           = '/upload';
 
 	/**
@@ -121,7 +121,7 @@ class UploadEndpoint {
 	 */
 	public static function handle( \WP_REST_Request $request ): array|\WP_Error {
 		if ( ! self::abilities_enabled() ) {
-			return new \WP_Error( 'wpcodex_disabled', 'WPCodex abilities are disabled.', [ 'status' => 403 ] );
+			return new \WP_Error( 'allyworker_disabled', 'AllyWorker abilities are disabled.', [ 'status' => 403 ] );
 		}
 
 		$token = self::get_token_from_request( $request );
@@ -313,7 +313,7 @@ class UploadEndpoint {
 	 */
 	private static function overwrite_stream( $source, string $resolved, int $max_bytes ): array|\WP_Error {
 		$created      = ! file_exists( $resolved );
-		$tmp          = tempnam( dirname( $resolved ), '.wpcodex-upload-' );
+		$tmp          = tempnam( dirname( $resolved ), '.allyworker-upload-' );
 		if ( false === $tmp ) {
 			return new \WP_Error( 'upload_temp_failed', sprintf( 'Could not create temporary upload file in: %s', dirname( $resolved ) ) );
 		}
@@ -406,7 +406,7 @@ class UploadEndpoint {
 		}
 
 		throw new \InvalidArgumentException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
-			__( 'Path traversal outside WordPress root is not allowed.', 'wpcodex' )
+			__( 'Path traversal outside WordPress root is not allowed.', 'allyworker' )
 		);
 	}
 
@@ -438,7 +438,7 @@ class UploadEndpoint {
 			return true;
 		}
 
-		$sandbox = WPCODEX_SANDBOX_DIR;
+		$sandbox = ALLY_WORKER_SANDBOX_DIR;
 		$normalized_sandbox = rtrim( str_replace( '\\', '/', $sandbox ), '/' );
 		$normalized_path    = str_replace( '\\', '/', dirname( $path ) );
 
@@ -446,7 +446,7 @@ class UploadEndpoint {
 			return new \WP_Error(
 				'php_sandbox_required',
 				sprintf(
-					'PHP files and PHP execution control files can only be uploaded to the sandbox directory: %s. Use a path like "wp-content/wpcodex-sandbox/my-feature.php".',
+					'PHP files and PHP execution control files can only be uploaded to the sandbox directory: %s. Use a path like "wp-content/wp-allyworker-sandbox/my-feature.php".',
 					$sandbox
 				)
 			);
@@ -485,7 +485,7 @@ class UploadEndpoint {
 	 * Extract the upload token from the request (custom header or Bearer).
 	 */
 	public static function get_token_from_request( \WP_REST_Request $request ): string {
-		$header = $request->get_header( 'x-wpcodex-upload-token' );
+		$header = $request->get_header( 'x-allyworker-upload-token' );
 		if ( is_string( $header ) && '' !== trim( $header ) ) {
 			return trim( $header );
 		}
@@ -504,7 +504,7 @@ class UploadEndpoint {
 
 	/** Return the HMAC signing secret. */
 	private static function token_secret(): string {
-		return wp_salt( 'auth' ) . '|' . wp_salt( 'secure_auth' ) . '|wpcodex-upload-link';
+		return wp_salt( 'auth' ) . '|' . wp_salt( 'secure_auth' ) . '|allyworker-upload-link';
 	}
 
 	/** Base64url-encode a binary string. */
@@ -535,8 +535,8 @@ class UploadEndpoint {
 		};
 	}
 
-	/** Check whether WPCodex abilities are currently enabled. */
+	/** Check whether AllyWorker abilities are currently enabled. */
 	private static function abilities_enabled(): bool {
-		return (bool) get_option( 'wpcodex_abilities_enabled', false );
+		return (bool) get_option( 'allyworker_abilities_enabled', false );
 	}
 }

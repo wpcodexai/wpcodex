@@ -7,20 +7,20 @@
  * FileManager are defined globally in tests/bootstrap.php — no Brain\Monkey
  * needed here.
  *
- * @package WPCodex\Tests\Unit\Runner
+ * @package AllyWorker\Tests\Unit\Runner
  */
 
 declare( strict_types=1 );
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir,WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- test setup/teardown requires direct FS calls; WP_Filesystem is not available in unit test context
 
-namespace WPCodex\Tests\Unit\Runner;
+namespace AllyWorker\Tests\Unit\Runner;
 
 use PHPUnit\Framework\TestCase;
-use WPCodex\Runner\FileManager;
+use AllyWorker\Runner\FileManager;
 
 /**
- * @covers \WPCodex\Runner\FileManager
+ * @covers \AllyWorker\Runner\FileManager
  */
 class FileManagerTest extends TestCase {
 
@@ -31,7 +31,7 @@ class FileManagerTest extends TestCase {
 		parent::setUp();
 
 		// tmp_dir lives inside sys_get_temp_dir(), which resolve_path allows.
-		$this->tmp_dir = sys_get_temp_dir() . '/wpcodex-fm-test-' . bin2hex( random_bytes( 4 ) ) . '/';
+		$this->tmp_dir = sys_get_temp_dir() . '/allyworker-fm-test-' . bin2hex( random_bytes( 4 ) ) . '/';
 		mkdir( $this->tmp_dir, 0755, true );
 
 		$this->reset_singleton();

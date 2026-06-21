@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/astra-get-settings
+ * Ability: allyworker/astra-get-settings
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Themes\Astra;
+namespace AllyWorker\Abilities\Themes\Astra;
 
-use WPCodex\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class GetSettings
@@ -25,12 +25,12 @@ class GetSettings extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/astra-get-settings';
+		return 'allyworker/astra-get-settings';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Astra: Get Settings', 'wpcodex' );
+		return __( 'Astra: Get Settings', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -38,14 +38,14 @@ class GetSettings extends AbstractAbility {
 		return __(
 			'Read the Astra theme global customizer settings from the astra-settings option. '
 			. 'Pass a "keys" array to retrieve specific settings; omit to get everything. '
-			. 'Returns a JSON object. Use wpcodex/astra-update-settings to change values.',
-			'wpcodex'
+			. 'Returns a JSON object. Use allyworker/astra-update-settings to change values.',
+			'allyworker'
 		);
 	}
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-astra';
+		return 'allyworker-themes';
 	}
 
 	/** {@inheritDoc} */
@@ -60,7 +60,7 @@ Common Astra setting keys (sample):
   Header:     header-layouts (1–6), header-main-rt-section (search|button|none)
   Footer:     footer-copyright (HTML string)
   Buttons:    button-color, button-h-color, button-bg-color, button-h-bg-color, button-border-radius (px)
-Call wpcodex/astra-flush-cache after any change to regenerate the dynamic CSS.
+Call allyworker/astra-flush-cache after any change to regenerate the dynamic CSS.
 INSTR;
 	}
 
@@ -96,7 +96,7 @@ INSTR;
 	/** {@inheritDoc} */
 	public function execute( array $input ): string|\WP_Error {
 		if ( ! self::astra_is_active() ) {
-			return new \WP_Error( 'wpcodex_astra_inactive', __( 'The Astra theme is not currently active.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_astra_inactive', __( 'The Astra theme is not currently active.', 'allyworker' ) );
 		}
 
 		/** @var mixed $raw */

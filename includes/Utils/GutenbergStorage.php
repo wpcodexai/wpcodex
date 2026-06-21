@@ -3,16 +3,16 @@
  * Gutenberg CPT queue — storage and finalizer-runtime engine.
  *
  * Central static utility class for the Block Editor Queue system.
- * Manages the wpcodex_gb_change CPT, batch/item lifecycle, lease-based
+ * Manages the allyworker_gb_change CPT, batch/item lifecycle, lease-based
  * concurrency, and the browser-side JS finalizer runtime heartbeat.
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Utils;
+namespace AllyWorker\Utils;
 
 use WP_Block_Type_Registry;
 use WP_Error;
@@ -37,11 +37,11 @@ class GutenbergStorage {
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_storage' ] );
 		add_action( 'init', [ $this, 'schedule_cleanup' ] );
-		add_action( 'wpcodex_gutenberg_cleanup', [ $this, 'cleanup_queue' ] );
+		add_action( 'allyworker_gutenberg_cleanup', [ $this, 'cleanup_queue' ] );
 	}
 
 	/** @var string Custom post type slug for both batches and items. */
-	public const POST_TYPE = 'wpcodex_gb_change';
+	public const POST_TYPE = 'allyworker_gb_change';
 
 	/** @var string Meta value for batch posts. */
 	public const KIND_BATCH = 'batch';
@@ -49,27 +49,27 @@ class GutenbergStorage {
 	/** @var string Meta value for item posts. */
 	public const KIND_ITEM = 'item';
 
-	public const META_KIND              = '_wpcodex_gb_kind';
-	public const META_STATUS            = '_wpcodex_gb_status';
-	public const META_STATUS_UPDATED_AT = '_wpcodex_gb_status_updated_at';
-	public const META_AGENT_LABEL       = '_wpcodex_gb_agent_label';
-	public const META_AGENT_SESSION_ID  = '_wpcodex_gb_agent_session_id';
-	public const META_READY_AT          = '_wpcodex_gb_ready_at';
-	public const META_FINALIZED_AT      = '_wpcodex_gb_finalized_at';
-	public const META_LEASE_OWNER       = '_wpcodex_gb_lease_owner';
-	public const META_LEASE_EXPIRES_AT  = '_wpcodex_gb_lease_expires_at';
-	public const META_LAST_ERROR        = '_wpcodex_gb_last_error';
-	public const META_TARGET_ID         = '_wpcodex_gb_target_id';
-	public const META_TARGET_TYPE       = '_wpcodex_gb_target_type';
-	public const META_OPERATION         = '_wpcodex_gb_operation';
-	public const META_BASE_CONTENT_HASH = '_wpcodex_gb_base_content_hash';
-	public const META_BASE_CONTENT      = '_wpcodex_gb_base_content';
-	public const META_BASE_REVISION_ID  = '_wpcodex_gb_base_revision_id';
-	public const META_SPEC_HASH         = '_wpcodex_gb_spec_hash';
-	public const META_BLOCK_SPEC        = '_wpcodex_gb_block_spec';
-	public const META_VALIDATION_ERRORS = '_wpcodex_gb_validation_errors';
-	public const META_FINALIZATION_MODE = '_wpcodex_gb_finalization_mode';
-	public const META_FINALIZED_CONTENT = '_wpcodex_gb_finalized_content';
+	public const META_KIND              = '_allyworker_gb_kind';
+	public const META_STATUS            = '_allyworker_gb_status';
+	public const META_STATUS_UPDATED_AT = '_allyworker_gb_status_updated_at';
+	public const META_AGENT_LABEL       = '_allyworker_gb_agent_label';
+	public const META_AGENT_SESSION_ID  = '_allyworker_gb_agent_session_id';
+	public const META_READY_AT          = '_allyworker_gb_ready_at';
+	public const META_FINALIZED_AT      = '_allyworker_gb_finalized_at';
+	public const META_LEASE_OWNER       = '_allyworker_gb_lease_owner';
+	public const META_LEASE_EXPIRES_AT  = '_allyworker_gb_lease_expires_at';
+	public const META_LAST_ERROR        = '_allyworker_gb_last_error';
+	public const META_TARGET_ID         = '_allyworker_gb_target_id';
+	public const META_TARGET_TYPE       = '_allyworker_gb_target_type';
+	public const META_OPERATION         = '_allyworker_gb_operation';
+	public const META_BASE_CONTENT_HASH = '_allyworker_gb_base_content_hash';
+	public const META_BASE_CONTENT      = '_allyworker_gb_base_content';
+	public const META_BASE_REVISION_ID  = '_allyworker_gb_base_revision_id';
+	public const META_SPEC_HASH         = '_allyworker_gb_spec_hash';
+	public const META_BLOCK_SPEC        = '_allyworker_gb_block_spec';
+	public const META_VALIDATION_ERRORS = '_allyworker_gb_validation_errors';
+	public const META_FINALIZATION_MODE = '_allyworker_gb_finalization_mode';
+	public const META_FINALIZED_CONTENT = '_allyworker_gb_finalized_content';
 
 	// -------------------------------------------------------------------------
 	// Status constants
@@ -137,10 +137,10 @@ class GutenbergStorage {
 	// -------------------------------------------------------------------------
 
 	/** @var string Transient key for finalizer runtime heartbeat records. */
-	public const FINALIZER_RUNTIME_TRANSIENT = 'wpcodex_gb_finalizer_runtimes';
+	public const FINALIZER_RUNTIME_TRANSIENT = 'allyworker_gb_finalizer_runtimes';
 
 	/** @var string Option key for the token-gated poll/SSE token. */
-	public const FINALIZER_RUNTIME_POLL_TOKEN_OPTION = 'wpcodex_gb_finalizer_poll_token';
+	public const FINALIZER_RUNTIME_POLL_TOKEN_OPTION = 'allyworker_gb_finalizer_poll_token';
 
 	/** @var int Random bytes used when generating the poll token. */
 	private const FINALIZER_RUNTIME_POLL_TOKEN_BYTES = 16;
@@ -166,7 +166,7 @@ class GutenbergStorage {
 	 */
 	public static function register_storage(): void {
 		register_post_type( self::POST_TYPE, [
-			'label'           => __( 'Gutenberg pending changes', 'wpcodex' ),
+			'label'           => __( 'Gutenberg pending changes', 'allyworker' ),
 			'public'          => false,
 			'show_ui'         => false,
 			'show_in_rest'    => false,
@@ -225,13 +225,13 @@ class GutenbergStorage {
 	 * @return void
 	 */
 	public static function schedule_cleanup(): void {
-		if ( wp_next_scheduled( 'wpcodex_gutenberg_cleanup' ) !== false ) {
+		if ( wp_next_scheduled( 'allyworker_gutenberg_cleanup' ) !== false ) {
 			return;
 		}
 		wp_schedule_event(
 			time() + self::CLEANUP_START_DELAY,
 			'daily',
-			'wpcodex_gutenberg_cleanup'
+			'allyworker_gutenberg_cleanup'
 		);
 	}
 
@@ -242,7 +242,7 @@ class GutenbergStorage {
 	 * @return void
 	 */
 	public static function unschedule_cleanup(): void {
-		wp_clear_scheduled_hook( 'wpcodex_gutenberg_cleanup' );
+		wp_clear_scheduled_hook( 'allyworker_gutenberg_cleanup' );
 	}
 
 	/**
@@ -267,11 +267,7 @@ class GutenbergStorage {
 			wp_delete_post( $batch->ID, true );
 		}
 	}
-
-	// -------------------------------------------------------------------------
-	// Helpers
-	// -------------------------------------------------------------------------
-
+	
 	/**
 	 * Return the current UTC time as a MySQL datetime string.
 	 *
@@ -376,7 +372,7 @@ class GutenbergStorage {
 	 * @return string Lock owner UUID on success; empty string if the lock is held.
 	 */
 	private static function status_transition_lock( int $post_id ): string {
-		$option  = sprintf( 'wpcodex_gb_status_lock_%d', $post_id );
+		$option  = sprintf( 'allyworker_gb_status_lock_%d', $post_id );
 		$owner   = (string) wp_generate_uuid4();
 		$payload = self::status_lock_payload( $owner );
 
@@ -429,7 +425,7 @@ class GutenbergStorage {
 	 * @return void
 	 */
 	private static function release_status_transition_lock( int $post_id, string $owner ): void {
-		$option = sprintf( 'wpcodex_gb_status_lock_%d', $post_id );
+		$option = sprintf( 'allyworker_gb_status_lock_%d', $post_id );
 		/** @var mixed $value */
 		$value = get_option( $option, '' );
 		if ( is_string( $value ) && str_starts_with( $value, $owner . '|' ) ) {
@@ -603,7 +599,7 @@ class GutenbergStorage {
 		string $agent_session_id,
 		string $agent_note
 	): int|WP_Error {
-		$label            = trim( $label ) !== '' ? sanitize_text_field( $label ) : __( 'Untitled Gutenberg batch', 'wpcodex' );
+		$label            = trim( $label ) !== '' ? sanitize_text_field( $label ) : __( 'Untitled Gutenberg batch', 'allyworker' );
 		$agent_label      = sanitize_text_field( $agent_label );
 		$agent_session_id = sanitize_text_field( $agent_session_id );
 
@@ -753,7 +749,7 @@ class GutenbergStorage {
 		return $title !== ''
 			? $title
 			/* translators: %d: post ID */
-			: sprintf( __( '(no title) #%d', 'wpcodex' ), $target->ID );
+			: sprintf( __( '(no title) #%d', 'allyworker' ), $target->ID );
 	}
 
 	/**
@@ -939,7 +935,7 @@ class GutenbergStorage {
 	}
 
 	/**
-	 * Validate that every block in the tree is a WPCodex-owned dynamic block.
+	 * Validate that every block in the tree is a AllyWorker-owned dynamic block.
 	 *
 	 * Returns a WP_Error if any non-dynamic block is found, directing the agent
 	 * to use the queue flow instead.
@@ -951,18 +947,18 @@ class GutenbergStorage {
 	public static function validate_dynamic_only_blocks( array $blocks ): ?WP_Error {
 		foreach ( $blocks as $block ) {
 			$name = is_string( $block['name'] ?? null ) ? $block['name'] : '';
-			if ( ! self::is_wpcodex_dynamic_block( $name ) ) {
+			if ( ! self::is_allyworker_dynamic_block( $name ) ) {
 				return new WP_Error(
 					'gutenberg_static_blocks_require_finalization',
 					sprintf(
-						'Block "%s" is not a registered WPCodex-owned dynamic-only block. Native/static Gutenberg blocks must be queued with wpcodex/gutenberg-add-pending-change and finalized in a browser before they are live.',
+						'Block "%s" is not a registered AllyWorker-owned dynamic-only block. Native/static Gutenberg blocks must be queued with allyworker/gutenberg-add-pending-change and finalized in a browser before they are live.',
 						$name !== '' ? $name : '(missing name)'
 					),
 					[
 						'status'                => 400,
 						'finalization_required' => true,
-						'queue_ability'         => 'wpcodex/gutenberg-add-pending-change',
-						'enable_ability'        => 'wpcodex/gutenberg-enable-batch-finalization',
+						'queue_ability'         => 'allyworker/gutenberg-add-pending-change',
+						'enable_ability'        => 'allyworker/gutenberg-enable-batch-finalization',
 					]
 				);
 			}
@@ -975,14 +971,14 @@ class GutenbergStorage {
 	}
 
 	/**
-	 * Return true when the given block name is a registered WPCodex dynamic block.
+	 * Return true when the given block name is a registered AllyWorker dynamic block.
 	 *
 	 * @since 1.0.0
-	 * @param string $name Block name (e.g. "wpcodex/my-block").
+	 * @param string $name Block name (e.g. "allyworker/my-block").
 	 * @return bool
 	 */
-	public static function is_wpcodex_dynamic_block( string $name ): bool {
-		if ( ! str_starts_with( $name, 'wpcodex/' ) ) {
+	public static function is_allyworker_dynamic_block( string $name ): bool {
+		if ( ! str_starts_with( $name, 'allyworker/' ) ) {
 			return false;
 		}
 		if ( ! class_exists( WP_Block_Type_Registry::class ) ) {
@@ -1004,7 +1000,7 @@ class GutenbergStorage {
 	public static function item_change_summary( WP_Post $target, string $operation, array $blocks ): string {
 		$names        = self::top_level_block_names( $blocks );
 		$name_summary = $names === []
-			? __( 'no blocks', 'wpcodex' )
+			? __( 'no blocks', 'allyworker' )
 			: implode( ', ', array_slice( $names, 0, 5 ) );
 		return sprintf(
 			'%s for %s #%d: %d top-level block(s): %s',
@@ -1035,7 +1031,7 @@ class GutenbergStorage {
 	 * @return string Admin URL.
 	 */
 	public static function finalizer_dashboard_url(): string {
-		return add_query_arg( [ 'page' => 'wpcodex-block-editor' ], admin_url( 'admin.php' ) );
+		return add_query_arg( [ 'page' => 'allyworker-block-editor' ], admin_url( 'admin.php' ) );
 	}
 
 	/**
@@ -1048,7 +1044,7 @@ class GutenbergStorage {
 	public static function batch_label( WP_Post $batch ): string {
 		$label = trim( $batch->post_title );
 		/* translators: %d: batch post ID */
-		return $label !== '' ? $label : sprintf( __( 'Gutenberg batch #%d', 'wpcodex' ), $batch->ID );
+		return $label !== '' ? $label : sprintf( __( 'Gutenberg batch #%d', 'allyworker' ), $batch->ID );
 	}
 
 	/**
@@ -1062,7 +1058,7 @@ class GutenbergStorage {
 		$runtime = self::finalizer_runtime_status( $batch );
 		if ( ( $runtime['online'] ?? false ) === true && ( $runtime['can_finalize_batch'] ?? false ) === true ) {
 			return sprintf(
-				'The WPCodex Block Editor Queue page is open and should automatically finalize Gutenberg batch #%d: %s. Do not ask the user to do anything unless the page goes offline; stream %s with curl -N, or poll %s with curl, until the batch becomes finalized, failed, or conflicted. Do not treat these Gutenberg changes as live until finalization completes.',
+				'The AllyWorker Block Editor Queue page is open and should automatically finalize Gutenberg batch #%d: %s. Do not ask the user to do anything unless the page goes offline; stream %s with curl -N, or poll %s with curl, until the batch becomes finalized, failed, or conflicted. Do not treat these Gutenberg changes as live until finalization completes.',
 				$batch->ID,
 				self::batch_label( $batch ),
 				(string) ( $runtime['sse_url'] ?? self::finalizer_runtime_sse_url( $batch->ID ) ),
@@ -1071,14 +1067,14 @@ class GutenbergStorage {
 		}
 		if ( ( $runtime['online'] ?? false ) === true ) {
 			return sprintf(
-				'A WPCodex Block Editor Queue page is open, but that browser user may not be able to finalize Gutenberg batch #%d: %s. Ask the user to open %s as a user who can edit every target. Do not treat these Gutenberg changes as live until finalization completes.',
+				'A AllyWorker Block Editor Queue page is open, but that browser user may not be able to finalize Gutenberg batch #%d: %s. Ask the user to open %s as a user who can edit every target. Do not treat these Gutenberg changes as live until finalization completes.',
 				$batch->ID,
 				self::batch_label( $batch ),
 				self::finalizer_dashboard_url()
 			);
 		}
 		return sprintf(
-			'The WPCodex Block Editor Queue page is not currently online. Ask the user to open %s and keep it open. It will automatically finalize Gutenberg batch #%d: %s when it can. Do not treat these Gutenberg changes as live until finalization completes.',
+			'The AllyWorker Block Editor Queue page is not currently online. Ask the user to open %s and keep it open. It will automatically finalize Gutenberg batch #%d: %s when it can. Do not treat these Gutenberg changes as live until finalization completes.',
 			self::finalizer_dashboard_url(),
 			$batch->ID,
 			self::batch_label( $batch )
@@ -1203,7 +1199,7 @@ class GutenbergStorage {
 			'target_title'          => $target instanceof WP_Post
 				? self::target_title( $target )
 				/* translators: %d: target post ID */
-				: sprintf( __( 'Missing target #%d', 'wpcodex' ), $target_id ),
+				: sprintf( __( 'Missing target #%d', 'allyworker' ), $target_id ),
 			'operation'             => self::meta_string( $item->ID, self::META_OPERATION ),
 			'status'                => self::gb_status( $item->ID ),
 			'created_at'            => $item->post_date_gmt,
@@ -1309,7 +1305,7 @@ class GutenbergStorage {
 			'agent_label'    => $agent_label !== '' ? $agent_label : 'the originating agent',
 			'target_id'      => $target_id,
 			'target_type'    => $target_type,
-			'cancel_ability' => 'wpcodex/gutenberg-delete-pending-batch',
+			'cancel_ability' => 'allyworker/gutenberg-delete-pending-batch',
 			'cancel_params'  => [ 'batch_id' => $item->post_parent ],
 		];
 	}
@@ -1389,7 +1385,7 @@ class GutenbergStorage {
 			update_post_meta(
 				$batch->ID,
 				self::META_LAST_ERROR,
-				__( 'A previous Block Editor Queue tab stopped before renewing its lease. Retry finalization for this batch.', 'wpcodex' )
+				__( 'A previous Block Editor Queue tab stopped before renewing its lease. Retry finalization for this batch.', 'allyworker' )
 			);
 			self::clear_lease( $batch->ID );
 		}
@@ -1445,7 +1441,7 @@ class GutenbergStorage {
 		if ( $current_status === self::STATUS_DRAFT ) {
 			return new WP_Error(
 				'gutenberg_batch_not_ready',
-				'Draft Gutenberg batches cannot be finalized until wpcodex/gutenberg-enable-batch-finalization is called.',
+				'Draft Gutenberg batches cannot be finalized until allyworker/gutenberg-enable-batch-finalization is called.',
 				[ 'status' => 409 ]
 			);
 		}
@@ -2000,14 +1996,14 @@ class GutenbergStorage {
 		$runtime = self::finalizer_runtime_status();
 		if ( ( $runtime['online'] ?? false ) === true ) {
 			return sprintf(
-				'The WPCodex Block Editor Queue page is open. Keep %s open while Gutenberg static/native changes are queued and finalized. You can stream %s with curl -N, or poll %s with curl, to check whether the page is still online. If a later status shows finalizer_runtime.online=false, ask the user to reopen it before treating queued changes as live.',
+				'The AllyWorker Block Editor Queue page is open. Keep %s open while Gutenberg static/native changes are queued and finalized. You can stream %s with curl -N, or poll %s with curl, to check whether the page is still online. If a later status shows finalizer_runtime.online=false, ask the user to reopen it before treating queued changes as live.',
 				self::finalizer_dashboard_url(),
 				(string) ( $runtime['sse_url'] ?? self::finalizer_runtime_sse_url() ),
 				(string) ( $runtime['poll_url'] ?? self::finalizer_runtime_poll_url() )
 			);
 		}
 		return sprintf(
-			'The WPCodex Block Editor Queue page is not currently online. Before queueing Gutenberg static/native changes, ask the user to open %s in wp-admin and keep it open while you work. Stream %s with curl -N, or poll %s with curl; if it stays or becomes offline, ask the user to reopen it before treating queued changes as live.',
+			'The AllyWorker Block Editor Queue page is not currently online. Before queueing Gutenberg static/native changes, ask the user to open %s in wp-admin and keep it open while you work. Stream %s with curl -N, or poll %s with curl; if it stays or becomes offline, ask the user to reopen it before treating queued changes as live.',
 			self::finalizer_dashboard_url(),
 			(string) ( $runtime['sse_url'] ?? self::finalizer_runtime_sse_url() ),
 			(string) ( $runtime['poll_url'] ?? self::finalizer_runtime_poll_url() )
@@ -2083,7 +2079,7 @@ class GutenbergStorage {
 	public static function finalizer_runtime_poll_url( ?int $batch_id = null ): string {
 		return add_query_arg(
 			self::finalizer_runtime_url_args( $batch_id ),
-			rest_url( 'wpcodex/v1/gutenberg/finalizer-runtime/status' )
+			rest_url( 'allyworker/v1/gutenberg/finalizer-runtime/status' )
 		);
 	}
 
@@ -2097,7 +2093,7 @@ class GutenbergStorage {
 	public static function finalizer_runtime_sse_url( ?int $batch_id = null ): string {
 		return add_query_arg(
 			self::finalizer_runtime_url_args( $batch_id ),
-			rest_url( 'wpcodex/v1/gutenberg/finalizer-runtime/events' )
+			rest_url( 'allyworker/v1/gutenberg/finalizer-runtime/events' )
 		);
 	}
 

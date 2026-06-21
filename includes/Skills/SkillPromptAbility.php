@@ -6,15 +6,15 @@
  * meta.mcp.type = 'prompt' so the MCP Adapter exposes it via the
  * prompts/list and prompts/get endpoints instead of tools/list.
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Skills;
+namespace AllyWorker\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class SkillPromptAbility
@@ -41,7 +41,7 @@ class SkillPromptAbility extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return "wpcodex/skill-prompt-{$this->slug}";
+		return "allyworker/skill-prompt-{$this->slug}";
 	}
 
 	/** {@inheritDoc} */
@@ -56,7 +56,7 @@ class SkillPromptAbility extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */

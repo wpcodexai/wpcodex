@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpcodex/astra-get-page-settings
+ * Ability: allyworker/astra-get-page-settings
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Themes\Astra;
+namespace AllyWorker\Abilities\Themes\Astra;
 
-use WPCodex\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class GetPageSettings
@@ -50,12 +50,12 @@ class GetPageSettings extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/astra-get-page-settings';
+		return 'allyworker/astra-get-page-settings';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Astra: Get Page Settings', 'wpcodex' );
+		return __( 'Astra: Get Page Settings', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -64,13 +64,13 @@ class GetPageSettings extends AbstractAbility {
 			'Read Astra per-page/post meta settings for a specific post ID or post title. '
 			. 'These settings override the global astra-settings for that page only. '
 			. 'Returns an object with all Astra meta keys and their current values.',
-			'wpcodex'
+			'allyworker'
 		);
 	}
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-astra';
+		return 'allyworker-themes';
 	}
 
 	/** {@inheritDoc} */
@@ -131,7 +131,7 @@ INSTR;
 	/** {@inheritDoc} */
 	public function execute( array $input ): string|\WP_Error {
 		if ( ! GetSettings::astra_is_active() ) {
-			return new \WP_Error( 'wpcodex_astra_inactive', __( 'The Astra theme is not currently active.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_astra_inactive', __( 'The Astra theme is not currently active.', 'allyworker' ) );
 		}
 
 		$post_id = $this->resolve_post_id( $input );
@@ -159,13 +159,13 @@ INSTR;
 		if ( isset( $input['post_id'] ) && is_scalar( $input['post_id'] ) ) {
 			$id = (int) $input['post_id'];
 			if ( $id <= 0 ) {
-				return new \WP_Error( 'wpcodex_invalid_input', __( 'post_id must be a positive integer.', 'wpcodex' ) );
+				return new \WP_Error( 'allyworker_invalid_input', __( 'post_id must be a positive integer.', 'allyworker' ) );
 			}
 			if ( ! get_post( $id ) ) {
 				return new \WP_Error(
-					'wpcodex_post_not_found',
+					'allyworker_post_not_found',
 					/* translators: %d: post ID */
-					sprintf( __( 'Post %d not found.', 'wpcodex' ), $id )
+					sprintf( __( 'Post %d not found.', 'allyworker' ), $id )
 				);
 			}
 			return $id;
@@ -182,14 +182,14 @@ INSTR;
 			] );
 			if ( empty( $query->posts ) ) {
 				return new \WP_Error(
-					'wpcodex_post_not_found',
+					'allyworker_post_not_found',
 					/* translators: %s: post title */
-					sprintf( __( 'No post found with title "%s".', 'wpcodex' ), $title )
+					sprintf( __( 'No post found with title "%s".', 'allyworker' ), $title )
 				);
 			}
 			return (int) $query->posts[0];
 		}
 
-		return new \WP_Error( 'wpcodex_invalid_input', __( 'Provide either post_id or post_title.', 'wpcodex' ) );
+		return new \WP_Error( 'allyworker_invalid_input', __( 'Provide either post_id or post_title.', 'allyworker' ) );
 	}
 }

@@ -1,21 +1,21 @@
 <?php
 /**
- * Unit tests for WPCodex\Utils\Requirements.
+ * Unit tests for AllyWorker\Utils\Requirements.
  *
- * @package WPCodex\Tests\Unit\Utils
+ * @package AllyWorker\Tests\Unit\Utils
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tests\Unit\Utils;
+namespace AllyWorker\Tests\Unit\Utils;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPCodex\Utils\Requirements;
+use AllyWorker\Utils\Requirements;
 
 /**
- * @covers \WPCodex\Utils\Requirements
+ * @covers \AllyWorker\Utils\Requirements
  */
 class RequirementsTest extends TestCase {
 

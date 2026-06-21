@@ -9,13 +9,13 @@
  */
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	const hub = document.getElementById( 'wpcodex-abilities-settings' );
+	const hub = document.getElementById( 'allyworker-abilities-settings' );
 	if ( ! hub ) return;
 
-	hub.querySelectorAll( '.wpcodex-toggle input[type="checkbox"]' ).forEach(
+	hub.querySelectorAll( '.allyworker-toggle input[type="checkbox"]' ).forEach(
 		( checkbox ) => {
 			checkbox.addEventListener( 'change', () => {
-				const card = checkbox.closest( '.wpcodex-ability-card' );
+				const card = checkbox.closest( '.allyworker-ability-card' );
 				if ( ! card ) return;
 
 				const isNowEnabled = checkbox.checked;
@@ -24,11 +24,11 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				card.classList.toggle( 'is-enabled', isNowEnabled );
 				card.classList.toggle( 'is-disabled', ! isNowEnabled );
 
-				const label = card.querySelector( '.wpcodex-toggle__label' );
+				const label = card.querySelector( '.allyworker-toggle__label' );
 				if ( label ) {
 					label.textContent = isNowEnabled
-						? window.wpcodexData?.i18n?.enabled ?? 'Enabled'
-						: window.wpcodexData?.i18n?.disabled ?? 'Disabled';
+						? window.allyworkerData?.i18n?.enabled ?? 'Enabled'
+						: window.allyworkerData?.i18n?.disabled ?? 'Disabled';
 				}
 			} );
 		}

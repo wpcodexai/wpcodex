@@ -1,26 +1,26 @@
 ---
 name: gutenberg-edit-content
-description: Create or edit WordPress content using the native Gutenberg block editor via the WPCodex Block Editor Queue. Activate when the user asks to build, rebuild, migrate, or update a post, page, or template using Gutenberg/native blocks.
+description: Create or edit WordPress content using the native Gutenberg block editor via the AllyWorker Block Editor Queue. Activate when the user asks to build, rebuild, migrate, or update a post, page, or template using Gutenberg/native blocks.
 enable_prompt: true
 enable_agentic: true
 ---
 
 # Editing Gutenberg Content
 
-Use this playbook for native WordPress block editor work. Static Gutenberg blocks require browser-side JavaScript serialization before queued content goes live — the WPCodex Block Editor Queue admin page is part of the workflow.
+Use this playbook for native WordPress block editor work. Static Gutenberg blocks require browser-side JavaScript serialization before queued content goes live — the AllyWorker Block Editor Queue admin page is part of the workflow.
 
 ## Start Here
 
-1. Call `wpcodex/php-execute` to check if the Gutenberg editor is active:
+1. Call `allyworker/php-execute` to check if the Gutenberg editor is active:
    ```php
    return function_exists('use_block_editor_for_post_type');
    ```
 2. Confirm the target post type supports the block editor.
-3. Ask the user to keep the **Block Editor Queue** admin page open while you work (WPCodex → Block Editor). Changes queued for static/native blocks cannot finalize without that page.
+3. Ask the user to keep the **Block Editor Queue** admin page open while you work (AllyWorker → Block Editor). Changes queued for static/native blocks cannot finalize without that page.
 
 ## Read Before Writing
 
-- Use `wpcodex/php-execute` with `get_post( $post_id )` and `parse_blocks( $post->post_content )` to read the current block structure before editing.
+- Use `allyworker/php-execute` with `get_post( $post_id )` and `parse_blocks( $post->post_content )` to read the current block structure before editing.
 - Do not stack pending changes on the same target without confirming the previous batch is finalized.
 
 ## Compose With Registered Blocks
@@ -38,7 +38,7 @@ return array_keys( WP_Block_Type_Registry::get_instance()->get_all_registered() 
 
 ## Write Path
 
-Use `wpcodex/php-execute` to call `wp_update_post()` with serialized block content built with `serialize_blocks()`:
+Use `allyworker/php-execute` to call `wp_update_post()` with serialized block content built with `serialize_blocks()`:
 
 ```php
 $blocks = [

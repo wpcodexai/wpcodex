@@ -2,15 +2,15 @@
 /**
  * Built-in skills source — loads bundled SKILL.md files as a read-only source.
  *
- * Registered with the wpcodex_skill_sources filter at priority 10 so built-ins
+ * Registered with the allyworker_skill_sources filter at priority 10 so built-ins
  * appear before user skills in the catalog.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Skills;
+namespace AllyWorker\Skills;
 
 /**
  * Class BuiltIn
@@ -22,12 +22,12 @@ class BuiltIn {
 	public const SOURCE_PRIORITY = 10;
 
 	/**
-	 * Wire the wpcodex_skill_sources filter.
+	 * Wire the allyworker_skill_sources filter.
 	 *
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_filter( 'wpcodex_skill_sources', [ $this, 'add_source' ] );
+		add_filter( 'allyworker_skill_sources', [ $this, 'add_source' ] );
 	}
 
 	/**

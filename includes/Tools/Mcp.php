@@ -5,18 +5,18 @@
  *
  * Instantiated once from Plugin::init().
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Tools;
+namespace AllyWorker\Tools;
 
 /**
  * Class Mcp
  *
- * Boots the MCP Adapter, registers wpcodex ability categories,
+ * Boots the MCP Adapter, registers allyworker ability categories,
  * and wires the MCP response filters.
  *
  * @since 1.0.0
@@ -53,8 +53,8 @@ class Mcp {
 			add_action( 'admin_notices', static function (): void {
 				echo '<div class="notice notice-error"><p>';
 				esc_html_e(
-					'WPCodex: The bundled MCP Adapter could not be loaded. Re-install the plugin release ZIP.',
-					'wpcodex'
+					'AllyWorker: The bundled MCP Adapter could not be loaded. Re-install the plugin release ZIP.',
+					'allyworker'
 				);
 				echo '</p></div>';
 			} );
@@ -69,7 +69,7 @@ class Mcp {
 				echo '<div class="notice notice-error"><p>';
 				printf(
 					/* translators: %s error message */
-					esc_html__( 'WPCodex: MCP Adapter failed to initialise. Error: %s', 'wpcodex' ),
+					esc_html__( 'AllyWorker: MCP Adapter failed to initialise. Error: %s', 'allyworker' ),
 					esc_html( $e->getMessage() )
 				);
 				echo '</p></div>';
@@ -91,14 +91,14 @@ class Mcp {
 		if ( ! is_array( $config ) ) {
 			return $config;
 		}
-		$config['server_id']    = 'wpcodex';
-		$config['server_route'] = 'wpcodex';
-		$config['server_name']  = 'WPCodex';
+		$config['server_id']    = 'allyworker';
+		$config['server_route'] = 'allyworker';
+		$config['server_name']  = 'AllyWorker';
 		return $config;
 	}
 
 	/**
-	 * Register wpcodex ability categories with the WordPress Abilities API.
+	 * Register allyworker ability categories with the WordPress Abilities API.
 	 *
 	 * Callback for the wp_abilities_api_categories_init action.
 	 *
@@ -106,40 +106,45 @@ class Mcp {
 	 * @return void
 	 */
 	public function register_ability_categories(): void {
-		wp_register_ability_category( 'wpcodex', [
-			'label'       => __( 'WPCodex', 'wpcodex' ),
-			'description' => __( 'Core WPCodex abilities for AI agent access to WordPress.', 'wpcodex' ),
+		wp_register_ability_category( 'allyworker', [
+			'label'       => __( 'AllyWorker', 'allyworker' ),
+			'description' => __( 'Core AllyWorker abilities for AI agent access to WordPress.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpcodex-skills', [
-			'label'       => __( 'WPCodex Skills', 'wpcodex' ),
-			'description' => __( 'Abilities for managing WPCodex skill playbooks.', 'wpcodex' ),
+		wp_register_ability_category( 'allyworker-skills', [
+			'label'       => __( 'AllyWorker Skills', 'allyworker' ),
+			'description' => __( 'Abilities for managing AllyWorker skill playbooks.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpcodex-gutenberg', [
-			'label'       => __( 'WPCodex Gutenberg', 'wpcodex' ),
-			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'wpcodex' ),
+		wp_register_ability_category( 'allyworker-gutenberg', [
+			'label'       => __( 'AllyWorker Gutenberg', 'allyworker' ),
+			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpcodex-general', [
-			'label'       => __( 'WPCodex General', 'wpcodex' ),
-			'description' => __( 'General-purpose abilities that may be used by WPCodex or other plugins.', 'wpcodex' ),
-		] );
-		
-		wp_register_ability_category( 'wpcodex-site', [
-			'label'       => __( 'WPCodex Site', 'wpcodex' ),
-			'description' => __( 'Abilities for reading and updating site settings and content.', 'wpcodex' ),
+		wp_register_ability_category( 'allyworker-general', [
+			'label'       => __( 'AllyWorker General', 'allyworker' ),
+			'description' => __( 'General-purpose abilities that may be used by AllyWorker or other plugins.', 'allyworker' ),
 		] );
 
-		// wp_register_ability_category( 'wpcodex-plugins', [
-		// 	'label'       => __( 'WPCodex Plugins', 'wpcodex' ),
-		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'wpcodex' ),
+		wp_register_ability_category( 'allyworker-site', [
+			'label'       => __( 'AllyWorker Site', 'allyworker' ),
+			'description' => __( 'Abilities for reading and updating site settings and content.', 'allyworker' ),
+		] );
+
+		// wp_register_ability_category( 'allyworker-plugins', [
+		// 	'label'       => __( 'AllyWorker Plugins', 'allyworker' ),
+		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'allyworker' ),
 		// ] );
 
-		// wp_register_ability_category( 'wpcodex-themes', [
-		// 	'label'       => __( 'WPCodex Themes', 'wpcodex' ),
-		// 	'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'wpcodex' ),
-		// ] );
+		wp_register_ability_category( 'allyworker-themes', [
+			'label'       => __( 'AllyWorker Themes', 'allyworker' ),
+			'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'allyworker' ),
+		] );
+
+		wp_register_ability_category( 'allyworker-astra', [
+			'label'       => __( 'Astra', 'allyworker' ),
+			'description' => __( 'Abilities for reading and updating Astra theme settings globally and per page.', 'allyworker' ),
+		] );
 	}
 
 	/**

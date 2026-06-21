@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/gutenberg-delete-pending-batch
+ * Ability: allyworker/gutenberg-delete-pending-batch
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Gutenberg;
+namespace AllyWorker\Abilities\Gutenberg;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Utils\GutenbergStorage;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class DeletePadding
@@ -24,22 +24,22 @@ class DeletePadding extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-gutenberg';
+		return 'allyworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/gutenberg-delete-pending-batch';
+		return 'allyworker/gutenberg-delete-pending-batch';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Delete Gutenberg Pending Batch', 'wpcodex' );
+		return __( 'Delete Gutenberg Pending Batch', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Cancels an entire Gutenberg pending batch and all its non-finalized items. Does not modify any target post_content.', 'wpcodex' );
+		return __( 'Cancels an entire Gutenberg pending batch and all its non-finalized items. Does not modify any target post_content.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */

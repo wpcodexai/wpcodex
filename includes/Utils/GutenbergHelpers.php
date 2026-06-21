@@ -5,13 +5,13 @@
  * Provides utility methods for converting WordPress's raw parse_blocks() output
  * into compact, agent-readable block trees.
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Utils;
+namespace AllyWorker\Utils;
 
 /**
  * Class GutenbergHelpers

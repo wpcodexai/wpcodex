@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpcodex/skill-restore-revision
+ * Ability: allyworker/skill-restore-revision
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Skills;
+namespace AllyWorker\Abilities\Skills;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Repository;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Repository;
 
 /**
  * Class SkillRestoreRevision
@@ -22,24 +22,24 @@ class SkillRestoreRevision extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpcodex-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpcodex/skill-restore-revision';
+		return 'allyworker/skill-restore-revision';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Restore Skill Revision', 'wpcodex' );
+		return __( 'Restore Skill Revision', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
 			'Restore a skill to a previously saved revision. The current state is automatically snapshotted first, so the restore is itself reversible.',
-			'wpcodex'
+			'allyworker'
 		);
 	}
 
@@ -50,7 +50,7 @@ class SkillRestoreRevision extends AbstractAbility {
 			'properties' => [
 				'revision_id' => [
 					'type'        => 'integer',
-					'description' => 'Numeric ID of the revision to restore (from wpcodex/skill-list-revisions).',
+					'description' => 'Numeric ID of the revision to restore (from allyworker/skill-list-revisions).',
 				],
 			],
 			'required' => [ 'revision_id' ],
@@ -79,7 +79,7 @@ class SkillRestoreRevision extends AbstractAbility {
 		$revision_id = (int) ( $input['revision_id'] ?? 0 );
 
 		if ( $revision_id <= 0 ) {
-			return new \WP_Error( 'wpcodex_invalid_input', __( 'revision_id must be a positive integer.', 'wpcodex' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'revision_id must be a positive integer.', 'allyworker' ) );
 		}
 
 		$result = Repository::instance()->restore_revision( $revision_id );

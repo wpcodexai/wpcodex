@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract base class for all WPCodex abilities.
+ * Abstract base class for all AllyWorker abilities.
  *
  * Concrete ability classes extend this and implement the abstract methods.
  * The register() method calls wp_register_ability() using get_config() —
@@ -9,22 +9,22 @@
  *
  * Pro-plugin extensibility
  * ------------------------
- * A pro plugin adds abilities by filtering 'wp_codex_abilities':
+ * A pro plugin adds abilities by filtering 'allyworker_abilities':
  *
- *   add_filter( 'wp_codex_abilities', function ( array $abilities ): array {
+ *   add_filter( 'allyworker_abilities', function ( array $abilities ): array {
  *       $abilities[] = new \MyProPlugin\Abilities\MyProAbility();
  *       return $abilities;
  *   } );
  *
- * @package WPCodex
+ * @package AllyWorker
  * @since   1.1.0
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities;
+namespace AllyWorker\Abilities;
 
-use WPCodex\Utils\Helpers;
+use AllyWorker\Utils\Helpers;
 
 /**
  * AbstractAbility
@@ -34,7 +34,7 @@ use WPCodex\Utils\Helpers;
 abstract class AbstractAbility {
 
 	/**
-	 * Ability name, e.g. 'wpcodex/file-read'.
+	 * Ability name, e.g. 'allyworker/file-read'.
 	 */
 	abstract public function get_name(): string;
 
@@ -83,10 +83,10 @@ abstract class AbstractAbility {
 	/**
 	 * Ability category slug. Override to use a different category.
 	 *
-	 * Known categories: 'wpcodex', 'wpcodex-general', 'wpcodex-skills', 'wpcodex-gutenberg'.
+	 * Known categories: 'allyworker', 'allyworker-general', 'allyworker-skills', 'allyworker-gutenberg'.
 	 */
 	public function get_category(): string {
-		return 'wpcodex';
+		return 'allyworker';
 	}
 
 	/**

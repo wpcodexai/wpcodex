@@ -1,4 +1,4 @@
-# Contributing to WPCodex
+# Contributing to AllyWorker
 
 Thank you for your interest in contributing. This document explains the development workflow, code standards, and the process for submitting changes.
 
@@ -6,7 +6,7 @@ Thank you for your interest in contributing. This document explains the developm
 
 ## Before You Start
 
-- Check the [open issues](https://github.com/wpcodex/wpcodex/issues) — your idea or bug may already be tracked
+- Check the [open issues](https://github.com/allyworker/allyworker/issues) — your idea or bug may already be tracked
 - For significant new features, open an issue first to discuss the approach before writing code
 - For security vulnerabilities, see [SECURITY.md](./SECURITY.md) — do not open a public issue
 
@@ -16,8 +16,8 @@ Thank you for your interest in contributing. This document explains the developm
 
 ```bash
 # Clone into your WordPress plugins directory
-git clone https://github.com/wpcodex/wpcodex.git wp-content/plugins/wpcodex
-cd wp-content/plugins/wpcodex
+git clone https://github.com/allyworker/allyworker.git wp-content/plugins/allyworker
+cd wp-content/plugins/allyworker
 
 # PHP dependencies (includes wordpress/mcp-adapter via Jetpack Autoloader)
 composer install
@@ -44,9 +44,9 @@ npm run build
 ## Project Structure
 
 ```
-wpcodex/
-├── wpcodex.php          # Entry point — loads MCP Adapter, registers abilities
-├── includes/            # PSR-4 source root (namespace: WPCodex\)
+allyworker/
+├── allyworker.php        # Entry point — loads MCP Adapter, registers abilities
+├── includes/            # PSR-4 source root (namespace: AllyWorker\)
 │   ├── Abilities/       # One file per ability — each calls wp_register_ability()
 │   ├── Runner/          # Execution logic: PhpRunner, CliRunner, DbRunner, FileManager
 │   └── Skills/          # DB engine: Repository, AdminPage, Schema
@@ -68,11 +68,11 @@ All PHP must follow [WordPress Coding Standards](https://developer.wordpress.org
 
 - Every file starts with `declare(strict_types=1);`
 - PHP 8.0 minimum — use typed properties, typed parameters, and return types on every method
-- Namespace root: `WPCodex\` → `includes/`; one class per file; file name matches class name
-- **Ability naming:** `wpcodex/kebab-case` — e.g. `wpcodex/php-execute`, `wpcodex/skill-list`
-- **Hook names:** prefixed `wpcodex_` — e.g. `wpcodex_after_activate`
-- **Option names:** prefixed `wpcodex_` — e.g. `wpcodex_enable_php_execute`
-- **Transient keys:** prefixed `wpcodex_transient_`
+- Namespace root: `AllyWorker\` → `includes/`; one class per file; file name matches class name
+- **Ability naming:** `allyworker/kebab-case` — e.g. `allyworker/php-execute`, `allyworker/skill-list`
+- **Hook names:** prefixed `allyworker_` — e.g. `allyworker_after_activate`
+- **Option names:** prefixed `allyworker_` — e.g. `allyworker_enable_php_execute`
+- **Transient keys:** prefixed `allyworker_transient_`
 - Output escaping on every echoed value: `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`
 - CSRF protection: `wp_nonce_field()` on every form; `check_admin_referer()` on every handler
 - Capability checks: `current_user_can('manage_options')` at the start of every admin render and POST handler
@@ -96,7 +96,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 ```
 type(scope): short description
 
-feat(abilities): add wpcodex/hook-inspect ability
+feat(abilities): add allyworker/hook-inspect ability
 fix(runner): handle missing WP-CLI binary gracefully
 docs(skills): add Bricks builder skill example
 refactor(abilities): extract permission check to helper
@@ -139,7 +139,7 @@ composer lint && composer analyze && composer test && npm run lint && npm run bu
 
 ## Adding a New Ability
 
-1. Create `includes/Abilities/YourAbility.php` — namespace `WPCodex\Abilities`
+1. Create `includes/Abilities/YourAbility.php` — namespace `AllyWorker\Abilities`
 2. Register on the `wp_abilities_api_init` hook:
 
 ```php
@@ -147,16 +147,16 @@ composer lint && composer analyze && composer test && npm run lint && npm run bu
 
 declare(strict_types=1);
 
-namespace WPCodex\Abilities;
+namespace AllyWorker\Abilities;
 
 /**
- * Registers the wpcodex/your-ability ability.
+ * Registers the allyworker/your-ability ability.
  */
 add_action( 'wp_abilities_api_init', static function (): void {
-    wp_register_ability( 'wpcodex/your-ability', [
-        'label'               => __( 'Your Ability', 'wpcodex' ),
-        'description'         => __( 'One-sentence description for the AI agent.', 'wpcodex' ),
-        'category'            => 'wpcodex',
+    wp_register_ability( 'allyworker/your-ability', [
+        'label'               => __( 'Your Ability', 'allyworker' ),
+        'description'         => __( 'One-sentence description for the AI agent.', 'allyworker' ),
+        'category'            => 'allyworker',
         'input_schema'        => [
             'type'       => 'object',
             'properties' => [
@@ -173,7 +173,7 @@ add_action( 'wp_abilities_api_init', static function (): void {
         ],
         'execute_callback'    => static function ( array $args ): string {
             // Delegate to a Runner class — keep ability files thin.
-            return ( new \WPCodex\Runner\YourRunner() )->run( $args['param_name'] );
+            return ( new \AllyWorker\Runner\YourRunner() )->run( $args['param_name'] );
         },
         'permission_callback' => static fn(): bool => current_user_can( 'manage_options' ),
         'meta'                => [
@@ -199,7 +199,7 @@ Tests live in `tests/Unit/` and `tests/Integration/`. We use [PHPUnit](https://p
 
 declare(strict_types=1);
 
-namespace WPCodex\Tests\Unit;
+namespace AllyWorker\Tests\Unit;
 
 use Brain\Monkey;
 use PHPUnit\Framework\TestCase;
@@ -266,7 +266,7 @@ Add an entry to `CHANGELOG.txt` under the `[Unreleased]` section for every PR:
 
 ```
 [Unreleased]
-- feat: add wpcodex/hook-inspect ability (lists active filters/actions on a hook)
+- feat: add allyworker/hook-inspect ability (lists active filters/actions on a hook)
 - fix: handle missing WP-CLI binary with a clear error message
 - docs: add Bricks builder skill example
 ```
@@ -275,4 +275,4 @@ Add an entry to `CHANGELOG.txt` under the `[Unreleased]` section for every PR:
 
 ## Questions
 
-Open a [GitHub Discussion](https://github.com/wpcodex/wpcodex/discussions) for questions about contributing, architecture, or roadmap.
+Open a [GitHub Discussion](https://github.com/allyworker/allyworker/discussions) for questions about contributing, architecture, or roadmap.

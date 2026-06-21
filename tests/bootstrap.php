@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for WPCodex tests.
+ * PHPUnit bootstrap for AllyWorker tests.
  *
  * Provides:
  *  - WordPress constants required by production code
@@ -14,7 +14,7 @@
  * NOTE: \Brain\Monkey\setUp() is intentionally NOT called here.
  * Each test class that needs Brain\Monkey calls it in its own setUp().
  *
- * @package WPCodex\Tests
+ * @package AllyWorker\Tests
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ define("MONTH_IN_SECONDS", 2592000);
 define("YEAR_IN_SECONDS", 31536000);
 
 if (!defined("ABSPATH")) {
-    $_test_abspath = sys_get_temp_dir() . "/wpcodex-test-abspath/";
+    $_test_abspath = sys_get_temp_dir() . "/allyworker-test-abspath/";
     // Create the stub upgrade.php so Schema::create_table() can require_once it.
     @mkdir($_test_abspath . "wp-admin/includes/", 0755, true);
     if (!file_exists($_test_abspath . "wp-admin/includes/upgrade.php")) {
@@ -41,10 +41,10 @@ if (!defined("ABSPATH")) {
     unset($_test_abspath);
 }
 
-if (!defined("WPCODEX_SANDBOX_DIR")) {
-    $_test_sandbox = sys_get_temp_dir() . "/wpcodex-test-sandbox/";
+if (!defined("ALLY_WORKER_SANDBOX_DIR")) {
+    $_test_sandbox = sys_get_temp_dir() . "/allyworker-test-sandbox/";
     @mkdir($_test_sandbox, 0755, true);
-    define("WPCODEX_SANDBOX_DIR", $_test_sandbox);
+    define("ALLY_WORKER_SANDBOX_DIR", $_test_sandbox);
     unset($_test_sandbox);
 }
 
@@ -99,8 +99,8 @@ if (!class_exists("WP_Post")) {
 // Minimal WordPress hooks system
 
 $GLOBALS["_wp_filter"] = [];
-$GLOBALS["_wpcodex_transients"] = [];
-$GLOBALS["_wpcodex_options"] = [];
+$GLOBALS["_allyworker_transients"] = [];
+$GLOBALS["_allyworker_options"] = [];
 
 if (!function_exists("add_filter")) {
     function add_filter(
@@ -289,7 +289,7 @@ if (!function_exists("is_wp_error")) {
 if (!function_exists("get_transient")) {
     function get_transient(string $transient): mixed
     {
-        return $GLOBALS["_wpcodex_transients"][$transient] ?? false;
+        return $GLOBALS["_allyworker_transients"][$transient] ?? false;
     }
 }
 if (!function_exists("set_transient")) {
@@ -298,21 +298,21 @@ if (!function_exists("set_transient")) {
         mixed $value,
         int $expiration = 0
     ): bool {
-        $GLOBALS["_wpcodex_transients"][$transient] = $value;
+        $GLOBALS["_allyworker_transients"][$transient] = $value;
         return true;
     }
 }
 if (!function_exists("delete_transient")) {
     function delete_transient(string $transient): bool
     {
-        unset($GLOBALS["_wpcodex_transients"][$transient]);
+        unset($GLOBALS["_allyworker_transients"][$transient]);
         return true;
     }
 }
 if (!function_exists("get_option")) {
     function get_option(string $option, mixed $default_value = false): mixed
     {
-        return $GLOBALS["_wpcodex_options"][$option] ?? $default_value;
+        return $GLOBALS["_allyworker_options"][$option] ?? $default_value;
     }
 }
 if (!function_exists("update_option")) {
@@ -321,14 +321,14 @@ if (!function_exists("update_option")) {
         mixed $value,
         string|bool $autoload = true
     ): bool {
-        $GLOBALS["_wpcodex_options"][$option] = $value;
+        $GLOBALS["_allyworker_options"][$option] = $value;
         return true;
     }
 }
 if (!function_exists("delete_option")) {
     function delete_option(string $option): bool
     {
-        unset($GLOBALS["_wpcodex_options"][$option]);
+        unset($GLOBALS["_allyworker_options"][$option]);
         return true;
     }
 }

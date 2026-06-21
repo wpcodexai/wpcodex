@@ -6,19 +6,19 @@
  * browser automation tool POSTs the token + nonce to the exchange endpoint
  * and gets back a short-lived login URL that sets a WordPress auth cookie.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\REST;
+namespace AllyWorker\REST;
 
 /**
  * Class AdminAccessEndpoint
  */
 class AdminAccessEndpoint {
 
-	private const ROUTE_NAMESPACE = 'wpcodex/v1';
+	private const ROUTE_NAMESPACE = 'allyworker/v1';
 
 	/**
 	 * Wire the rest_api_init hook.
@@ -111,15 +111,15 @@ class AdminAccessEndpoint {
 	 */
 	public static function handle_exchange( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		if ( ! self::abilities_enabled() ) {
-			return new \WP_Error( 'wpcodex_disabled', 'WPCodex abilities are disabled.', [ 'status' => 403 ] );
+			return new \WP_Error( 'allyworker_disabled', 'AllyWorker abilities are disabled.', [ 'status' => 403 ] );
 		}
 
-		$token = self::get_header_value( $request, 'x-wpcodex-admin-access-token' );
+		$token = self::get_header_value( $request, 'x-allyworker-admin-access-token' );
 		if ( '' === $token ) {
 			return new \WP_Error( 'missing_admin_access_token', 'Missing admin access token.', [ 'status' => 401 ] );
 		}
 
-		$nonce = self::get_header_value( $request, 'x-wpcodex-admin-access-nonce' );
+		$nonce = self::get_header_value( $request, 'x-allyworker-admin-access-nonce' );
 		if ( '' === $nonce ) {
 			return new \WP_Error( 'missing_admin_access_nonce', 'Missing admin access nonce.', [ 'status' => 401 ] );
 		}
@@ -162,7 +162,7 @@ class AdminAccessEndpoint {
 		}
 
 		$response = new \WP_REST_Response( [
-			'login_url'          => rest_url( 'wpcodex/v1/admin-access/' . rawurlencode( $login_nonce ) ),
+			'login_url'          => rest_url( 'allyworker/v1/admin-access/' . rawurlencode( $login_nonce ) ),
 			'expires_at'         => $login_expires_at,
 			'session_expires_in' => $access['session_expires_in'],
 			'redirect_url'       => $access['redirect_url'],
@@ -182,7 +182,7 @@ class AdminAccessEndpoint {
 	 */
 	public static function handle_login( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		if ( ! self::abilities_enabled() ) {
-			return new \WP_Error( 'wpcodex_disabled', 'WPCodex abilities are disabled.', [ 'status' => 403 ] );
+			return new \WP_Error( 'allyworker_disabled', 'AllyWorker abilities are disabled.', [ 'status' => 403 ] );
 		}
 
 		$params = $request->get_url_params();
@@ -326,21 +326,21 @@ class AdminAccessEndpoint {
 
 	/** Return the transient key for an admin access token. */
 	private static function token_transient_key( string $token ): string {
-		return 'wpcodex_admin_access_' . hash_hmac( 'sha256', $token, wp_salt( 'auth' ) );
+		return 'allyworker_admin_access_' . hash_hmac( 'sha256', $token, wp_salt( 'auth' ) );
 	}
 
 	/** Return the transient key for a one-time browser login nonce. */
 	private static function login_transient_key( string $nonce ): string {
-		return 'wpcodex_admin_login_' . hash_hmac( 'sha256', $nonce, wp_salt( 'auth' ) );
+		return 'allyworker_admin_login_' . hash_hmac( 'sha256', $nonce, wp_salt( 'auth' ) );
 	}
 
 	/** Return the binding nonce HMAC hash stored alongside a token. */
 	private static function nonce_hash( string $nonce ): string {
-		return hash_hmac( 'sha256', $nonce, wp_salt( 'nonce' ) . '|wpcodex-admin-access' );
+		return hash_hmac( 'sha256', $nonce, wp_salt( 'nonce' ) . '|allyworker-admin-access' );
 	}
 
-	/** Check whether WPCodex abilities are currently enabled. */
+	/** Check whether AllyWorker abilities are currently enabled. */
 	private static function abilities_enabled(): bool {
-		return (bool) get_option( 'wpcodex_abilities_enabled', false );
+		return (bool) get_option( 'allyworker_abilities_enabled', false );
 	}
 }

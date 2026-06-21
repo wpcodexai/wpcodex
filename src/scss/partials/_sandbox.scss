@@ -1,27 +1,27 @@
 /**
- * WPCodex — Sandbox page.
+ * AllyWorker — Sandbox page.
  *
- * Scoped to #wpcodex-sandbox.
+ * Scoped to #allyworker-sandbox.
  */
 
-#wpcodex-sandbox {
-	.wpcodex-flex {
+#allyworker-sandbox {
+	.allyworker-flex {
 		display: unset;
 	}
 
-	.wpcodex-card__meta {
+	.allyworker-card__meta {
 		font-family: $font-mono;
 		font-size: .75rem;
 	}
 
-	.wpcodex-card.is-suspended {
+	.allyworker-card.is-suspended {
 		opacity: .6;
 		filter: grayscale(.3);
 	}
 }
 
 // Warn badge (used for Suspended state).
-.wpcodex-badge--warn {
+.allyworker-badge--warn {
 	background: #fff3cd;
 	color: #7a4f00;
 }

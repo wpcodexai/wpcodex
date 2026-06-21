@@ -2,12 +2,12 @@
 /**
  * Requirements checker.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Utils;
+namespace AllyWorker\Utils;
 
 /**
  * Class Requirements
@@ -30,7 +30,7 @@ class Requirements {
 		if ( version_compare( PHP_VERSION, self::MIN_PHP, '<' ) ) {
 			$errors[] = sprintf(
 				/* translators: 1: required version 2: current version */
-				__( 'WPCodex requires PHP %1$s or higher. You are running %2$s.', 'wpcodex' ),
+				__( 'AllyWorker requires PHP %1$s or higher. You are running %2$s.', 'allyworker' ),
 				self::MIN_PHP,
 				PHP_VERSION
 			);
@@ -39,7 +39,7 @@ class Requirements {
 		if ( version_compare( get_bloginfo( 'version' ), self::MIN_WP, '<' ) ) {
 			$errors[] = sprintf(
 				/* translators: 1: required version 2: current version */
-				__( 'WPCodex requires WordPress %1$s or higher (Abilities API). You are running %2$s.', 'wpcodex' ),
+				__( 'AllyWorker requires WordPress %1$s or higher (Abilities API). You are running %2$s.', 'allyworker' ),
 				self::MIN_WP,
 				get_bloginfo( 'version' )
 			);

@@ -2,15 +2,15 @@
 /**
  * Skills source registry — aggregates skills from multiple sources.
  *
- * Sources are registered via the wpcodex_skill_sources filter. Each source
+ * Sources are registered via the allyworker_skill_sources filter. Each source
  * provides a loader callable that returns a list of skill records.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Skills;
+namespace AllyWorker\Skills;
 
 /**
  * Class Sources
@@ -39,7 +39,7 @@ class Sources {
 		];
 
 		/** @var array<string, array{id: string, priority: int, label: string, loader: callable}> $sources */
-		$sources = apply_filters( 'wpcodex_skill_sources', $default );
+		$sources = apply_filters( 'allyworker_skill_sources', $default );
 
 		$list = array_values( $sources );
 		usort( $list, static fn( array $a, array $b ): int => $a['priority'] <=> $b['priority'] );
@@ -136,7 +136,7 @@ class Sources {
 	}
 
 	/**
-	 * Loader for the user DB source — reads from wpcodex_skills table.
+	 * Loader for the user DB source — reads from allyworker_skills table.
 	 *
 	 * @return list<array{slug: string, name: string, description: string, body: string, enable_prompt: bool, enable_agentic: bool}>
 	 */

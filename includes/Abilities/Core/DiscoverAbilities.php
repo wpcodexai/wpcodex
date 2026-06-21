@@ -3,19 +3,19 @@
  * Ability: mcp-adapter/discover-abilities
  *
  * Replaces the MCP Adapter's built-in mcp-adapter/discover-abilities so the
- * response includes WPCodex environment instructions and the skill catalog.
+ * response includes AllyWorker environment instructions and the skill catalog.
  * Agents read this at session start and immediately know what tools and skills
  * are available without a separate tool call.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Abilities\Core;
+namespace AllyWorker\Abilities\Core;
 
-use WPCodex\Abilities\AbstractAbility;
-use WPCodex\Skills\Sources;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Sources;
 
 class DiscoverAbilities extends AbstractAbility {
 	/** {@inheritDoc} */
@@ -25,14 +25,14 @@ class DiscoverAbilities extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Discover Abilities', 'wpcodex' );
+		return __( 'Discover Abilities', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'Discover all available WordPress abilities. Returns the full ability list plus WPCodex environment instructions and skill catalog. Call this at the start of every session.',
-			'wpcodex'
+			'Discover all available WordPress abilities. Returns the full ability list plus AllyWorker environment instructions and skill catalog. Call this at the start of every session.',
+			'allyworker'
 		);
 	}
 
@@ -51,7 +51,7 @@ class DiscoverAbilities extends AbstractAbility {
 			'properties' => [
 				'instructions' => [
 					'type'        => 'string',
-					'description' => 'WPCodex environment instructions and skill catalog for this session.',
+					'description' => 'AllyWorker environment instructions and skill catalog for this session.',
 				],
 				'abilities'    => [
 					'type'  => 'array',
@@ -83,12 +83,12 @@ class DiscoverAbilities extends AbstractAbility {
 	 */
 	public function check_permission(): bool|\WP_Error {
 		if ( ! is_user_logged_in() ) {
-			return new \WP_Error( 'wpcodex_not_authenticated', 'Authentication required.', [ 'status' => 401 ] );
+			return new \WP_Error( 'allyworker_not_authenticated', 'Authentication required.', [ 'status' => 401 ] );
 		}
 		/** @var string $cap */
-		$cap = apply_filters( 'wpcodex_discover_abilities_capability', 'read' );
+		$cap = apply_filters( 'allyworker_discover_abilities_capability', 'read' );
 		if ( ! current_user_can( $cap ) ) {
-			return new \WP_Error( 'wpcodex_insufficient_capability', 'Insufficient capability.', [ 'status' => 403 ] );
+			return new \WP_Error( 'allyworker_insufficient_capability', 'Insufficient capability.', [ 'status' => 403 ] );
 		}
 		return true;
 	}
@@ -153,12 +153,12 @@ class DiscoverAbilities extends AbstractAbility {
 	 */
 	private static function build_instructions(): string {
 		$site_url = home_url();
-		$sandbox  = WPCODEX_SANDBOX_DIR;
+		$sandbox  = ALLY_WORKER_SANDBOX_DIR;
 
 		$lines = [
-			'## WPCodex — AI Operating System for WordPress',
+			'## AllyWorker — AI Operating System for WordPress',
 			'',
-			'You are connected to a WordPress site via the WPCodex MCP server.',
+			'You are connected to a WordPress site via the AllyWorker MCP server.',
 			'',
 			'**Site:** ' . $site_url,
 			'**Sandbox directory:** ' . $sandbox,
@@ -197,11 +197,11 @@ class DiscoverAbilities extends AbstractAbility {
 		$lines = array_merge( $lines, [
 			'### Abilities',
 			'',
-			'- Execute arbitrary PHP with `wpcodex/php-execute` — full WordPress environment available (`$wpdb`, all functions, all plugins).',
-			'- Run WP-CLI commands with `wpcodex/wpcli-run`.',
-			'- Read, write, edit, delete, and list files with the `wpcodex/file-*` abilities.',
-			'- Persist PHP code across requests by writing files to the sandbox directory and using `wpcodex/file-disable` / `wpcodex/file-enable` to control loading.',
-			'- Manage skill playbooks with `wpcodex/skill-*` abilities.',
+			'- Execute arbitrary PHP with `allyworker/php-execute` — full WordPress environment available (`$wpdb`, all functions, all plugins).',
+			'- Run WP-CLI commands with `allyworker/wpcli-run`.',
+			'- Read, write, edit, delete, and list files with the `allyworker/file-*` abilities.',
+			'- Persist PHP code across requests by writing files to the sandbox directory and using `allyworker/file-disable` / `allyworker/file-enable` to control loading.',
+			'- Manage skill playbooks with `allyworker/skill-*` abilities.',
 			'',
 		] );
 
@@ -235,7 +235,7 @@ class DiscoverAbilities extends AbstractAbility {
 		$lines = array_merge( $lines, [
 			'## Rules',
 			'',
-			'- Always inspect before modifying. Use `wpcodex/file-read` or `wpcodex/php-execute` to understand the current state.',
+			'- Always inspect before modifying. Use `allyworker/file-read` or `allyworker/php-execute` to understand the current state.',
 			'- For destructive operations, confirm with the user first.',
 			'- Sandbox files run on every WordPress request — keep them lean and non-blocking.',
 			'',
@@ -313,7 +313,7 @@ class DiscoverAbilities extends AbstractAbility {
 
 	/**
 	 * Build the ## Available Skills catalog block from all registered sources
-	 * (user DB + external plugin sources via the wpcodex_skill_sources filter).
+	 * (user DB + external plugin sources via the allyworker_skill_sources filter).
 	 */
 	private static function build_skill_catalog(): string {
 		// Use Sources::discoverable() so external plugin skills are included.
@@ -326,7 +326,7 @@ class DiscoverAbilities extends AbstractAbility {
 		$lines = [
 			'## Available Skills',
 			'',
-			'Call `wpcodex/skill-read` with the skill name to load its full instructions.',
+			'Call `allyworker/skill-read` with the skill name to load its full instructions.',
 			'',
 		];
 

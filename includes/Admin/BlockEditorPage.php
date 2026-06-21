@@ -6,15 +6,15 @@
  * Batches are finalized automatically once the user opens the Block Editor
  * Queue page — the browser-side JS runtime handles serialization via iframe.
  *
- * @package WPCodex
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPCodex\Admin;
+namespace AllyWorker\Admin;
 
 use WP_Post;
-use WPCodex\Utils\GutenbergStorage;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class BlockEditorPage
@@ -23,36 +23,36 @@ final class BlockEditorPage {
 
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions.', 'wpcodex' ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'allyworker' ) );
 		}
 
 		$notices = self::handle_actions();
 		$batches = self::get_batches();
 		?>
-		<div class="wrap wpcodex-wrap" id="wpcodex-block-editor">
-			<div class="wpcodex-page-header wpcodex-flex">
-				<h1 class="wpcodex-page-title"><?php esc_html_e( 'Block Editor', 'wpcodex' ); ?></h1>
+		<div class="wrap allyworker-wrap" id="allyworker-block-editor">
+			<div class="allyworker-page-header allyworker-flex">
+				<h1 class="allyworker-page-title"><?php esc_html_e( 'Block Editor', 'allyworker' ); ?></h1>
 			</div>
-			<p class="wpcodex-page-description">
-				<?php esc_html_e( 'AI agents queue Gutenberg block changes here instead of writing directly to post_content. The browser-side JS finalizer processes each batch automatically — keep this page open in a background tab while an active session is running. You can also open the finalization link for any batch to trigger it manually.', 'wpcodex' ); ?>
+			<p class="allyworker-page-description">
+				<?php esc_html_e( 'AI agents queue Gutenberg block changes here instead of writing directly to post_content. The browser-side JS finalizer processes each batch automatically — keep this page open in a background tab while an active session is running. You can also open the finalization link for any batch to trigger it manually.', 'allyworker' ); ?>
 			</p>
 
 			<?php self::render_notices( $notices ); ?>
 
 			<?php if ( empty( $batches ) ) : ?>
-				<div class="wpcodex-empty-state">
-					<p><?php esc_html_e( 'No pending batches. When an AI agent queues Gutenberg changes, they will appear here.', 'wpcodex' ); ?></p>
+				<div class="allyworker-empty-state">
+					<p><?php esc_html_e( 'No pending batches. When an AI agent queues Gutenberg changes, they will appear here.', 'allyworker' ); ?></p>
 				</div>
 			<?php else : ?>
-				<div class="wpcodex-queue-table-wrap">
-					<table class="wp-list-table widefat fixed striped wpcodex-queue-table">
+				<div class="allyworker-queue-table-wrap">
+					<table class="wp-list-table widefat fixed striped allyworker-queue-table">
 						<thead>
 							<tr>
-								<th><?php esc_html_e( 'Batch', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Items', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Status', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Created', 'wpcodex' ); ?></th>
-								<th><?php esc_html_e( 'Actions', 'wpcodex' ); ?></th>
+								<th><?php esc_html_e( 'Batch', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Items', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Status', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Created', 'allyworker' ); ?></th>
+								<th><?php esc_html_e( 'Actions', 'allyworker' ); ?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -64,13 +64,13 @@ final class BlockEditorPage {
 				</div>
 			<?php endif; ?>
 
-			<div class="wpcodex-info-box">
-				<h3><?php esc_html_e( 'How it works', 'wpcodex' ); ?></h3>
+			<div class="allyworker-info-box">
+				<h3><?php esc_html_e( 'How it works', 'allyworker' ); ?></h3>
 				<ol>
-					<li><?php esc_html_e( 'The AI agent calls wpcodex/gutenberg-write-content — changes are queued here, not written directly to the post.', 'wpcodex' ); ?></li>
-					<li><?php esc_html_e( 'The JS finalizer on this page auto-processes ready batches via a hidden iframe. Keep this tab open in the background during active sessions.', 'wpcodex' ); ?></li>
-					<li><?php esc_html_e( 'Alternatively, the agent calls wpcodex/gutenberg-get-finalization-url and gives you a direct link to trigger finalization manually.', 'wpcodex' ); ?></li>
-					<li><?php esc_html_e( 'Once finalized the batch is removed from the active queue.', 'wpcodex' ); ?></li>
+					<li><?php esc_html_e( 'The AI agent calls allyworker/gutenberg-write-content — changes are queued here, not written directly to the post.', 'allyworker' ); ?></li>
+					<li><?php esc_html_e( 'The JS finalizer on this page auto-processes ready batches via a hidden iframe. Keep this tab open in the background during active sessions.', 'allyworker' ); ?></li>
+					<li><?php esc_html_e( 'Alternatively, the agent calls allyworker/gutenberg-get-finalization-url and gives you a direct link to trigger finalization manually.', 'allyworker' ); ?></li>
+					<li><?php esc_html_e( 'Once finalized the batch is removed from the active queue.', 'allyworker' ); ?></li>
 				</ol>
 			</div>
 		</div>
@@ -81,11 +81,11 @@ final class BlockEditorPage {
 	 * @return array{type: string, message: string}[]
 	 */
 	private static function handle_actions(): array {
-		if ( ! isset( $_POST['wpcodex_queue_nonce'] ) ) {
+		if ( ! isset( $_POST['allyworker_queue_nonce'] ) ) {
 			return [];
 		}
 
-		check_admin_referer( 'wpcodex_queue_action', 'wpcodex_queue_nonce' );
+		check_admin_referer( 'allyworker_queue_action', 'allyworker_queue_nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return [];
@@ -100,7 +100,7 @@ final class BlockEditorPage {
 				if ( is_wp_error( $result ) ) {
 					return [ [ 'type' => 'error', 'message' => $result->get_error_message() ] ];
 				}
-				return [ [ 'type' => 'success', 'message' => __( 'Batch cancelled.', 'wpcodex' ) ] ];
+				return [ [ 'type' => 'success', 'message' => __( 'Batch cancelled.', 'allyworker' ) ] ];
 
 			case 'cancel_all':
 				$cancelled = 0;
@@ -115,7 +115,7 @@ final class BlockEditorPage {
 				}
 				return [ [ 'type' => 'success', 'message' => sprintf(
 					/* translators: %d: number of batches cancelled */
-					__( '%d batch(es) cancelled.', 'wpcodex' ),
+					__( '%d batch(es) cancelled.', 'allyworker' ),
 					$cancelled
 				) ] ];
 		}
@@ -162,15 +162,15 @@ final class BlockEditorPage {
 		$created_ts = $created_at !== '' ? strtotime( $created_at ) : 0;
 
 		$status_labels = [
-			GutenbergStorage::STATUS_DRAFT      => __( 'Draft', 'wpcodex' ),
-			GutenbergStorage::STATUS_READY      => __( 'Ready', 'wpcodex' ),
-			GutenbergStorage::STATUS_RUNNING    => __( 'Finalizing…', 'wpcodex' ),
-			GutenbergStorage::STATUS_PREPARED   => __( 'Prepared', 'wpcodex' ),
-			GutenbergStorage::STATUS_FINALIZED  => __( 'Finalized', 'wpcodex' ),
-			GutenbergStorage::STATUS_FAILED     => __( 'Failed', 'wpcodex' ),
-			GutenbergStorage::STATUS_CONFLICTED => __( 'Conflicted', 'wpcodex' ),
-			GutenbergStorage::STATUS_CANCELED   => __( 'Cancelled', 'wpcodex' ),
-			GutenbergStorage::STATUS_STALE      => __( 'Stale', 'wpcodex' ),
+			GutenbergStorage::STATUS_DRAFT      => __( 'Draft', 'allyworker' ),
+			GutenbergStorage::STATUS_READY      => __( 'Ready', 'allyworker' ),
+			GutenbergStorage::STATUS_RUNNING    => __( 'Finalizing…', 'allyworker' ),
+			GutenbergStorage::STATUS_PREPARED   => __( 'Prepared', 'allyworker' ),
+			GutenbergStorage::STATUS_FINALIZED  => __( 'Finalized', 'allyworker' ),
+			GutenbergStorage::STATUS_FAILED     => __( 'Failed', 'allyworker' ),
+			GutenbergStorage::STATUS_CONFLICTED => __( 'Conflicted', 'allyworker' ),
+			GutenbergStorage::STATUS_CANCELED   => __( 'Cancelled', 'allyworker' ),
+			GutenbergStorage::STATUS_STALE      => __( 'Stale', 'allyworker' ),
 		];
 		?>
 		<tr>
@@ -181,13 +181,13 @@ final class BlockEditorPage {
 				<?php endif; ?>
 				<?php if ( $last_error !== '' ) : ?>
 					<br><span style="color:#d63638;font-size:.8125rem;" title="<?php echo esc_attr( $last_error ); ?>">
-						<?php esc_html_e( 'Error (hover for details)', 'wpcodex' ); ?>
+						<?php esc_html_e( 'Error (hover for details)', 'allyworker' ); ?>
 					</span>
 				<?php endif; ?>
 			</td>
 			<td><?php echo esc_html( (string) $item_count ); ?></td>
 			<td>
-				<span class="wpcodex-status wpcodex-status--<?php echo esc_attr( $status ); ?>">
+				<span class="allyworker-status allyworker-status--<?php echo esc_attr( $status ); ?>">
 					<?php echo esc_html( $status_labels[ $status ] ?? $status ); ?>
 				</span>
 			</td>
@@ -202,17 +202,17 @@ final class BlockEditorPage {
 						<a href="<?php echo esc_url( $finalize_url ); ?>"
 						   target="_blank"
 						   class="button button-small button-primary">
-							<?php esc_html_e( 'Finalize in editor', 'wpcodex' ); ?>
+							<?php esc_html_e( 'Finalize in editor', 'allyworker' ); ?>
 						</a>
 					<?php endif; ?>
 					<?php if ( ! in_array( $status, GutenbergStorage::TERMINAL_STATUSES, true ) ) : ?>
 						<form method="post" action="">
-							<?php wp_nonce_field( 'wpcodex_queue_action', 'wpcodex_queue_nonce' ); ?>
+							<?php wp_nonce_field( 'allyworker_queue_action', 'allyworker_queue_nonce' ); ?>
 							<input type="hidden" name="queue_action" value="cancel">
 							<input type="hidden" name="batch_id"     value="<?php echo esc_attr( (string) $batch_id ); ?>">
 							<button type="submit" class="button button-small button-link-delete"
-							        onclick="return confirm('<?php echo esc_js( __( 'Cancel this batch?', 'wpcodex' ) ); ?>')">
-								<?php esc_html_e( 'Cancel', 'wpcodex' ); ?>
+							        onclick="return confirm('<?php echo esc_js( __( 'Cancel this batch?', 'allyworker' ) ); ?>')">
+								<?php esc_html_e( 'Cancel', 'allyworker' ); ?>
 							</button>
 						</form>
 					<?php endif; ?>

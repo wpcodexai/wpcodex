@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpworker/file-disable
+ * Ability: allyworker/file-disable
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Files;
+namespace AllyWorker\Abilities\Files;
 
-use WPWorker\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class FileDisable
@@ -21,24 +21,24 @@ class FileDisable extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-general';
+		return 'allyworker-general';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/file-disable';
+		return 'allyworker/file-disable';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Disable Sandbox File', 'worker-ai' );
+		return __( 'Disable Sandbox File', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'Disables a PHP file in the WPWorker sandbox (wp-content/wpworker-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
-			'wpworker'
+			'Disables a PHP file in the AllyWorker sandbox (wp-content/wp-allyworker-sandbox/) by appending ".disabled" to its filename. The file is preserved on disk but no longer loaded. Idempotent: disabling an already-disabled file returns disabled=false.',
+			'allyworker'
 		);
 	}
 
@@ -49,7 +49,7 @@ class FileDisable extends AbstractAbility {
 			'properties'           => [
 				'path' => [
 					'type'        => 'string',
-					'description' => 'Absolute path to the sandbox file to disable. Must be inside wp-content/wpworker-sandbox/.',
+					'description' => 'Absolute path to the sandbox file to disable. Must be inside wp-content/wp-allyworker-sandbox/.',
 					'minLength'   => 1,
 				],
 			],
@@ -79,27 +79,27 @@ class FileDisable extends AbstractAbility {
 	public function execute( array $input ): array|\WP_Error {
 		$path = isset( $input['path'] ) ? (string) $input['path'] : '';
 		if ( '' === $path ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'path must be a non-empty string.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'path must be a non-empty string.', 'allyworker' ) );
 		}
 
 		$resolved = realpath( $path );
 		if ( false === $resolved ) {
 			/* translators: %s: file path */
-			return new \WP_Error( 'wpworker_not_found', sprintf( __( 'File not found: %s', 'worker-ai' ), $path ) );
+			return new \WP_Error( 'allyworker_not_found', sprintf( __( 'File not found: %s', 'allyworker' ), $path ) );
 		}
 
 		// Must be inside sandbox directory.
-		$sandbox = rtrim( (string) realpath( WPWORKER_SANDBOX_DIR ), '/\\' );
+		$sandbox = rtrim( (string) realpath( ALLY_WORKER_SANDBOX_DIR ), '/\\' );
 		if ( ! str_starts_with( $resolved, $sandbox . DIRECTORY_SEPARATOR ) && $resolved !== $sandbox ) {
 			return new \WP_Error(
-				'wpworker_path_outside_sandbox',
-				__( 'Path must be inside the WPWorker sandbox directory.', 'worker-ai' )
+				'allyworker_path_outside_sandbox',
+				__( 'Path must be inside the AllyWorker sandbox directory.', 'allyworker' )
 			);
 		}
 
 		if ( ! is_file( $resolved ) ) {
 			/* translators: %s: file path */
-			return new \WP_Error( 'wpworker_not_a_file', sprintf( __( 'Not a file: %s', 'worker-ai' ), $resolved ) );
+			return new \WP_Error( 'allyworker_not_a_file', sprintf( __( 'Not a file: %s', 'allyworker' ), $resolved ) );
 		}
 
 		// Idempotent: already disabled.
@@ -115,16 +115,16 @@ class FileDisable extends AbstractAbility {
 
 		if ( file_exists( $disabled_path ) ) {
 			return new \WP_Error(
-				'wpworker_disabled_exists',
+				'allyworker_disabled_exists',
 				/* translators: %s: file path */
-				sprintf( __( 'A disabled version already exists: %s', 'worker-ai' ), $disabled_path )
+				sprintf( __( 'A disabled version already exists: %s', 'allyworker' ), $disabled_path )
 			);
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- WP_Filesystem::move() requires filesystem init not available in this context
 		if ( ! rename( $resolved, $disabled_path ) ) {
 			/* translators: %s: file path */
-			return new \WP_Error( 'wpworker_rename_failed', sprintf( __( 'Failed to rename: %s', 'worker-ai' ), $resolved ) );
+			return new \WP_Error( 'allyworker_rename_failed', sprintf( __( 'Failed to rename: %s', 'allyworker' ), $resolved ) );
 		}
 
 		return [

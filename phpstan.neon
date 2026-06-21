@@ -5,10 +5,10 @@ parameters:
     level: 8
 
     # Analyse the actual PHP source directory and the entry point.
-    # Worker AI PHP lives in includes/ (PSR-4 root), not src/ (which is TypeScript/SCSS).
+    # AllyWorker PHP lives in includes/ (PSR-4 root), not src/ (which is JS/SCSS).
     paths:
         - includes
-        - worker-ai.php
+        - allyworker.php
 
     bootstrapFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

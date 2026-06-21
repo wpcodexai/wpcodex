@@ -1,8 +1,8 @@
-# Worker AI
+# AllyWorker
 
 > **AI agent tools for WordPress — read, inspect, manage, and build via MCP.**
 
-Worker AI connects AI agents to your WordPress site through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Any compatible AI client — Claude, Cursor, Codex, Windsurf, GitHub Copilot, and more — can inspect and interact with your site in real time using WordPress Application Passwords.
+AllyWorker connects AI agents to your WordPress site through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Any compatible AI client — Claude, Cursor, Codex, Windsurf, GitHub Copilot, and more — can inspect and interact with your site in real time using WordPress Application Passwords.
 
 No proxy. No hosted service. The AI client connects directly to your server over HTTPS.
 
@@ -16,7 +16,7 @@ No proxy. No hosted service. The AI client connects directly to your server over
 | PHP | 8.0+ |
 | HTTPS | Required |
 
-WordPress 6.9+ is required because Worker AI uses the **WordPress Abilities API** (`wp_register_ability()`), which is part of WordPress core since 6.9.
+WordPress 6.9+ is required because AllyWorker uses the **WordPress Abilities API** (`wp_register_ability()`), which is part of WordPress core since 6.9.
 
 ---
 
@@ -24,20 +24,20 @@ WordPress 6.9+ is required because Worker AI uses the **WordPress Abilities API*
 
 **1. Install & activate**
 ```bash
-wp plugin install wpworker --activate
+wp plugin install allyworker --activate
 ```
 
 **2. Create an Application Password**
 Go to **WordPress Admin → Users → Your Profile → Application Passwords**. Create a password and name it after your AI client (e.g. `Claude Code`).
 
 **3. Connect your AI client**
-Go to **Worker AI → Connect**. Copy the MCP configuration for your client and paste it in. The configuration uses your site URL and Application Password — no separate secret key.
+Go to **AllyWorker → Connect**. Copy the MCP configuration for your client and paste it in. The configuration uses your site URL and Application Password — no separate secret key.
 
 ---
 
 ## MCP Abilities
 
-Worker AI registers the following abilities via the WordPress Abilities API. Each ability is exposed as an MCP tool through the bundled `wordpress/mcp-adapter`. All abilities are authenticated via **WordPress Application Passwords** over HTTPS.
+AllyWorker registers the following abilities via the WordPress Abilities API. Each ability is exposed as an MCP tool through the bundled `wordpress/mcp-adapter`. All abilities are authenticated via **WordPress Application Passwords** over HTTPS.
 
 ### Free abilities
 
@@ -45,34 +45,34 @@ Worker AI registers the following abilities via the WordPress Abilities API. Eac
 
 | Ability | Description |
 |---|---|
-| `wpworker/file-read` | Read any file on the server |
-| `wpworker/file-list` | List files in a directory |
-| `wpworker/file-disable` | Disable a sandbox PHP file (rename to `.disabled`) |
-| `wpworker/file-enable` | Re-enable a previously disabled sandbox file |
-| `wpworker/create-upload-link` | Create a temporary upload endpoint and bearer token |
-| `wpworker/site-info` | Full install snapshot: version, plugins, theme, options |
-| `wpworker/option-get` | Get a WordPress option |
-| `wpworker/option-set` | Set a WordPress option |
-| `wpworker/post-query` | Query posts via `WP_Query` |
-| `wpworker/create-admin-access-link` | Create a temporary one-time admin session link |
-| `wpworker/skill-list` | List all skills with their names and trigger descriptions |
-| `wpworker/skill-read` | Read a skill's full body by name |
-| `wpworker/skill-create` | Create a new skill (name, description, body) |
-| `wpworker/skill-update` | Update an existing skill |
-| `wpworker/skill-delete` | Delete a skill by name |
+| `allyworker/file-read` | Read any file on the server |
+| `allyworker/file-list` | List files in a directory |
+| `allyworker/file-disable` | Disable a sandbox PHP file (rename to `.disabled`) |
+| `allyworker/file-enable` | Re-enable a previously disabled sandbox file |
+| `allyworker/create-upload-link` | Create a temporary upload endpoint and bearer token |
+| `allyworker/site-info` | Full install snapshot: version, plugins, theme, options |
+| `allyworker/option-get` | Get a WordPress option |
+| `allyworker/option-set` | Set a WordPress option |
+| `allyworker/post-query` | Query posts via `WP_Query` |
+| `allyworker/create-admin-access-link` | Create a temporary one-time admin session link |
+| `allyworker/skill-list` | List all skills with their names and trigger descriptions |
+| `allyworker/skill-read` | Read a skill's full body by name |
+| `allyworker/skill-create` | Create a new skill (name, description, body) |
+| `allyworker/skill-update` | Update an existing skill |
+| `allyworker/skill-delete` | Delete a skill by name |
 
-### Pro abilities ([Worker AI Pro](https://wpworker.ai/pro/) required)
+### Pro abilities ([AllyWorker Pro](https://allyworker.com/pro/) required)
 
 | Ability | Description |
 |---|---|
-| `wpworker/php-execute` | Run arbitrary PHP inside the WordPress process |
-| `wpworker/wpcli-run` | Execute WP-CLI commands |
-| `wpworker/db-query` | Run SQL queries via `$wpdb` |
-| `wpworker/file-write` | Write or create files (atomic, with `.bak` backup) |
-| `wpworker/file-edit` | Find-and-replace in a file |
-| `wpworker/file-delete` | Delete a file or directory |
+| `allyworker/php-execute` | Run arbitrary PHP inside the WordPress process |
+| `allyworker/wpcli-run` | Execute WP-CLI commands |
+| `allyworker/db-query` | Run SQL queries via `$wpdb` |
+| `allyworker/file-write` | Write or create files (atomic, with `.bak` backup) |
+| `allyworker/file-edit` | Find-and-replace in a file |
+| `allyworker/file-delete` | Delete a file or directory |
 
-Pro abilities are injected via the `wpworker_abilities` filter when Worker AI Pro is active. They appear in **Worker AI → Ability Settings** alongside free abilities and can be enabled or disabled individually. See [SECURITY.md](./SECURITY.md).
+Pro abilities are injected via the `allyworker_abilities` filter when AllyWorker Pro is active. They appear in **AllyWorker → Ability Settings** alongside free abilities and can be enabled or disabled individually. See [SECURITY.md](./SECURITY.md).
 
 ---
 
@@ -82,7 +82,7 @@ Pro abilities are injected via the `wpworker_abilities` filter when Worker AI Pr
 - Every request validated by the `wordpress/mcp-adapter` against the WordPress user table
 - Each ability has a `permission_callback` requiring `manage_options` capability (super-admin on Multisite)
 - HTTPS enforced — plugin warns if SSL is not detected
-- The sandbox directory (`wp-content/wpworker-sandbox/`) isolates PHP snippets; files that cause fatal errors are auto-disabled
+- The sandbox directory (`wp-content/allyworker-sandbox/`) isolates PHP snippets; files that cause fatal errors are auto-disabled
 - PHP file uploads via `create-upload-link` are restricted to the sandbox directory
 
 **Pro abilities** (PHP execution, WP-CLI, direct SQL, filesystem writes) are intended for development and staging environments. See [SECURITY.md](./SECURITY.md).
@@ -91,7 +91,7 @@ Pro abilities are injected via the `wpworker_abilities` filter when Worker AI Pr
 
 ## Agent Skills
 
-Skills are short Markdown playbooks stored in the **WordPress database** and managed from **Worker AI → Skills** in the admin. The agent reads only each skill's `description` field at session start to decide which skills are relevant; the full body is loaded on demand when the description matches the task.
+Skills are short Markdown playbooks stored in the **WordPress database** and managed from **AllyWorker → Skills** in the admin. The agent reads only each skill's `description` field at session start to decide which skills are relevant; the full body is loaded on demand when the description matches the task.
 
 Each skill has a small YAML frontmatter block:
 
@@ -119,10 +119,10 @@ Skills are site-wide: every AI client connected to this site shares the same ski
 ## Project Structure
 
 ```
-wpworker/
-├── wpworker.php                        # Plugin entry point (headers, constants, bootstrap)
+allyworker/
+├── allyworker.php                        # Plugin entry point (headers, constants, bootstrap)
 │
-├── includes/                          # PSR-4 autoloaded source (namespace: Worker AI\)
+├── includes/                          # PSR-4 autoloaded source (namespace: AllyWorker\)
 │   ├── Plugin.php                     # Singleton bootstrap — loads MCP Adapter, registers abilities
 │   ├── Admin/
 │   │   ├── AdminMenu.php              # Top-level menu + asset enqueue
@@ -160,7 +160,7 @@ wpworker/
 │   │   └── FileManager.php            # Atomic read/write/list
 │   ├── Skills/
 │   │   ├── Repository.php             # DB read/write for skill records
-│   │   ├── AdminPage.php              # Worker AI → Skills admin UI
+│   │   ├── AdminPage.php              # AllyWorker → Skills admin UI
 │   │   └── Schema.php                 # DB table creation + upgrade
 │   └── Utils/
 │       └── Requirements.php           # PHP/WP version checks
@@ -205,8 +205,8 @@ wpworker/
 
 ```bash
 # Clone into your WordPress plugins directory
-git clone https://github.com/wpworkerai/wpworker.git wp-content/plugins/wpworker
-cd wp-content/plugins/wpworker
+git clone https://github.com/allyworker/allyworker.git wp-content/plugins/allyworker
+cd wp-content/plugins/allyworker
 
 # PHP dependencies (includes wordpress/mcp-adapter via Jetpack Autoloader)
 composer install
@@ -233,14 +233,14 @@ All PRs must pass all checks above. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ### Adding a Free Ability
 
-1. Create `includes/Abilities/YourAbility.php` in namespace `Worker AI\Abilities`
+1. Create `includes/Abilities/YourAbility.php` in namespace `AllyWorker\Abilities`
 2. Extend `AbstractAbility` and implement all abstract methods
 3. Add it to `Abilities::create_abilities()` in `includes/Abilities/Abilities.php`
 4. Add a unit test in `tests/Unit/Abilities/YourAbilityTest.php`
 
 ### Adding a Pro Ability
 
-Pro abilities live in [Worker AI Pro](https://wpworker.ai/pro/) under `includes/Abilities/Pro/`. They extend `Worker AI\Abilities\AbstractAbility` and are injected via the `wpworker_abilities` filter — the Runner classes (`PhpRunner`, `CliRunner`, `DbRunner`, `FileManager`) remain in the free plugin for Pro to use.
+Pro abilities live in [AllyWorker Pro](https://allyworker.com/pro/) under `includes/Abilities/Pro/`. They extend `AllyWorker\Abilities\AbstractAbility` and are injected via the `allyworker_abilities` filter — the Runner classes (`PhpRunner`, `CliRunner`, `DbRunner`, `FileManager`) remain in the free plugin for Pro to use.
 
 ---
 

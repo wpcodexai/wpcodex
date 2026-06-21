@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpworker/file-read
+ * Ability: allyworker/file-read
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Files;
+namespace AllyWorker\Abilities\Files;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Runner\FileManager;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Runner\FileManager;
 
 /**
  * Class FileRead
@@ -22,22 +22,22 @@ class FileRead extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-general';
+		return 'allyworker-general';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/file-read';
+		return 'allyworker/file-read';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Read File', 'worker-ai' );
+		return __( 'Read File', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Read the contents of a file from the WordPress filesystem. Returns base64-encoded content for binary files.', 'worker-ai' );
+		return __( 'Read the contents of a file from the WordPress filesystem. Returns base64-encoded content for binary files.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -93,7 +93,7 @@ class FileRead extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['path'] ) || ! is_string( $input['path'] ) ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'path must be a non-empty string.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'path must be a non-empty string.', 'allyworker' ) );
 		}
 
 		$offset = max( 0, (int) ( $input['offset'] ?? 0 ) );
@@ -102,9 +102,9 @@ class FileRead extends AbstractAbility {
 		try {
 			return FileManager::instance()->read_file( $input['path'], $offset, $limit );
 		} catch ( \InvalidArgumentException $e ) {
-			return new \WP_Error( 'wpworker_path_error', $e->getMessage() );
+			return new \WP_Error( 'allyworker_path_error', $e->getMessage() );
 		} catch ( \RuntimeException $e ) {
-			return new \WP_Error( 'wpworker_file_error', $e->getMessage() );
+			return new \WP_Error( 'allyworker_file_error', $e->getMessage() );
 		}
 	}
 }

@@ -31,7 +31,7 @@
         </include>
         <exclude>
             <!-- Exclude the entry point — it is bootstrap-only, not testable logic. -->
-            <file>worker-ai.php</file>
+            <file>allyworker.php</file>
         </exclude>
     </source>
 </phpunit>

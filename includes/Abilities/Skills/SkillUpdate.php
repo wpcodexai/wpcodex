@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpworker/skill-update
+ * Ability: allyworker/skill-update
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Skills;
+namespace AllyWorker\Abilities\Skills;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Skills\Repository;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Repository;
 
 /**
  * Class SkillUpdate
@@ -22,22 +22,22 @@ class SkillUpdate extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/skill-update';
+		return 'allyworker/skill-update';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Update Skill', 'worker-ai' );
+		return __( 'Update Skill', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Update an existing skill by name. Pass only the fields you want to change.', 'worker-ai' );
+		return __( 'Update an existing skill by name. Pass only the fields you want to change.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -79,7 +79,7 @@ class SkillUpdate extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['name'] ) || ! is_string( $input['name'] ) ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'name must be a non-empty string.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'name must be a non-empty string.', 'allyworker' ) );
 		}
 		$data = [];
 		if ( isset( $input['description'] ) ) {
@@ -95,7 +95,7 @@ class SkillUpdate extends AbstractAbility {
 			$data['enable_prompt'] = (bool) $input['enable_prompt'];
 		}
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'No fields to update were provided.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'No fields to update were provided.', 'allyworker' ) );
 		}
 		return Repository::instance()->update( $input['name'], $data );
 	}

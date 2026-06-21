@@ -2,18 +2,18 @@
 /**
  * PHP Runner — temp-file sandbox execution engine.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Runner;
+namespace AllyWorker\Runner;
 
 /**
  * Class PhpRunner
  *
  * Executes PHP code by writing it to a uniquely named temp file inside
- * WPWORKER_SANDBOX_DIR, including it in the current WordPress process with
+ * ALLY_WORKER_SANDBOX_DIR, including it in the current WordPress process with
  * output buffering, then always deleting the file — even on exception.
  *
  * Returns a structured result array so callers can expose typed output
@@ -44,7 +44,7 @@ class PhpRunner {
 	 * @throws \RuntimeException When the sandbox directory is not writable.
 	 */
 	public function run( string $code ): array {
-		$sandbox = WPWORKER_SANDBOX_DIR;
+		$sandbox = ALLY_WORKER_SANDBOX_DIR;
 
 		if ( ! is_dir( $sandbox ) ) {
 			wp_mkdir_p( $sandbox );
@@ -52,7 +52,7 @@ class PhpRunner {
 
 		if ( ! wp_is_writable( $sandbox ) ) {
 			throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
-				__( 'WPWorker sandbox directory is not writable. Check plugin activation.', 'worker-ai' )
+				__( 'AllyWorker sandbox directory is not writable. Check plugin activation.', 'allyworker' )
 			);
 		}
 
@@ -62,7 +62,7 @@ class PhpRunner {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		if ( false === file_put_contents( $filename, $wrapped ) ) {
-			throw new \RuntimeException( __( 'WPWorker: Failed to write PHP sandbox file.', 'worker-ai' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
+			throw new \RuntimeException( __( 'AllyWorker: Failed to write PHP sandbox file.', 'allyworker' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not HTML output
 		}
 
 		/** @var list<array{type: string, message: string, file: string, line: int}> $errors */

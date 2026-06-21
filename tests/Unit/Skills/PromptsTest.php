@@ -1,26 +1,26 @@
 <?php
 /**
- * Unit tests for WPWorker\Skills\Prompts.
+ * Unit tests for AllyWorker\Skills\Prompts.
  *
  * register() calls wp_register_ability() which requires a live WordPress
  * environment; that path is covered by integration tests.
  * Here we test the constructor hook wiring and that register() is a no-op
  * when wp_register_ability does not exist.
  *
- * @package WPWorker\Tests\Unit\Skills
+ * @package AllyWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Skills;
+namespace AllyWorker\Tests\Unit\Skills;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Skills\Prompts;
+use AllyWorker\Skills\Prompts;
 
 /**
- * @covers \WPWorker\Skills\Prompts
+ * @covers \AllyWorker\Skills\Prompts
  */
 class PromptsTest extends TestCase {
 

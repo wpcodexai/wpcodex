@@ -3,27 +3,27 @@
  * Ability registration aggregator.
  *
  * Instantiates every built-in ability and registers them all at once.
- * Pro plugins extend the list via the 'wpworker_abilities' filter:
+ * Pro plugins extend the list via the 'allyworker_abilities' filter:
  *
- *   add_filter( 'wpworker_abilities', function ( array $abilities ): array {
+ *   add_filter( 'allyworker_abilities', function ( array $abilities ): array {
  *       $abilities[] = new \MyProPlugin\Abilities\MyProAbility();
  *       return $abilities;
  *   } );
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities;
+namespace AllyWorker\Abilities;
 
-use WPWorker\Admin\AbilityPolicy;
-use WPWorker\Abilities\Core;
-use WPWorker\Abilities\Files;
-use WPWorker\Abilities\Gutenberg;
-use WPWorker\Abilities\Site;
-use WPWorker\Abilities\Skills;
-use WPWorker\Abilities\Themes;
+use AllyWorker\Admin\AbilityPolicy;
+use AllyWorker\Abilities\Core;
+use AllyWorker\Abilities\Files;
+use AllyWorker\Abilities\Gutenberg;
+use AllyWorker\Abilities\Site;
+use AllyWorker\Abilities\Skills;
+use AllyWorker\Abilities\Themes;
 
 
 /**
@@ -74,7 +74,7 @@ class Abilities {
 	public static function get_all_ability_data(): array {
 		if ( empty( self::$all_abilities ) ) {
 			/** @var AbstractAbility[] $abilities */
-			$abilities = apply_filters( 'wpworker_abilities', static::create_abilities() );
+			$abilities = apply_filters( 'allyworker_abilities', static::create_abilities() );
 			foreach ( $abilities as $ability ) {
 				self::$all_abilities[ $ability->get_name() ] = [
 					'id'          => $ability->get_name(),
@@ -94,14 +94,14 @@ class Abilities {
 	 * ability (enabled and disabled) so the settings page can display them all
 	 * regardless of their enabled/disabled state.
 	 *
-	 * The 'wpworker_abilities' filter lets pro plugins append their own ability
+	 * The 'allyworker_abilities' filter lets pro plugins append their own ability
 	 * instances without touching this file.
 	 *
 	 * @since 1.1.0
 	 */
 	public function register(): void {
 		/** @var AbstractAbility[] $abilities */
-		$abilities = apply_filters( 'wpworker_abilities', static::create_abilities() );
+		$abilities = apply_filters( 'allyworker_abilities', static::create_abilities() );
 
 		// Rebuild the static index on every invocation so it reflects the
 		// current filter output (e.g. pro-plugin additions).
@@ -125,7 +125,7 @@ class Abilities {
 	/**
 	 * Determines whether an ability should be registered.
 	 *
-	 * Reads the wpworker_ability_* option set in AbilityPolicy (the admin
+	 * Reads the allyworker_ability_* option set in AbilityPolicy (the admin
 	 * Enable/Disable toggle). Abilities are enabled by default.
 	 *
 	 * @since  1.1.0
@@ -141,7 +141,7 @@ class Abilities {
 	 *
 	 * Static so get_all_ability_data() can build the index on admin page
 	 * loads without constructing a registering Abilities instance. The
-	 * wpworker_abilities filter is still applied by every caller, so
+	 * allyworker_abilities filter is still applied by every caller, so
 	 * third-party abilities added via the filter are always included.
 	 *
 	 * @since  1.1.0
@@ -202,7 +202,7 @@ class Abilities {
 		 *
 		 * @since 1.1.0
 		 */
-		do_action( 'wpworker_theme_abilities' );
-		do_action( 'wpworker_plugin_abilities' );
+		do_action( 'allyworker_theme_abilities' );
+		do_action( 'allyworker_plugin_abilities' );
 	}
 }

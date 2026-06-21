@@ -2,12 +2,12 @@
 /**
  * Skills Repository — all database operations for skill records.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Skills;
+namespace AllyWorker\Skills;
 
 /**
  * Class Repository
@@ -87,9 +87,9 @@ class Repository {
 		if ( null !== $existing ) {
 			if ( 'fail' === $on_conflict ) {
 				return new \WP_Error(
-					'wpworker_duplicate',
+					'allyworker_duplicate',
 					/* translators: %s skill name */
-					sprintf( __( 'A skill named "%s" already exists.', 'worker-ai' ), esc_html( $name ) )
+					sprintf( __( 'A skill named "%s" already exists.', 'allyworker' ), esc_html( $name ) )
 				);
 			}
 
@@ -122,7 +122,7 @@ class Repository {
 		);
 
 		if ( false === $result ) {
-			return new \WP_Error( 'wpworker_db_error', $wpdb->last_error );
+			return new \WP_Error( 'allyworker_db_error', $wpdb->last_error );
 		}
 
 		Notices::set_pending_reload_notice();
@@ -160,9 +160,9 @@ class Repository {
 
 		if ( null === $this->find( $name ) ) {
 			return new \WP_Error(
-				'wpworker_not_found',
+				'allyworker_not_found',
 				/* translators: %s skill name */
-				sprintf( __( 'Skill "%s" not found.', 'worker-ai' ), esc_html( $name ) )
+				sprintf( __( 'Skill "%s" not found.', 'allyworker' ), esc_html( $name ) )
 			);
 		}
 
@@ -210,7 +210,7 @@ class Repository {
 		);
 
 		if ( false === $result ) {
-			return new \WP_Error( 'wpworker_db_error', $wpdb->last_error );
+			return new \WP_Error( 'allyworker_db_error', $wpdb->last_error );
 		}
 
 		Notices::set_pending_reload_notice();
@@ -238,7 +238,7 @@ class Repository {
 		);
 
 		if ( false === $result ) {
-			return new \WP_Error( 'wpworker_db_error', $wpdb->last_error );
+			return new \WP_Error( 'allyworker_db_error', $wpdb->last_error );
 		}
 
 		Notices::set_pending_reload_notice();
@@ -294,9 +294,9 @@ class Repository {
 
 		if ( ! is_array( $rev ) ) {
 			return new \WP_Error(
-				'wpworker_not_found',
+				'allyworker_not_found',
 				/* translators: %d revision ID */
-				sprintf( __( 'Revision #%d not found.', 'worker-ai' ), $revision_id )
+				sprintf( __( 'Revision #%d not found.', 'allyworker' ), $revision_id )
 			);
 		}
 
@@ -304,9 +304,9 @@ class Repository {
 
 		if ( null === $this->find( $skill_name ) ) {
 			return new \WP_Error(
-				'wpworker_not_found',
+				'allyworker_not_found',
 				/* translators: %s skill name */
-				sprintf( __( 'Skill "%s" not found.', 'worker-ai' ), esc_html( $skill_name ) )
+				sprintf( __( 'Skill "%s" not found.', 'allyworker' ), esc_html( $skill_name ) )
 			);
 		}
 
@@ -329,7 +329,7 @@ class Repository {
 		);
 
 		if ( false === $result ) {
-			return new \WP_Error( 'wpworker_db_error', $wpdb->last_error );
+			return new \WP_Error( 'allyworker_db_error', $wpdb->last_error );
 		}
 
 		$this->prune_revisions( $skill_name );

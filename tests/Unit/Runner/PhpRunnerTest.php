@@ -5,22 +5,22 @@
  * PhpRunner::run() returns a structured array (not a plain string) since the
  * API was updated.  These tests verify the array keys and values.
  *
- * @package WPWorker\Tests\Unit\Runner
+ * @package AllyWorker\Tests\Unit\Runner
  */
 
 declare( strict_types=1 );
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test setup requires direct FS calls; WP_Filesystem is not available in unit test context
 
-namespace WPWorker\Tests\Unit\Runner;
+namespace AllyWorker\Tests\Unit\Runner;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Runner\PhpRunner;
+use AllyWorker\Runner\PhpRunner;
 
 /**
- * @covers \WPWorker\Runner\PhpRunner
+ * @covers \AllyWorker\Runner\PhpRunner
  */
 final class PhpRunnerTest extends TestCase {
 
@@ -28,9 +28,9 @@ final class PhpRunnerTest extends TestCase {
 		parent::setUp();
 		Monkey\setUp();
 
-		// Ensure sandbox dir exists (WPWORKER_SANDBOX_DIR is defined in bootstrap).
-		if ( ! is_dir( WPWORKER_SANDBOX_DIR ) ) {
-			mkdir( WPWORKER_SANDBOX_DIR, 0755, true );
+		// Ensure sandbox dir exists (ALLY_WORKER_SANDBOX_DIR is defined in bootstrap).
+		if ( ! is_dir( ALLY_WORKER_SANDBOX_DIR ) ) {
+			mkdir( ALLY_WORKER_SANDBOX_DIR, 0755, true );
 		}
 
 		$this->reset_singleton();
@@ -144,9 +144,9 @@ final class PhpRunnerTest extends TestCase {
 		Functions\when( 'wp_mkdir_p' )->justReturn( true );
 		Functions\when( 'wp_is_writable' )->justReturn( true );
 
-		$before = count( glob( WPWORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
+		$before = count( glob( ALLY_WORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
 		PhpRunner::instance()->run( 'echo "test";' );
-		$after  = count( glob( WPWORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
+		$after  = count( glob( ALLY_WORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
 
 		$this->assertSame( $before, $after, 'Temp file was not cleaned up.' );
 	}
@@ -155,9 +155,9 @@ final class PhpRunnerTest extends TestCase {
 		Functions\when( 'wp_mkdir_p' )->justReturn( true );
 		Functions\when( 'wp_is_writable' )->justReturn( true );
 
-		$before = count( glob( WPWORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
+		$before = count( glob( ALLY_WORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
 		PhpRunner::instance()->run( 'throw new \Exception("boom");' );
-		$after  = count( glob( WPWORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
+		$after  = count( glob( ALLY_WORKER_SANDBOX_DIR . 'exec_*.php' ) ?: [] );
 
 		$this->assertSame( $before, $after, 'Temp file was not cleaned up after exception.' );
 	}

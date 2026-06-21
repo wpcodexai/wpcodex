@@ -5,18 +5,18 @@
  * Provides the REST routes used by the browser-side JS finalizer runtime
  * to heartbeat, claim batches, process items, and stream SSE status events.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\REST;
+namespace AllyWorker\REST;
 
 use WP_Error;
 use WP_Post;
 use WP_REST_Request;
 use WP_REST_Response;
-use WPWorker\Utils\GutenbergStorage;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class GutenbergFinalizerEndpoint
@@ -37,67 +37,67 @@ class GutenbergFinalizerEndpoint {
 	}
 
 	/**
-	 * Register all wpworker/v1/gutenberg/* REST routes.
+	 * Register all allyworker/v1/gutenberg/* REST routes.
 	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
 	public function register_routes(): void {
-		register_rest_route( 'wpworker/v1', '/gutenberg/batches', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/batches', [
 			'methods'             => 'GET',
 			'callback'            => [ self::class, 'rest_list_batches' ],
 			'permission_callback' => [ self::class, 'can_access_dashboard' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/finalizer-runtime/heartbeat', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/finalizer-runtime/heartbeat', [
 			'methods'             => 'POST',
 			'callback'            => [ self::class, 'rest_finalizer_runtime_heartbeat' ],
 			'permission_callback' => [ self::class, 'can_access_dashboard' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/finalizer-runtime/status', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/finalizer-runtime/status', [
 			'methods'             => 'GET',
 			'callback'            => [ self::class, 'rest_poll_finalizer_runtime_status' ],
 			'permission_callback' => [ self::class, 'can_poll_finalizer_runtime' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/finalizer-runtime/events', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/finalizer-runtime/events', [
 			'methods'             => 'GET',
 			'callback'            => [ self::class, 'rest_stream_finalizer_runtime_events' ],
 			'permission_callback' => [ self::class, 'can_poll_finalizer_runtime' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/batches/(?P<batch_id>\d+)/claim', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/batches/(?P<batch_id>\d+)/claim', [
 			'methods'             => 'POST',
 			'callback'            => [ self::class, 'rest_claim_batch' ],
 			'permission_callback' => [ self::class, 'can_access_batch' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/batches/(?P<batch_id>\d+)/items/claim-next', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/batches/(?P<batch_id>\d+)/items/claim-next', [
 			'methods'             => 'POST',
 			'callback'            => [ self::class, 'rest_claim_next_item' ],
 			'permission_callback' => [ self::class, 'can_access_batch' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/items/(?P<item_id>\d+)/spec', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/items/(?P<item_id>\d+)/spec', [
 			'methods'             => 'GET',
 			'callback'            => [ self::class, 'rest_get_item_spec' ],
 			'permission_callback' => [ self::class, 'can_access_item' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/items/(?P<item_id>\d+)/complete', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/items/(?P<item_id>\d+)/complete', [
 			'methods'             => 'POST',
 			'callback'            => [ self::class, 'rest_complete_item' ],
 			'permission_callback' => [ self::class, 'can_access_item' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/items/(?P<item_id>\d+)/fail', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/items/(?P<item_id>\d+)/fail', [
 			'methods'             => 'POST',
 			'callback'            => [ self::class, 'rest_fail_item' ],
 			'permission_callback' => [ self::class, 'can_access_item' ],
 		] );
 
-		register_rest_route( 'wpworker/v1', '/gutenberg/batches/(?P<batch_id>\d+)/cancel', [
+		register_rest_route( 'allyworker/v1', '/gutenberg/batches/(?P<batch_id>\d+)/cancel', [
 			'methods'             => 'POST',
 			'callback'            => [ self::class, 'rest_cancel_batch' ],
 			'permission_callback' => [ self::class, 'can_access_batch' ],
@@ -429,8 +429,8 @@ class GutenbergFinalizerEndpoint {
 			$editor_url = admin_url( sprintf( 'post.php?post=%d&action=edit', $target_id ) );
 		}
 		return add_query_arg( [
-			'wpworker_gb_finalizer' => '1',
-			'wpworker_gb_item'      => $item->ID,
+			'allyworker_gb_finalizer' => '1',
+			'allyworker_gb_item'      => $item->ID,
 		], $editor_url );
 	}
 

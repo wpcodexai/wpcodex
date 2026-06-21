@@ -2,17 +2,17 @@
 /**
  * Unit tests for DbRunner.
  *
- * @package WPWorker\Tests\Unit\Runner
+ * @package AllyWorker\Tests\Unit\Runner
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Runner;
+namespace AllyWorker\Tests\Unit\Runner;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Runner\DbRunner;
+use AllyWorker\Runner\DbRunner;
 
 /**
  * Class DbRunnerTest

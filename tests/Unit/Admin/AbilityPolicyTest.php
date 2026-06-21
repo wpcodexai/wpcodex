@@ -1,21 +1,21 @@
 <?php
 /**
- * Unit tests for WPWorker\Admin\AbilityPolicy.
+ * Unit tests for AllyWorker\Admin\AbilityPolicy.
  *
- * @package WPWorker\Tests\Unit\Admin
+ * @package AllyWorker\Tests\Unit\Admin
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Admin;
+namespace AllyWorker\Tests\Unit\Admin;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Admin\AbilityPolicy;
+use AllyWorker\Admin\AbilityPolicy;
 
 /**
- * @covers \WPWorker\Admin\AbilityPolicy
+ * @covers \AllyWorker\Admin\AbilityPolicy
  */
 class AbilityPolicyTest extends TestCase {
 
@@ -51,21 +51,21 @@ class AbilityPolicyTest extends TestCase {
 
 	public function test_apply_unregisters_disabled_ability(): void {
 		Functions\when( 'wp_get_abilities' )->justReturn( [
-			'wpworker/php-execute' => [ 'label' => 'PHP Execute' ],
+			'allyworker/php-execute' => [ 'label' => 'PHP Execute' ],
 		] );
 		Functions\when( 'sanitize_key' )->alias(
 			static fn( string $k ): string => strtolower( preg_replace( '/[^a-z0-9_\-]/', '', $k ) ?? $k )
 		);
 		// Ability is disabled.
 		Functions\when( 'get_option' )->justReturn( 'no' );
-		Functions\expect( 'wp_unregister_ability' )->once()->with( 'wpworker/php-execute' );
+		Functions\expect( 'wp_unregister_ability' )->once()->with( 'allyworker/php-execute' );
 
 		( new AbilityPolicy() )->apply();
 	}
 
 	public function test_apply_does_not_unregister_enabled_ability(): void {
 		Functions\when( 'wp_get_abilities' )->justReturn( [
-			'wpworker/php-execute' => [ 'label' => 'PHP Execute' ],
+			'allyworker/php-execute' => [ 'label' => 'PHP Execute' ],
 		] );
 		Functions\when( 'sanitize_key' )->alias(
 			static fn( string $k ): string => strtolower( preg_replace( '/[^a-z0-9_\-]/', '', $k ) ?? $k )
@@ -76,7 +76,7 @@ class AbilityPolicyTest extends TestCase {
 		( new AbilityPolicy() )->apply();
 	}
 
-	public function test_apply_skips_non_wpworker_abilities(): void {
+	public function test_apply_skips_non_allyworker_abilities(): void {
 		Functions\when( 'wp_get_abilities' )->justReturn( [
 			'mcp-adapter/list-tools' => [ 'label' => 'List Tools' ],
 			'core/something'         => [ 'label' => 'Core ability' ],
@@ -92,8 +92,8 @@ class AbilityPolicyTest extends TestCase {
 
 	public function test_apply_only_unregisters_explicitly_disabled_abilities(): void {
 		Functions\when( 'wp_get_abilities' )->justReturn( [
-			'wpworker/enabled-ability'  => [],
-			'wpworker/disabled-ability' => [],
+			'allyworker/enabled-ability'  => [],
+			'allyworker/disabled-ability' => [],
 		] );
 		Functions\when( 'sanitize_key' )->alias(
 			static fn( string $k ): string => strtolower( preg_replace( '/[^a-z0-9_\-]/', '', $k ) ?? $k )
@@ -106,7 +106,7 @@ class AbilityPolicyTest extends TestCase {
 		);
 		Functions\expect( 'wp_unregister_ability' )
 			->once()
-			->with( 'wpworker/disabled-ability' );
+			->with( 'allyworker/disabled-ability' );
 
 		( new AbilityPolicy() )->apply();
 	}

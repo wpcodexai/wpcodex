@@ -5,18 +5,18 @@
  *
  * Instantiated once from Plugin::init().
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tools;
+namespace AllyWorker\Tools;
 
 /**
  * Class Mcp
  *
- * Boots the MCP Adapter, registers wpworker ability categories,
+ * Boots the MCP Adapter, registers allyworker ability categories,
  * and wires the MCP response filters.
  *
  * @since 1.0.0
@@ -53,8 +53,8 @@ class Mcp {
 			add_action( 'admin_notices', static function (): void {
 				echo '<div class="notice notice-error"><p>';
 				esc_html_e(
-					'WPWorker: The bundled MCP Adapter could not be loaded. Re-install the plugin release ZIP.',
-					'worker-ai'
+					'AllyWorker: The bundled MCP Adapter could not be loaded. Re-install the plugin release ZIP.',
+					'allyworker'
 				);
 				echo '</p></div>';
 			} );
@@ -69,7 +69,7 @@ class Mcp {
 				echo '<div class="notice notice-error"><p>';
 				printf(
 					/* translators: %s error message */
-					esc_html__( 'WPWorker: MCP Adapter failed to initialise. Error: %s', 'worker-ai' ),
+					esc_html__( 'AllyWorker: MCP Adapter failed to initialise. Error: %s', 'allyworker' ),
 					esc_html( $e->getMessage() )
 				);
 				echo '</p></div>';
@@ -91,14 +91,14 @@ class Mcp {
 		if ( ! is_array( $config ) ) {
 			return $config;
 		}
-		$config['server_id']    = 'wpworker';
-		$config['server_route'] = 'wpworker';
-		$config['server_name']  = 'Worker AI';
+		$config['server_id']    = 'allyworker';
+		$config['server_route'] = 'allyworker';
+		$config['server_name']  = 'AllyWorker';
 		return $config;
 	}
 
 	/**
-	 * Register wpworker ability categories with the WordPress Abilities API.
+	 * Register allyworker ability categories with the WordPress Abilities API.
 	 *
 	 * Callback for the wp_abilities_api_categories_init action.
 	 *
@@ -106,44 +106,44 @@ class Mcp {
 	 * @return void
 	 */
 	public function register_ability_categories(): void {
-		wp_register_ability_category( 'wpworker', [
-			'label'       => __( 'Worker AI', 'worker-ai' ),
-			'description' => __( 'Core Worker AI abilities for AI agent access to WordPress.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker', [
+			'label'       => __( 'AllyWorker', 'allyworker' ),
+			'description' => __( 'Core AllyWorker abilities for AI agent access to WordPress.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpworker-skills', [
-			'label'       => __( 'Worker AI Skills', 'worker-ai' ),
-			'description' => __( 'Abilities for managing Worker AI skill playbooks.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker-skills', [
+			'label'       => __( 'AllyWorker Skills', 'allyworker' ),
+			'description' => __( 'Abilities for managing AllyWorker skill playbooks.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpworker-gutenberg', [
-			'label'       => __( 'Worker AI Gutenberg', 'worker-ai' ),
-			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker-gutenberg', [
+			'label'       => __( 'AllyWorker Gutenberg', 'allyworker' ),
+			'description' => __( 'Abilities for AI-assisted Gutenberg block editing.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpworker-general', [
-			'label'       => __( 'Worker AI General', 'worker-ai' ),
-			'description' => __( 'General-purpose abilities that may be used by Worker AI or other plugins.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker-general', [
+			'label'       => __( 'AllyWorker General', 'allyworker' ),
+			'description' => __( 'General-purpose abilities that may be used by AllyWorker or other plugins.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpworker-site', [
-			'label'       => __( 'Worker AI Site', 'worker-ai' ),
-			'description' => __( 'Abilities for reading and updating site settings and content.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker-site', [
+			'label'       => __( 'AllyWorker Site', 'allyworker' ),
+			'description' => __( 'Abilities for reading and updating site settings and content.', 'allyworker' ),
 		] );
 
-		// wp_register_ability_category( 'wpworker-plugins', [
-		// 	'label'       => __( 'Worker AI Plugins', 'worker-ai' ),
-		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'worker-ai' ),
+		// wp_register_ability_category( 'allyworker-plugins', [
+		// 	'label'       => __( 'AllyWorker Plugins', 'allyworker' ),
+		// 	'description' => __( 'Abilities for reading and updating plugin settings, and activating/deactivating plugins.', 'allyworker' ),
 		// ] );
 
-		wp_register_ability_category( 'wpworker-themes', [
-			'label'       => __( 'Worker AI Themes', 'worker-ai' ),
-			'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker-themes', [
+			'label'       => __( 'AllyWorker Themes', 'allyworker' ),
+			'description' => __( 'Abilities for reading and updating theme settings globally and per page.', 'allyworker' ),
 		] );
 
-		wp_register_ability_category( 'wpworker-astra', [
-			'label'       => __( 'Astra', 'worker-ai' ),
-			'description' => __( 'Abilities for reading and updating Astra theme settings globally and per page.', 'worker-ai' ),
+		wp_register_ability_category( 'allyworker-astra', [
+			'label'       => __( 'Astra', 'allyworker' ),
+			'description' => __( 'Abilities for reading and updating Astra theme settings globally and per page.', 'allyworker' ),
 		] );
 	}
 

@@ -2,12 +2,12 @@
 /**
  * Skills admin notices — surfaces an MCP-reload reminder after skill changes.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Skills;
+namespace AllyWorker\Skills;
 
 /**
  * Class Notices
@@ -19,7 +19,7 @@ namespace WPWorker\Skills;
  */
 class Notices {
 
-	private const TRANSIENT_KEY = 'wpworker_transient_skill_reload_notice';
+	private const TRANSIENT_KEY = 'allyworker_transient_skill_reload_notice';
 
 	/**
 	 * Constructor — no hook needed; notice is consumed by SkillsPage directly.
@@ -51,7 +51,7 @@ class Notices {
 
 		return [
 			'type'    => 'info',
-			'message' => __( 'Skills updated. MCP clients should re-discover abilities to reflect the latest skill catalog.', 'worker-ai' ),
+			'message' => __( 'Skills updated. MCP clients should re-discover abilities to reflect the latest skill catalog.', 'allyworker' ),
 		];
 	}
 }

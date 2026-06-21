@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpworker/option-get
+ * Ability: allyworker/option-get
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Site;
+namespace AllyWorker\Abilities\Site;
 
-use WPWorker\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class OptionGet
@@ -19,21 +19,21 @@ use WPWorker\Abilities\AbstractAbility;
  */
 class OptionGet extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpworker-site';
+		return 'allyworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/option-get';
+		return 'allyworker/option-get';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Get Option', 'worker-ai' );
+		return __( 'Get Option', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Get a WordPress option value by name. Returns the value as JSON.', 'worker-ai' );
+		return __( 'Get a WordPress option value by name. Returns the value as JSON.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -71,7 +71,7 @@ class OptionGet extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): string|\WP_Error {
 		if ( empty( $input['option_name'] ) || ! is_string( $input['option_name'] ) ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'option_name must be a non-empty string.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'option_name must be a non-empty string.', 'allyworker' ) );
 		}
 		$default = $input['default'] ?? '';
 		$value   = get_option( sanitize_key( $input['option_name'] ), $default );

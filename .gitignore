@@ -1,14 +1,14 @@
-# Worker AI — .gitignore
+# AllyWorker — .gitignore
 
 # Live skill files — gitignored so every install keeps its own skills.
 # The read-only templates in skills/ ARE committed. Only the live directory
-# wpworker-skills/ is excluded.
+# allyworker-skills/ is excluded.
 
-wpworker-skills/
+allyworker-skills/
 
 # PHP sandbox — runtime directory created on plugin activation.
 # Contains only temp execution files; never commit.
-wpworker-sandbox/
+wp-allyworker-sandbox/
 
 # Composer
 /vendor/

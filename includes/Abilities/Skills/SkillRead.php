@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpworker/skill-read
+ * Ability: allyworker/skill-read
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Skills;
+namespace AllyWorker\Abilities\Skills;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Skills\Sources;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Sources;
 
 /**
  * Class SkillRead
@@ -22,22 +22,22 @@ class SkillRead extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/skill-read';
+		return 'allyworker/skill-read';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Read Skill', 'worker-ai' );
+		return __( 'Read Skill', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Read the full body of a skill by name. Searches all registered skill sources (user DB and external plugins).', 'worker-ai' );
+		return __( 'Read the full body of a skill by name. Searches all registered skill sources (user DB and external plugins).', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -76,15 +76,15 @@ class SkillRead extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( empty( $input['name'] ) || ! is_string( $input['name'] ) ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'name must be a non-empty string.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'name must be a non-empty string.', 'allyworker' ) );
 		}
 
 		$skill = Sources::find( $input['name'] );
 		if ( null === $skill ) {
 			return new \WP_Error(
-				'wpworker_not_found',
+				'allyworker_not_found',
 				/* translators: %s skill name */
-				sprintf( __( 'Skill "%s" not found.', 'worker-ai' ), esc_html( $input['name'] ) )
+				sprintf( __( 'Skill "%s" not found.', 'allyworker' ), esc_html( $input['name'] ) )
 			);
 		}
 

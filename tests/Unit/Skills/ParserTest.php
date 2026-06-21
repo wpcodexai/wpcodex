@@ -1,19 +1,19 @@
 <?php
 /**
- * Unit tests for WPWorker\Skills\Parser.
+ * Unit tests for AllyWorker\Skills\Parser.
  *
- * @package WPWorker\Tests\Unit\Skills
+ * @package AllyWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Skills;
+namespace AllyWorker\Tests\Unit\Skills;
 
 use PHPUnit\Framework\TestCase;
-use WPWorker\Skills\Parser;
+use AllyWorker\Skills\Parser;
 
 /**
- * @covers \WPWorker\Skills\Parser
+ * @covers \AllyWorker\Skills\Parser
  */
 class ParserTest extends TestCase {
 

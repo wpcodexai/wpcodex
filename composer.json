@@ -1,5 +1,5 @@
 {
-    "name": "wpworker/worker-ai",
+    "name": "allyworker/allyworker",
     "description": "The AI operating system for WordPress developers. Full WordPress control for AI agents — via MCP.",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later",
@@ -19,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "WPWorker\\": "includes/"
+            "AllyWorker\\": "includes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "WPWorker\\Tests\\": "tests/"
+            "AllyWorker\\Tests\\": "tests/"
         }
     },
     "scripts": {

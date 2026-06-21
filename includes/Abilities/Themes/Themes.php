@@ -2,24 +2,24 @@
 /**
  * Theme ability aggregator.
  *
- * Registers the wpworker-astra (and future theme) ability categories and
+ * Registers the allyworker-astra (and future theme) ability categories and
  * returns the full list of theme ability instances for inclusion in the
  * main Abilities::create_abilities() array.
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Themes;
+namespace AllyWorker\Abilities\Themes;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Abilities\Themes\Astra\FlushCache;
-use WPWorker\Abilities\Themes\Astra\GetPageSettings;
-use WPWorker\Abilities\Themes\Astra\GetSettings;
-use WPWorker\Abilities\Themes\Astra\SetPageSettings;
-use WPWorker\Abilities\Themes\Astra\UpdateSettings;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Abilities\Themes\Astra\FlushCache;
+use AllyWorker\Abilities\Themes\Astra\GetPageSettings;
+use AllyWorker\Abilities\Themes\Astra\GetSettings;
+use AllyWorker\Abilities\Themes\Astra\SetPageSettings;
+use AllyWorker\Abilities\Themes\Astra\UpdateSettings;
 
 /**
  * Class Themes
@@ -37,14 +37,14 @@ class Themes {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_filter( 'wpworker_abilities', [ $this, 'append' ] );
+		add_filter( 'allyworker_abilities', [ $this, 'append' ] );
 	}
 
 	/**
 	 * Appends Theme abilities to the ability list supplied by the free plugin.
 	 *
 	 * @since  0.1.0
-	 * @param  array<int, mixed> $abilities Ability instances from WPWorker free.
+	 * @param  array<int, mixed> $abilities Ability instances from AllyWorker free.
 	 * @return array<int, mixed>            The extended list.
 	 */
 	public function append( array $abilities ): array {

@@ -1,25 +1,25 @@
 <?php
 /**
- * Unit tests for WPWorker\Utils\GutenbergStorage — pure computation methods only.
+ * Unit tests for AllyWorker\Utils\GutenbergStorage — pure computation methods only.
  *
  * Methods that touch the WordPress database (create_batch, get_batches, etc.)
  * are integration-tested separately; this suite covers the stateless helpers
  * that operate entirely on in-memory data.
  *
- * @package WPWorker\Tests\Unit\Utils
+ * @package AllyWorker\Tests\Unit\Utils
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Utils;
+namespace AllyWorker\Tests\Unit\Utils;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Utils\GutenbergStorage;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
- * @covers \WPWorker\Utils\GutenbergStorage
+ * @covers \AllyWorker\Utils\GutenbergStorage
  */
 class GutenbergStorageTest extends TestCase {
 
@@ -36,8 +36,8 @@ class GutenbergStorageTest extends TestCase {
 
 	// ── Constants sanity ──────────────────────────────────────────────────────
 
-	public function test_post_type_constant_is_wpworker_gb_change(): void {
-		$this->assertSame( 'wpworker_gb_change', GutenbergStorage::POST_TYPE );
+	public function test_post_type_constant_is_allyworker_gb_change(): void {
+		$this->assertSame( 'allyworker_gb_change', GutenbergStorage::POST_TYPE );
 	}
 
 	public function test_non_terminal_and_terminal_statuses_are_disjoint(): void {

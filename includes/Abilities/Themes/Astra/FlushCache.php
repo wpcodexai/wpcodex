@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpworker/astra-flush-cache
+ * Ability: allyworker/astra-flush-cache
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Themes\Astra;
+namespace AllyWorker\Abilities\Themes\Astra;
 
-use WPWorker\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class FlushCache
@@ -24,12 +24,12 @@ class FlushCache extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/astra-flush-cache';
+		return 'allyworker/astra-flush-cache';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Astra: Flush Cache', 'worker-ai' );
+		return __( 'Astra: Flush Cache', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -38,13 +38,13 @@ class FlushCache extends AbstractAbility {
 			'Clear Astra\'s dynamic CSS cache (transients, option-based cache, and file cache) '
 			. 'so that any changes made to astra-settings or page meta take effect immediately. '
 			. 'Always call this after updating Astra settings if flush_cache was set to false.',
-			'worker-ai'
+			'allyworker'
 		);
 	}
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-themes';
+		return 'allyworker-themes';
 	}
 
 	/** {@inheritDoc} */
@@ -76,7 +76,7 @@ class FlushCache extends AbstractAbility {
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( ! GetSettings::astra_is_active() ) {
-			return new \WP_Error( 'wpworker_astra_inactive', __( 'The Astra theme is not currently active.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_astra_inactive', __( 'The Astra theme is not currently active.', 'allyworker' ) );
 		}
 
 		$cleared  = 0;

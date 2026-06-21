@@ -2,21 +2,21 @@
 /**
  * Unit tests for Skills\Repository.
  *
- * @package WPWorker\Tests\Unit\Skills
+ * @package AllyWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Skills;
+namespace AllyWorker\Tests\Unit\Skills;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Skills\Repository;
-use WPWorker\Skills\Schema;
+use AllyWorker\Skills\Repository;
+use AllyWorker\Skills\Schema;
 
 /**
- * @covers \WPWorker\Skills\Repository
+ * @covers \AllyWorker\Skills\Repository
  */
 class RepositoryTest extends TestCase {
 
@@ -181,7 +181,7 @@ class RepositoryTest extends TestCase {
 		] );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpworker_duplicate', $result->get_error_code() );
+		$this->assertSame( 'allyworker_duplicate', $result->get_error_code() );
 	}
 
 	// ── update() ─────────────────────────────────────────────────────────────
@@ -206,7 +206,7 @@ class RepositoryTest extends TestCase {
 		$result = Repository::instance()->update( 'missing', [ 'description' => 'x' ] );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpworker_not_found', $result->get_error_code() );
+		$this->assertSame( 'allyworker_not_found', $result->get_error_code() );
 	}
 
 	// ── delete() ─────────────────────────────────────────────────────────────

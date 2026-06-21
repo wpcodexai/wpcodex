@@ -1,20 +1,20 @@
 /**
- * WPWorker — Block Editor Queue page.
+ * AllyWorker — Block Editor Queue page.
  *
- * Scoped to #wpworker-block-editor.
+ * Scoped to #allyworker-block-editor.
  */
 
-#wpworker-block-editor {
-	.wpworker-flex {
+#allyworker-block-editor {
+	.allyworker-flex {
 		display: unset;
 	}
 
-	.wpworker-queue-table-wrap {
+	.allyworker-queue-table-wrap {
 		margin-top: 16px;
 		overflow-x: auto;
 	}
 
-	.wpworker-queue-table {
+	.allyworker-queue-table {
 		min-width: 700px;
 
 		code {
@@ -25,7 +25,7 @@
 		}
 	}
 
-	.wpworker-status {
+	.allyworker-status {
 		display: inline-block;
 		padding: 2px 8px;
 		border-radius: $radius-lg;
@@ -85,7 +85,7 @@
 		}
 	}
 
-	.wpworker-info-box {
+	.allyworker-info-box {
 		background: $color-bg-white;
 		border: 1px solid $color-border-lt;
 		border-left: 4px solid $color-primary;

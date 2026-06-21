@@ -2,12 +2,12 @@
 /**
  * Skills frontmatter parser.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Skills;
+namespace AllyWorker\Skills;
 
 /**
  * Class Parser
@@ -92,7 +92,7 @@ class Parser {
 					}
 				}
 			} else {
-				$parse_error = __( 'Frontmatter started with --- but had no closing ---.', 'worker-ai' );
+				$parse_error = __( 'Frontmatter started with --- but had no closing ---.', 'allyworker' );
 			}
 		}
 

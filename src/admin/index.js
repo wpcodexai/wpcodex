@@ -1,5 +1,5 @@
 /**
- * WPWorker Admin — entry point.
+ * AllyWorker Admin — entry point.
  *
  * @file   src/admin/index.js
  * @since  1.0.0

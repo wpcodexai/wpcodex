@@ -1,23 +1,23 @@
 <?php
 /**
- * Unit tests for WPWorker\Skills\Sources.
+ * Unit tests for AllyWorker\Skills\Sources.
  *
  * Does NOT use Brain\Monkey — tests rely on the real hooks system and the
  * real function stubs from tests/bootstrap.php.
  *
- * @package WPWorker\Tests\Unit\Skills
+ * @package AllyWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Skills;
+namespace AllyWorker\Tests\Unit\Skills;
 
 use PHPUnit\Framework\TestCase;
-use WPWorker\Skills\Repository;
-use WPWorker\Skills\Sources;
+use AllyWorker\Skills\Repository;
+use AllyWorker\Skills\Sources;
 
 /**
- * @covers \WPWorker\Skills\Sources
+ * @covers \AllyWorker\Skills\Sources
  */
 class SourcesTest extends TestCase {
 
@@ -110,7 +110,7 @@ class SourcesTest extends TestCase {
 
 	public function test_discoverable_excludes_skills_with_empty_description(): void {
 		add_filter(
-			'wpworker_skill_sources',
+			'allyworker_skill_sources',
 			static function ( array $sources ): array {
 				$sources['test-empty'] = [
 					'id'       => 'test-empty',
@@ -138,7 +138,7 @@ class SourcesTest extends TestCase {
 
 	public function test_discoverable_excludes_skills_with_empty_body(): void {
 		add_filter(
-			'wpworker_skill_sources',
+			'allyworker_skill_sources',
 			static function ( array $sources ): array {
 				$sources['test-empty-body'] = [
 					'id'       => 'test-empty-body',
@@ -174,7 +174,7 @@ class SourcesTest extends TestCase {
 
 	public function test_exists_in_external_source_returns_label_for_match(): void {
 		add_filter(
-			'wpworker_skill_sources',
+			'allyworker_skill_sources',
 			static function ( array $sources ): array {
 				$sources['ext'] = [
 					'id'       => 'ext',
@@ -200,7 +200,7 @@ class SourcesTest extends TestCase {
 
 	public function test_find_normalises_slug_before_matching(): void {
 		add_filter(
-			'wpworker_skill_sources',
+			'allyworker_skill_sources',
 			static function ( array $sources ): array {
 				$sources['find-test'] = [
 					'id'       => 'find-test',

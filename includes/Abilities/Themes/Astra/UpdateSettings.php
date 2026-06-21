@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpworker/astra-update-settings
+ * Ability: allyworker/astra-update-settings
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Themes\Astra;
+namespace AllyWorker\Abilities\Themes\Astra;
 
-use WPWorker\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class UpdateSettings
@@ -25,12 +25,12 @@ class UpdateSettings extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/astra-update-settings';
+		return 'allyworker/astra-update-settings';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Astra: Update Settings', 'worker-ai' );
+		return __( 'Astra: Update Settings', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -39,13 +39,13 @@ class UpdateSettings extends AbstractAbility {
 			'Merge one or more Astra customizer settings into the astra-settings option. '
 			. 'Only the keys you supply are changed; everything else is preserved. '
 			. 'Pass flush_cache: true (default) to regenerate the dynamic CSS immediately.',
-			'wpworker'
+			'allyworker'
 		);
 	}
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-themes';
+		return 'allyworker-themes';
 	}
 
 	/** {@inheritDoc} */
@@ -57,7 +57,7 @@ Pass any valid Astra setting key in "settings". Values must match Astra's expect
   - Objects for header/footer builder rows (hb-row-1, fb-row-1, …) — use astra-get-settings first
     to read the current structure before overwriting builder rows.
 Always use flush_cache: true (the default) unless you are batching multiple update calls.
-After the last batch call, call wpworker/astra-flush-cache manually.
+After the last batch call, call allyworker/astra-flush-cache manually.
 INSTR;
 	}
 
@@ -113,11 +113,11 @@ INSTR;
 	/** {@inheritDoc} */
 	public function execute( array $input ): array|\WP_Error {
 		if ( ! GetSettings::astra_is_active() ) {
-			return new \WP_Error( 'wpworker_astra_inactive', __( 'The Astra theme is not currently active.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_astra_inactive', __( 'The Astra theme is not currently active.', 'allyworker' ) );
 		}
 
 		if ( ! isset( $input['settings'] ) || ! is_array( $input['settings'] ) ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'settings must be an object.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'settings must be an object.', 'allyworker' ) );
 		}
 
 		/** @var mixed $raw */

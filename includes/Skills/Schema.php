@@ -2,21 +2,21 @@
 /**
  * Skills — database schema.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Skills;
+namespace AllyWorker\Skills;
 
 /**
  * Class Schema
  *
- * Manages the wpworker_skills custom table.
+ * Manages the allyworker_skills custom table.
  */
 class Schema {
 
-	public const TABLE_VERSION_OPTION = 'wpworker_skills_table_version';
+	public const TABLE_VERSION_OPTION = 'allyworker_skills_table_version';
 	public const TABLE_VERSION        = 2;
 
 	/**
@@ -25,8 +25,8 @@ class Schema {
 	public static function create_table(): void {
 		global $wpdb;
 
-		$skills_table    = $wpdb->prefix . 'wpworker_skills';
-		$revisions_table = $wpdb->prefix . 'wpworker_skill_revisions';
+		$skills_table    = $wpdb->prefix . 'allyworker_skills';
+		$revisions_table = $wpdb->prefix . 'allyworker_skill_revisions';
 		$charset         = $wpdb->get_charset_collate();
 
 		$sql_skills = "CREATE TABLE {$skills_table} (
@@ -67,6 +67,7 @@ class Schema {
 	 * without needing to re-activate the plugin.
 	 */
 	public static function maybe_upgrade(): void {
+
 		$current = (int) get_option( self::TABLE_VERSION_OPTION, 0 );
 		if ( $current < self::TABLE_VERSION ) {
 			self::create_table();
@@ -78,7 +79,7 @@ class Schema {
 	 */
 	public static function table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'wpworker_skills';
+		return $wpdb->prefix . 'allyworker_skills';
 	}
 
 	/**
@@ -86,6 +87,6 @@ class Schema {
 	 */
 	public static function revisions_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'wpworker_skill_revisions';
+		return $wpdb->prefix . 'allyworker_skill_revisions';
 	}
 }

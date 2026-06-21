@@ -1,19 +1,19 @@
 <?php
 /**
- * Ability: wpworker/skill-create
+ * Ability: allyworker/skill-create
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Skills;
+namespace AllyWorker\Abilities\Skills;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Skills\Repository;
-use WPWorker\Skills\Sources;
-use WPWorker\Skills\Parser;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Repository;
+use AllyWorker\Skills\Sources;
+use AllyWorker\Skills\Parser;
 
 /**
  * Class SkillCreate
@@ -24,24 +24,24 @@ class SkillCreate extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/skill-create';
+		return 'allyworker/skill-create';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Create Skill', 'worker-ai' );
+		return __( 'Create Skill', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'Create a new WPWorker skill. The description is the trigger — write it so the agent knows when to fire this skill automatically.',
-			'worker-ai'
+			'Create a new AllyWorker skill. The description is the trigger — write it so the agent knows when to fire this skill automatically.',
+			'allyworker'
 		);
 	}
 
@@ -89,9 +89,9 @@ class SkillCreate extends AbstractAbility {
 		foreach ( [ 'name', 'description', 'body' ] as $key ) {
 			if ( empty( $input[ $key ] ) || ! is_string( $input[ $key ] ) ) {
 				return new \WP_Error(
-					'wpworker_invalid_input',
+					'allyworker_invalid_input',
 					/* translators: %s argument name */
-					sprintf( __( '%s must be a non-empty string.', 'worker-ai' ), $key )
+					sprintf( __( '%s must be a non-empty string.', 'allyworker' ), $key )
 				);
 			}
 		}
@@ -106,10 +106,10 @@ class SkillCreate extends AbstractAbility {
 		$external_label = Sources::exists_in_external_source( $slug );
 		if ( null !== $external_label ) {
 			return new \WP_Error(
-				'wpworker_external_source',
+				'allyworker_external_source',
 				sprintf(
 					/* translators: 1: slug 2: source label */
-					__( 'Skill "%1$s" belongs to the "%2$s" source and cannot be modified here.', 'worker-ai' ),
+					__( 'Skill "%1$s" belongs to the "%2$s" source and cannot be modified here.', 'allyworker' ),
 					esc_html( $slug ),
 					esc_html( $external_label )
 				)

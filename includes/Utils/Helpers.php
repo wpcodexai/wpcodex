@@ -2,12 +2,12 @@
 /**
  * Shared helpers used across ability files.
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Utils;
+namespace AllyWorker\Utils;
 /**
  * Class Helpers
  */
@@ -26,8 +26,8 @@ class Helpers {
 	public static function ability_permission(): bool|\WP_Error {
 		if ( ! is_user_logged_in() ) {
 			return new \WP_Error(
-				'wpworker_not_authenticated',
-				__( 'You must be logged in to use Worker AI abilities.', 'worker-ai' ),
+				'allyworker_not_authenticated',
+				__( 'You must be logged in to use AllyWorker abilities.', 'allyworker' ),
 				[ 'status' => 401 ]
 			);
 		}
@@ -36,8 +36,8 @@ class Helpers {
 
 		if ( ! $allowed ) {
 			return new \WP_Error(
-				'wpworker_insufficient_capability',
-				__( 'You must have the manage_options capability (or be a super admin on multisite) to use Worker AI abilities.', 'worker-ai' ),
+				'allyworker_insufficient_capability',
+				__( 'You must have the manage_options capability (or be a super admin on multisite) to use AllyWorker abilities.', 'allyworker' ),
 				[ 'status' => 403 ]
 			);
 		}

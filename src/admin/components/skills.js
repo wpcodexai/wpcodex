@@ -11,7 +11,7 @@
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	// Auto-grow textarea
-	const textarea = document.querySelector( '.wpworker-skill-editor' );
+	const textarea = document.querySelector( '.allyworker-skill-editor' );
 	if ( textarea ) {
 		const autoGrow = () => {
 			textarea.style.height = 'auto';

@@ -1,27 +1,27 @@
 /**
- * WPWorker — Sandbox page.
+ * AllyWorker — Sandbox page.
  *
- * Scoped to #wpworker-sandbox.
+ * Scoped to #allyworker-sandbox.
  */
 
-#wpworker-sandbox {
-	.wpworker-flex {
+#allyworker-sandbox {
+	.allyworker-flex {
 		display: unset;
 	}
 
-	.wpworker-card__meta {
+	.allyworker-card__meta {
 		font-family: $font-mono;
 		font-size: .75rem;
 	}
 
-	.wpworker-card.is-suspended {
+	.allyworker-card.is-suspended {
 		opacity: .6;
 		filter: grayscale(.3);
 	}
 }
 
 // Warn badge (used for Suspended state).
-.wpworker-badge--warn {
+.allyworker-badge--warn {
 	background: #fff3cd;
 	color: #7a4f00;
 }

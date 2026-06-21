@@ -1,18 +1,18 @@
 <?php
 /**
- * Ability: wpworker/gutenberg-get-content
+ * Ability: allyworker/gutenberg-get-content
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Gutenberg;
+namespace AllyWorker\Abilities\Gutenberg;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Utils\GutenbergHelpers;
-use WPWorker\Utils\GutenbergStorage;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Utils\GutenbergHelpers;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class GetContent
@@ -25,22 +25,22 @@ class GetContent extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-gutenberg';
+		return 'allyworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/gutenberg-get-content';
+		return 'allyworker/gutenberg-get-content';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Get Gutenberg Content', 'worker-ai' );
+		return __( 'Get Gutenberg Content', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Reads the live saved Gutenberg post_content for a target post and returns a compact parsed block tree. Use before queuing or writing block changes.', 'worker-ai' );
+		return __( 'Reads the live saved Gutenberg post_content for a target post and returns a compact parsed block tree. Use before queuing or writing block changes.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -102,15 +102,15 @@ class GetContent extends AbstractAbility {
 	public function execute( array $input ): array|\WP_Error {
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 		if ( $post_id <= 0 ) {
-			return new \WP_Error( 'wpworker_invalid_input', __( 'post_id must be a positive integer.', 'worker-ai' ) );
+			return new \WP_Error( 'allyworker_invalid_input', __( 'post_id must be a positive integer.', 'allyworker' ) );
 		}
 
 		$post = get_post( $post_id );
 		if ( ! $post instanceof \WP_Post ) {
 			return new \WP_Error(
-				'wpworker_not_found',
+				'allyworker_not_found',
 				/* translators: %d post ID */
-				sprintf( __( 'Post %d was not found.', 'worker-ai' ), $post_id )
+				sprintf( __( 'Post %d was not found.', 'allyworker' ), $post_id )
 			);
 		}
 

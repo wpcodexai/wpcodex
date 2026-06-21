@@ -1,14 +1,14 @@
 # Abilities Reference
 
-Abilities are the tools WPWorker exposes to AI agents via the MCP server. Every ability requires the agent to be authenticated with an Application Password and AI Abilities to be enabled on the **Configuration** page.
+Abilities are the tools AllyWorker exposes to AI agents via the MCP server. Every ability requires the agent to be authenticated with an Application Password and AI Abilities to be enabled on the **Configuration** page.
 
-All ability names follow the pattern `wpworker/<name>`.
+All ability names follow the pattern `allyworker/<name>`.
 
 ---
 
 ## Session start
 
-### `wpworker/discover-abilities`
+### `allyworker/discover-abilities`
 
 Returns the full list of registered MCP tools plus a rich instruction block: WordPress/PHP version, locale, installed plugins (active/inactive), WordPress-native development guidelines, active theme, and the skill catalog.
 
@@ -18,7 +18,7 @@ Returns the full list of registered MCP tools plus a rich instruction block: Wor
 
 ## Site abilities
 
-### `wpworker/php-execute`
+### `allyworker/php-execute`
 
 Run arbitrary PHP code inside the live WordPress process.
 
@@ -34,7 +34,7 @@ The full WordPress environment is available: `$wpdb`, all functions, all active 
 
 ---
 
-### `wpworker/wpcli-run`
+### `allyworker/wpcli-run`
 
 Execute a WP-CLI command.
 
@@ -50,7 +50,7 @@ Execute a WP-CLI command.
 
 ---
 
-### `wpworker/db-query`
+### `allyworker/db-query`
 
 Run a SQL query via `$wpdb`.
 
@@ -63,13 +63,13 @@ SELECT returns rows. INSERT / UPDATE / DELETE returns affected row count.
 
 ---
 
-### `wpworker/site-info`
+### `allyworker/site-info`
 
 Returns a full install snapshot: WP version, PHP version, active plugins, active theme, site URL, and admin URL. No arguments.
 
 ---
 
-### `wpworker/option-get` / `wpworker/option-set`
+### `allyworker/option-get` / `allyworker/option-set`
 
 Get or set a WordPress option.
 
@@ -81,7 +81,7 @@ Get or set a WordPress option.
 
 ---
 
-### `wpworker/post-query`
+### `allyworker/post-query`
 
 Run a `WP_Query`.
 
@@ -93,7 +93,7 @@ Returns `found_posts` count and a `posts` array.
 
 ---
 
-### `wpworker/create-admin-access-link`
+### `allyworker/create-admin-access-link`
 
 Generates a one-time admin login link for a specified user.
 
@@ -110,7 +110,7 @@ The link expires after one use. Useful when the agent needs a browser session fo
 
 All file paths must be absolute. Writes create a `.bak` backup of the previous file before overwriting.
 
-### `wpworker/file-read`
+### `allyworker/file-read`
 
 Read a file and return its contents.
 
@@ -120,7 +120,7 @@ Read a file and return its contents.
 
 ---
 
-### `wpworker/file-write`
+### `allyworker/file-write`
 
 Write (or create) a file atomically.
 
@@ -131,7 +131,7 @@ Write (or create) a file atomically.
 
 ---
 
-### `wpworker/file-edit`
+### `allyworker/file-edit`
 
 Apply a targeted search-and-replace to an existing file.
 
@@ -143,7 +143,7 @@ Apply a targeted search-and-replace to an existing file.
 
 ---
 
-### `wpworker/file-list`
+### `allyworker/file-list`
 
 List a directory.
 
@@ -154,7 +154,7 @@ List a directory.
 
 ---
 
-### `wpworker/file-delete`
+### `allyworker/file-delete`
 
 Delete a file.
 
@@ -164,13 +164,13 @@ Delete a file.
 
 ---
 
-### `wpworker/file-disable` / `wpworker/file-enable`
+### `allyworker/file-disable` / `allyworker/file-enable`
 
 Rename a sandbox PHP file to add or remove the `.disabled` extension, preventing or allowing it from being loaded. See the [Sandbox guide](./03-sandbox.md).
 
 ---
 
-### `wpworker/create-upload-link`
+### `allyworker/create-upload-link`
 
 Generate a signed URL the agent can use to upload a file directly to `wp-content/uploads/`.
 
@@ -182,13 +182,13 @@ See the [Skills guide](./02-skills.md) for the full workflow. Short reference:
 
 | Ability | Description |
 |---|---|
-| `wpworker/skill-list` | List all skills (name, description, flags). |
-| `wpworker/skill-read` | Read the full body of a skill by name. |
-| `wpworker/skill-create` | Create a new skill. |
-| `wpworker/skill-update` | Update an existing skill. |
-| `wpworker/skill-delete` | Delete a skill. |
-| `wpworker/skill-list-revisions` | List revision history for a skill. |
-| `wpworker/skill-restore-revision` | Restore a skill to an earlier revision. |
+| `allyworker/skill-list` | List all skills (name, description, flags). |
+| `allyworker/skill-read` | Read the full body of a skill by name. |
+| `allyworker/skill-create` | Create a new skill. |
+| `allyworker/skill-update` | Update an existing skill. |
+| `allyworker/skill-delete` | Delete a skill. |
+| `allyworker/skill-list-revisions` | List revision history for a skill. |
+| `allyworker/skill-restore-revision` | Restore a skill to an earlier revision. |
 
 ---
 
@@ -198,10 +198,10 @@ See the [Gutenberg guide](./04-gutenberg.md) for the full workflow. Short refere
 
 | Ability | Description |
 |---|---|
-| `wpworker/gutenberg-get-content` | Read the block content of a post/page. |
-| `wpworker/gutenberg-write-content` | Queue a full content replacement (convenience wrapper). |
-| `wpworker/gutenberg-create-pending-batch` | Create a new batch for multi-post changes. |
-| `wpworker/gutenberg-add-pending-change` | Add one post's block change to an open batch. |
-| `wpworker/gutenberg-enable-batch-finalization` | Mark batch as ready for the browser finalizer. |
-| `wpworker/gutenberg-get-finalization-url` | Get the URL the user should open to finalize. |
-| `wpworker/gutenberg-get-finalizer-runtime` | Poll finalization status (online, progress). |
+| `allyworker/gutenberg-get-content` | Read the block content of a post/page. |
+| `allyworker/gutenberg-write-content` | Queue a full content replacement (convenience wrapper). |
+| `allyworker/gutenberg-create-pending-batch` | Create a new batch for multi-post changes. |
+| `allyworker/gutenberg-add-pending-change` | Add one post's block change to an open batch. |
+| `allyworker/gutenberg-enable-batch-finalization` | Mark batch as ready for the browser finalizer. |
+| `allyworker/gutenberg-get-finalization-url` | Get the URL the user should open to finalize. |
+| `allyworker/gutenberg-get-finalizer-runtime` | Poll finalization status (online, progress). |

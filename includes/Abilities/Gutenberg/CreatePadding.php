@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpworker/gutenberg-create-pending-batch
+ * Ability: allyworker/gutenberg-create-pending-batch
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Gutenberg;
+namespace AllyWorker\Abilities\Gutenberg;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Utils\GutenbergStorage;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Utils\GutenbergStorage;
 
 /**
  * Class CreatePadding
@@ -24,22 +24,22 @@ class CreatePadding extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-gutenberg';
+		return 'allyworker-gutenberg';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/gutenberg-create-pending-batch';
+		return 'allyworker/gutenberg-create-pending-batch';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Create Gutenberg Pending Batch', 'worker-ai' );
+		return __( 'Create Gutenberg Pending Batch', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
-		return __( 'Creates an empty draft Gutenberg batch. Add changes with wpworker/gutenberg-add-pending-change, then enable finalization with wpworker/gutenberg-enable-batch-finalization.', 'worker-ai' );
+		return __( 'Creates an empty draft Gutenberg batch. Add changes with allyworker/gutenberg-add-pending-change, then enable finalization with allyworker/gutenberg-enable-batch-finalization.', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
@@ -80,7 +80,7 @@ class CreatePadding extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_instructions(): string {
-		return 'Creates an empty draft Gutenberg batch. Then call wpworker/gutenberg-add-pending-change one or more times to populate it, and finally wpworker/gutenberg-enable-batch-finalization to unlock finalization. Check finalizer_runtime.online and ask the user to open finalizer_runtime.dashboard_url if it is offline before static/native Gutenberg content is queued.';
+		return 'Creates an empty draft Gutenberg batch. Then call allyworker/gutenberg-add-pending-change one or more times to populate it, and finally allyworker/gutenberg-enable-batch-finalization to unlock finalization. Check finalizer_runtime.online and ask the user to open finalizer_runtime.dashboard_url if it is offline before static/native Gutenberg content is queued.';
 	}
 
 	/** {@inheritDoc} */

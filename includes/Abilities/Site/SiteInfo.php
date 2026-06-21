@@ -1,16 +1,16 @@
 <?php
 /**
- * Ability: wpworker/site-info
+ * Ability: allyworker/site-info
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Site;
+namespace AllyWorker\Abilities\Site;
 
-use WPWorker\Abilities\AbstractAbility;
+use AllyWorker\Abilities\AbstractAbility;
 
 /**
  * Class SiteInfo
@@ -19,23 +19,23 @@ use WPWorker\Abilities\AbstractAbility;
  */
 class SiteInfo extends AbstractAbility {
 	public function get_category(): string {
-		return 'wpworker-site';
+		return 'allyworker-site';
 	}
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/site-info';
+		return 'allyworker/site-info';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'Site Info', 'worker-ai' );
+		return __( 'Site Info', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
 			'Return a full snapshot of this WordPress installation: WP version, PHP version, active theme, active plugins, site URLs, database table prefix, and key constants.',
-			'wpworker'
+			'allyworker'
 		);
 	}
 

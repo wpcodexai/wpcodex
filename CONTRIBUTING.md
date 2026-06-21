@@ -1,4 +1,4 @@
-# Contributing to Worker AI
+# Contributing to AllyWorker
 
 Thank you for your interest in contributing. This document explains the development workflow, code standards, and the process for submitting changes.
 
@@ -6,7 +6,7 @@ Thank you for your interest in contributing. This document explains the developm
 
 ## Before You Start
 
-- Check the [open issues](https://github.com/wpworker/wpworker/issues) — your idea or bug may already be tracked
+- Check the [open issues](https://github.com/allyworker/allyworker/issues) — your idea or bug may already be tracked
 - For significant new features, open an issue first to discuss the approach before writing code
 - For security vulnerabilities, see [SECURITY.md](./SECURITY.md) — do not open a public issue
 
@@ -16,8 +16,8 @@ Thank you for your interest in contributing. This document explains the developm
 
 ```bash
 # Clone into your WordPress plugins directory
-git clone https://github.com/wpworkerai/worker-ai.git wp-content/plugins/worker-ai
-cd wp-content/plugins/worker-ai
+git clone https://github.com/allyworker/allyworker.git wp-content/plugins/allyworker
+cd wp-content/plugins/allyworker
 
 # PHP dependencies (includes wordpress/mcp-adapter via Jetpack Autoloader)
 composer install
@@ -44,9 +44,9 @@ npm run build
 ## Project Structure
 
 ```
-wpworker/
-├── worker-ai.php        # Entry point — loads MCP Adapter, registers abilities
-├── includes/            # PSR-4 source root (namespace: WPWorker\)
+allyworker/
+├── allyworker.php        # Entry point — loads MCP Adapter, registers abilities
+├── includes/            # PSR-4 source root (namespace: AllyWorker\)
 │   ├── Abilities/       # One file per ability — each calls wp_register_ability()
 │   ├── Runner/          # Execution logic: PhpRunner, CliRunner, DbRunner, FileManager
 │   └── Skills/          # DB engine: Repository, AdminPage, Schema
@@ -68,11 +68,11 @@ All PHP must follow [WordPress Coding Standards](https://developer.wordpress.org
 
 - Every file starts with `declare(strict_types=1);`
 - PHP 8.0 minimum — use typed properties, typed parameters, and return types on every method
-- Namespace root: `WPWorker\` → `includes/`; one class per file; file name matches class name
-- **Ability naming:** `wpworker/kebab-case` — e.g. `wpworker/php-execute`, `wpworker/skill-list`
-- **Hook names:** prefixed `wpworker_` — e.g. `wpworker_after_activate`
-- **Option names:** prefixed `wpworker_` — e.g. `wpworker_enable_php_execute`
-- **Transient keys:** prefixed `wpworker_transient_`
+- Namespace root: `AllyWorker\` → `includes/`; one class per file; file name matches class name
+- **Ability naming:** `allyworker/kebab-case` — e.g. `allyworker/php-execute`, `allyworker/skill-list`
+- **Hook names:** prefixed `allyworker_` — e.g. `allyworker_after_activate`
+- **Option names:** prefixed `allyworker_` — e.g. `allyworker_enable_php_execute`
+- **Transient keys:** prefixed `allyworker_transient_`
 - Output escaping on every echoed value: `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`
 - CSRF protection: `wp_nonce_field()` on every form; `check_admin_referer()` on every handler
 - Capability checks: `current_user_can('manage_options')` at the start of every admin render and POST handler
@@ -96,7 +96,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 ```
 type(scope): short description
 
-feat(abilities): add wpworker/hook-inspect ability
+feat(abilities): add allyworker/hook-inspect ability
 fix(runner): handle missing WP-CLI binary gracefully
 docs(skills): add Bricks builder skill example
 refactor(abilities): extract permission check to helper
@@ -139,7 +139,7 @@ composer lint && composer analyze && composer test && npm run lint && npm run bu
 
 ## Adding a New Ability
 
-1. Create `includes/Abilities/YourAbility.php` — namespace `WPWorker\Abilities`
+1. Create `includes/Abilities/YourAbility.php` — namespace `AllyWorker\Abilities`
 2. Register on the `wp_abilities_api_init` hook:
 
 ```php
@@ -147,16 +147,16 @@ composer lint && composer analyze && composer test && npm run lint && npm run bu
 
 declare(strict_types=1);
 
-namespace WPWorker\Abilities;
+namespace AllyWorker\Abilities;
 
 /**
- * Registers the wpworker/your-ability ability.
+ * Registers the allyworker/your-ability ability.
  */
 add_action( 'wp_abilities_api_init', static function (): void {
-    wp_register_ability( 'wpworker/your-ability', [
-        'label'               => __( 'Your Ability', 'worker-ai' ),
-        'description'         => __( 'One-sentence description for the AI agent.', 'worker-ai' ),
-        'category'            => 'wpworker',
+    wp_register_ability( 'allyworker/your-ability', [
+        'label'               => __( 'Your Ability', 'allyworker' ),
+        'description'         => __( 'One-sentence description for the AI agent.', 'allyworker' ),
+        'category'            => 'allyworker',
         'input_schema'        => [
             'type'       => 'object',
             'properties' => [
@@ -173,7 +173,7 @@ add_action( 'wp_abilities_api_init', static function (): void {
         ],
         'execute_callback'    => static function ( array $args ): string {
             // Delegate to a Runner class — keep ability files thin.
-            return ( new \WPWorker\Runner\YourRunner() )->run( $args['param_name'] );
+            return ( new \AllyWorker\Runner\YourRunner() )->run( $args['param_name'] );
         },
         'permission_callback' => static fn(): bool => current_user_can( 'manage_options' ),
         'meta'                => [
@@ -199,7 +199,7 @@ Tests live in `tests/Unit/` and `tests/Integration/`. We use [PHPUnit](https://p
 
 declare(strict_types=1);
 
-namespace WPWorker\Tests\Unit;
+namespace AllyWorker\Tests\Unit;
 
 use Brain\Monkey;
 use PHPUnit\Framework\TestCase;
@@ -266,7 +266,7 @@ Add an entry to `CHANGELOG.txt` under the `[Unreleased]` section for every PR:
 
 ```
 [Unreleased]
-- feat: add wpworker/hook-inspect ability (lists active filters/actions on a hook)
+- feat: add allyworker/hook-inspect ability (lists active filters/actions on a hook)
 - fix: handle missing WP-CLI binary with a clear error message
 - docs: add Bricks builder skill example
 ```
@@ -275,4 +275,4 @@ Add an entry to `CHANGELOG.txt` under the `[Unreleased]` section for every PR:
 
 ## Questions
 
-Open a [GitHub Discussion](https://github.com/wpworker/wpworker/discussions) for questions about contributing, architecture, or roadmap.
+Open a [GitHub Discussion](https://github.com/allyworker/allyworker/discussions) for questions about contributing, architecture, or roadmap.

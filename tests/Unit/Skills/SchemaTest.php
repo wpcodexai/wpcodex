@@ -1,21 +1,21 @@
 <?php
 /**
- * Unit tests for WPWorker\Skills\Schema.
+ * Unit tests for AllyWorker\Skills\Schema.
  *
- * @package WPWorker\Tests\Unit\Skills
+ * @package AllyWorker\Tests\Unit\Skills
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Skills;
+namespace AllyWorker\Tests\Unit\Skills;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Skills\Schema;
+use AllyWorker\Skills\Schema;
 
 /**
- * @covers \WPWorker\Skills\Schema
+ * @covers \AllyWorker\Skills\Schema
  */
 class SchemaTest extends TestCase {
 
@@ -39,40 +39,33 @@ class SchemaTest extends TestCase {
 		parent::tearDown();
 	}
 
-	// ── Constants ─────────────────────────────────────────────────────────────
-
 	public function test_table_version_is_at_least_2(): void {
 		$this->assertGreaterThanOrEqual( 2, Schema::TABLE_VERSION );
 	}
 
 	public function test_table_version_option_key_is_prefixed(): void {
-		$this->assertStringStartsWith( 'wpworker_', Schema::TABLE_VERSION_OPTION );
+		$this->assertStringStartsWith( 'allyworker_', Schema::TABLE_VERSION_OPTION );
 	}
 
-	// ── table_name ────────────────────────────────────────────────────────────
-
 	public function test_table_name_includes_skills(): void {
-		$this->assertSame( 'wp_wpworker_skills', Schema::table_name() );
+		$this->assertSame( 'wp_allyworker_skills', Schema::table_name() );
 	}
 
 	public function test_table_name_respects_wpdb_prefix(): void {
 		global $wpdb;
 		$wpdb->prefix = 'custom_';
-		$this->assertSame( 'custom_wpworker_skills', Schema::table_name() );
+		$this->assertSame( 'custom_allyworker_skills', Schema::table_name() );
 		$wpdb->prefix = 'wp_'; // reset
 	}
 
-	// ── revisions_table_name ──────────────────────────────────────────────────
 
 	public function test_revisions_table_name_includes_skill_revisions(): void {
-		$this->assertSame( 'wp_wpworker_skill_revisions', Schema::revisions_table_name() );
+		$this->assertSame( 'wp_allyworker_skill_revisions', Schema::revisions_table_name() );
 	}
 
 	public function test_revisions_table_name_is_different_from_skills_table(): void {
 		$this->assertNotSame( Schema::table_name(), Schema::revisions_table_name() );
 	}
-
-	// ── maybe_upgrade ─────────────────────────────────────────────────────────
 
 	public function test_maybe_upgrade_runs_create_table_when_version_is_old(): void {
 		// Version 0 → behind TABLE_VERSION → create_table() is called.

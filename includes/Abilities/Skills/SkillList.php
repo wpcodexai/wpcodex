@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpworker/skill-list
+ * Ability: allyworker/skill-list
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Skills;
+namespace AllyWorker\Abilities\Skills;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Skills\Repository;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Repository;
 
 /**
  * Class SkillList
@@ -22,24 +22,24 @@ class SkillList extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/skill-list';
+		return 'allyworker/skill-list';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'List Skills', 'worker-ai' );
+		return __( 'List Skills', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
-			'List all available WPWorker skills with their names, descriptions, and enabled flags. Load this at session start to discover standing instructions for this site.',
-			'worker-ai'
+			'List all available AllyWorker skills with their names, descriptions, and enabled flags. Load this at session start to discover standing instructions for this site.',
+			'allyworker'
 		);
 	}
 

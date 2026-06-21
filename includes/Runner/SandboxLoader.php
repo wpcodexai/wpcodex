@@ -10,14 +10,14 @@
  * WordPress hooks are registered directly in __construct.
  * load() must be called explicitly from Plugin::init().
  *
- * @package WPWorker
+ * @package AllyWorker
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Runner;
+namespace AllyWorker\Runner;
 
-use WPWorker\Admin\AdminMenu;
+use AllyWorker\Admin\AdminMenu;
 
 /**
  * Class SandboxLoader
@@ -34,7 +34,7 @@ class SandboxLoader {
 	private string $crashed_file;
 
 	public function __construct() {
-		$this->sandbox_dir  = WPWORKER_SANDBOX_DIR;
+		$this->sandbox_dir  = ALLY_WORKER_SANDBOX_DIR;
 		$this->crashed_file = $this->sandbox_dir . self::CRASHED_MARKER;
 
 		add_action( 'admin_notices', [ $this, 'maybe_show_crash_notice' ] );
@@ -44,7 +44,7 @@ class SandboxLoader {
 	 * Load all enabled sandbox PHP files.
 	 *
 	 * Called explicitly from Plugin::init().
-	 * Reads the wpworker_abilities_enabled option to decide whether to run
+	 * Reads the allyworker_abilities_enabled option to decide whether to run
 	 * the full crash-recovery path or the lighter no-overhead path.
 	 */
 	public function load(): void {
@@ -88,8 +88,8 @@ class SandboxLoader {
 
 		$notice = sprintf(
 			'<strong>%s</strong> %s',
-			esc_html__( 'WPWorker Sandbox: Safe mode is active.', 'worker-ai' ),
-			esc_html__( 'A sandbox file caused a fatal error. All sandbox files are disabled until you fix or delete the broken file, then delete the .crashed marker from the sandbox directory.', 'worker-ai' )
+			esc_html__( 'AllyWorker Sandbox: Safe mode is active.', 'allyworker' ),
+			esc_html__( 'A sandbox file caused a fatal error. All sandbox files are disabled until you fix or delete the broken file, then delete the .crashed marker from the sandbox directory.', 'allyworker' )
 		);
 
 		if ( '' !== $file_name ) {
@@ -180,7 +180,7 @@ class SandboxLoader {
 	/**
 	 * Whether safe mode is currently active.
 	 *
-	 * True when the .crashed marker exists or ?wpworker_safe_mode=1 is set.
+	 * True when the .crashed marker exists or ?allyworker_safe_mode=1 is set.
 	 */
 	private function is_safe_mode(): bool {
 		if ( file_exists( $this->crashed_file ) ) {
@@ -188,7 +188,7 @@ class SandboxLoader {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return isset( $_GET['wpworker_safe_mode'] ) && '1' === $_GET['wpworker_safe_mode'];
+		return isset( $_GET['allyworker_safe_mode'] ) && '1' === $_GET['allyworker_safe_mode'];
 	}
 
 	/**

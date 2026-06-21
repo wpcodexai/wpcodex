@@ -1,25 +1,25 @@
 <?php
 /**
- * Unit tests for WPWorker\Runner\CliRunner.
+ * Unit tests for AllyWorker\Runner\CliRunner.
  *
  * run() itself spawns a real subprocess, so we only test the parts that are
  * unit-testable: the singleton, the RuntimeException when WP-CLI is absent,
  * and the safe_env() credential-stripping via reflection.
  *
- * @package WPWorker\Tests\Unit\Runner
+ * @package AllyWorker\Tests\Unit\Runner
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Runner;
+namespace AllyWorker\Tests\Unit\Runner;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Runner\CliRunner;
+use AllyWorker\Runner\CliRunner;
 
 /**
- * @covers \WPWorker\Runner\CliRunner
+ * @covers \AllyWorker\Runner\CliRunner
  */
 class CliRunnerTest extends TestCase {
 
@@ -78,19 +78,19 @@ class CliRunnerTest extends TestCase {
 		putenv( 'HTTP_AUTHORIZATION' );
 	}
 
-	public function test_safe_env_strips_wpworker_secret(): void {
-		putenv( 'WPWORKER_SECRET=topsecret' );
+	public function test_safe_env_strips_allyworker_secret(): void {
+		putenv( 'ALLYWORKER_SECRET=topsecret' );
 
 		$env = $this->call_safe_env();
 
-		$this->assertArrayNotHasKey( 'WPWORKER_SECRET', $env );
+		$this->assertArrayNotHasKey( 'ALLYWORKER_SECRET', $env );
 
-		putenv( 'WPWORKER_SECRET' );
+		putenv( 'ALLYWORKER_SECRET' );
 	}
 
 	public function test_safe_env_preserves_normal_env_vars(): void {
 		// Use a custom env var to avoid platform differences with 'PATH'.
-		$key = 'WPWORKER_TEST_PRESERVE_' . strtoupper( bin2hex( random_bytes( 4 ) ) );
+		$key = 'ALLYWORKER_TEST_PRESERVE_' . strtoupper( bin2hex( random_bytes( 4 ) ) );
 		$val = 'test_value_' . bin2hex( random_bytes( 4 ) );
 
 		putenv( "{$key}={$val}" );

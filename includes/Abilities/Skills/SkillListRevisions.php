@@ -1,17 +1,17 @@
 <?php
 /**
- * Ability: wpworker/skill-list-revisions
+ * Ability: allyworker/skill-list-revisions
  *
- * @package WPWorker
+ * @package AllyWorker
  * @since   1.0.0
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Abilities\Skills;
+namespace AllyWorker\Abilities\Skills;
 
-use WPWorker\Abilities\AbstractAbility;
-use WPWorker\Skills\Repository;
+use AllyWorker\Abilities\AbstractAbility;
+use AllyWorker\Skills\Repository;
 
 /**
  * Class SkillListRevisions
@@ -22,24 +22,24 @@ class SkillListRevisions extends AbstractAbility {
 
 	/** {@inheritDoc} */
 	public function get_category(): string {
-		return 'wpworker-skills';
+		return 'allyworker-skills';
 	}
 
 	/** {@inheritDoc} */
 	public function get_name(): string {
-		return 'wpworker/skill-list-revisions';
+		return 'allyworker/skill-list-revisions';
 	}
 
 	/** {@inheritDoc} */
 	public function get_label(): string {
-		return __( 'List Skill Revisions', 'worker-ai' );
+		return __( 'List Skill Revisions', 'allyworker' );
 	}
 
 	/** {@inheritDoc} */
 	public function get_description(): string {
 		return __(
 			'Return up to 10 saved revisions for a skill, newest first. Each revision includes the body, description, and flags captured before the previous save.',
-			'worker-ai'
+			'allyworker'
 		);
 	}
 

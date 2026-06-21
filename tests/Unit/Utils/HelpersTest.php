@@ -2,17 +2,17 @@
 /**
  * Unit tests for Helpers::ability_permission().
  *
- * @package WPWorker\Tests\Unit\Utils
+ * @package AllyWorker\Tests\Unit\Utils
  */
 
 declare( strict_types=1 );
 
-namespace WPWorker\Tests\Unit\Utils;
+namespace AllyWorker\Tests\Unit\Utils;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use WPWorker\Utils\Helpers;
+use AllyWorker\Utils\Helpers;
 
 /**
  * Class HelpersTest
@@ -49,7 +49,7 @@ class HelpersTest extends TestCase {
 		$result = Helpers::ability_permission();
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpworker_not_authenticated', $result->get_error_code() );
+		$this->assertSame( 'allyworker_not_authenticated', $result->get_error_code() );
 		$this->assertSame( 401, $result->get_error_data()['status'] );
 	}
 
@@ -61,7 +61,7 @@ class HelpersTest extends TestCase {
 		$result = Helpers::ability_permission();
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'wpworker_insufficient_capability', $result->get_error_code() );
+		$this->assertSame( 'allyworker_insufficient_capability', $result->get_error_code() );
 		$this->assertSame( 403, $result->get_error_data()['status'] );
 	}
 

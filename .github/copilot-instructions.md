@@ -1,5 +1,5 @@
 ---
-applyTo: 'wp-content\plugins\wpworker',
+applyTo: 'wp-content\plugins\allyworker',
 title: 'Copilot / Agent Instructions Template',
 scope: 'repository',
 created: 2026-06-05

@@ -1,16 +1,16 @@
-# Worker AI — Security Model
+# AllyWorker — Security Model
 
-> **Worker AI is designed for development and staging environments only.**
+> **AllyWorker is designed for development and staging environments only.**
 >
 > It gives AI agents the ability to execute arbitrary PHP code, run WP-CLI commands, query the database directly, and read or write any file the web server can access. This is intentional and powerful. It is also a significant attack surface if misused or misconfigured.
 >
-> Read this document before activating Worker AI on any site.
+> Read this document before activating AllyWorker on any site.
 
 ---
 
 ## Threat Model
 
-### What Worker AI Can Do
+### What AllyWorker Can Do
 
 An authenticated agent can:
 
@@ -22,7 +22,7 @@ An authenticated agent can:
 - Install, activate, or deactivate plugins and themes
 - Create or delete WordPress users, including administrators
 
-### What Worker AI Cannot Do
+### What AllyWorker Cannot Do
 
 - Bypass server-level `open_basedir` or `disable_functions` restrictions (these apply to the PHP process as normal)
 - Access files outside `open_basedir` if it is configured
@@ -39,7 +39,7 @@ An authenticated agent can:
 | SQL injection | All parameterised queries through `$wpdb->prepare()` |
 | Subprocess env leakage | `HTTP_AUTHORIZATION` and sensitive env vars stripped before `proc_open` |
 | Sandbox file persistence | Temp PHP files always `unlink()`-ed, even on exception |
-| Directory listing of sandbox | `.htaccess Deny from all` + `index.php` stub in `wpworker-sandbox/` |
+| Directory listing of sandbox | `.htaccess Deny from all` + `index.php` stub in `allyworker-sandbox/` |
 | CSRF on admin actions | `wp_nonce_field()` + `check_admin_referer()` on every form |
 | Privilege escalation via admin | `current_user_can('manage_options')` on every render, handler, and ability `permission_callback` |
 
@@ -47,7 +47,7 @@ An authenticated agent can:
 
 ## Authentication
 
-Worker AI uses **WordPress Application Passwords** for authentication, provided by the `wordpress/mcp-adapter` transport layer. This is native WordPress authentication — no custom keys, no separate secrets.
+AllyWorker uses **WordPress Application Passwords** for authentication, provided by the `wordpress/mcp-adapter` transport layer. This is native WordPress authentication — no custom keys, no separate secrets.
 
 ### How It Works
 
@@ -94,7 +94,7 @@ Revoke an Application Password at any time from the same **Application Passwords
 
 ## Transport Security
 
-Worker AI requires HTTPS. Transmitting Application Password credentials over plain HTTP exposes them to any network observer.
+AllyWorker requires HTTPS. Transmitting Application Password credentials over plain HTTP exposes them to any network observer.
 
 - The plugin shows a persistent admin error notice if the site is not running HTTPS
 - The **Connect** page shows an additional warning on non-HTTPS sites
@@ -106,9 +106,9 @@ If you are developing locally with HTTP, use a tool such as [mkcert](https://git
 
 ## PHP Execution Sandbox
 
-PHP code is executed via a temporary file inside `wp-content/wpworker-sandbox/`:
+PHP code is executed via a temporary file inside `wp-content/allyworker-sandbox/`:
 
-1. Code is written to `wpworker-sandbox/exec_{random_16_hex}.php`
+1. Code is written to `allyworker-sandbox/exec_{random_16_hex}.php`
 2. The file is `include()`-ed inside a `try/catch(\Throwable)` with output buffering
 3. The file is **always** deleted after execution — even if an exception is thrown
 4. The sandbox directory is protected by `.htaccess Deny from all` (Apache) and an `index.php` stub
@@ -117,7 +117,7 @@ PHP code is executed via a temporary file inside `wp-content/wpworker-sandbox/`:
 
 This is intentional — it is what makes the tool useful. It also means that a compromised Application Password gives an attacker full server access equivalent to a web shell. Protect your credentials accordingly.
 
-**Future:** A `WPWORKER_SAFE_MODE` constant (planned for v1.1) will switch execution to a subprocess with `disable_functions` restrictions for teams that need tighter isolation.
+**Future:** A `ALLY_WORKER_SAFE_MODE` constant (planned for v1.1) will switch execution to a subprocess with `disable_functions` restrictions for teams that need tighter isolation.
 
 ---
 
@@ -140,22 +140,22 @@ All file write operations in `FileManager`:
 WP-CLI runs as a child process via `proc_open`. Security measures:
 
 - `HTTP_AUTHORIZATION` and any credential-bearing environment variables are removed from the subprocess environment
-- The process is killed if it exceeds the configured timeout (default: 30 seconds; override with `WPWORKER_CLI_TIMEOUT` constant)
+- The process is killed if it exceeds the configured timeout (default: 30 seconds; override with `ALLY_WORKER_CLI_TIMEOUT` constant)
 - `--no-color` and `--path=ABSPATH` are always appended to prevent path ambiguity
 
 ---
 
 ## Production Use
 
-**Do not activate Worker AI on a production site unless you fully understand the implications.**
+**Do not activate AllyWorker on a production site unless you fully understand the implications.**
 
-Worker AI on a production site means:
+AllyWorker on a production site means:
 
 - Any AI client with a valid Application Password has full, unrestricted server access
 - PHP execution errors, bugs, or AI mistakes run live against real data
 - There is no read-only mode (planned for v1.2)
 
-If you choose to use Worker AI on production anyway:
+If you choose to use AllyWorker on production anyway:
 
 1. Create a dedicated WordPress user with `manage_options` capability only — do not use an administrator account
 2. Revoke the Application Password immediately after each session
@@ -167,9 +167,9 @@ If you choose to use Worker AI on production anyway:
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Worker AI, please do **not** open a public GitHub issue.
+If you discover a security vulnerability in AllyWorker, please do **not** open a public GitHub issue.
 
-Report it privately to: **security@wpworker.ai**
+Report it privately to: **security@allyworker.com**
 
 Include:
 - A description of the vulnerability
